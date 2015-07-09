@@ -14,7 +14,7 @@ import org.ankhzet.ergo.reader.chapter.page.PageData;
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-public class ChapterData extends HashMap<String, PageData> {
+public class ChapterCacher extends HashMap<String, PageData> {
   public final ReentrantLock lock = new ReentrantLock();
 
   public boolean isBusy() {
@@ -27,16 +27,18 @@ public class ChapterData extends HashMap<String, PageData> {
     
     lock.lock();
     try {
-      if (listener != null && !progressLayout(listener, 0))
+      if (!progressLayout(listener, 0))
         return;
+      
       int pos = 0;
       for (PageData page : this.values()) {
         page.calcLayout(w, h, ro);
-        if (listener != null && !progressLayout(listener, ++pos))
+        
+        if (!progressLayout(listener, ++pos))
           return;
       }
-      if (listener != null)
-        listener.progressDone();
+      
+      progressDone(listener);
     } finally {
       lock.unlock();
     }
@@ -45,21 +47,25 @@ public class ChapterData extends HashMap<String, PageData> {
   public synchronized void prepareCache(PageRenderOptions options, LoaderProgressListener listener) {
     if (isBusy())
       return;
+    
     lock.lock();
     try {
-      if (listener != null && !progressCache(listener, 0))
+      if (!progressCache(listener, 0))
         return;
+      
       int pos = 0;
       List<String> l = new ArrayList<>(this.keySet());
       Collections.sort(l);
       for (String fileKey : l) {
         PageData page = get(fileKey);
         page.makeCache(options);
-        if (listener != null && !progressCache(listener, ++pos))
+        
+        if (!progressCache(listener, ++pos))
           return;
       }
-      if (listener != null)
-        listener.progressDone();
+      
+      progressDone(listener);
+      
       System.gc();
     } finally {
       lock.unlock();
@@ -67,11 +73,21 @@ public class ChapterData extends HashMap<String, PageData> {
   }
 
   private boolean progressLayout(LoaderProgressListener listener, int p) {
-    return listener.onProgress(LoaderProgressListener.STATE_LAYOUTING, p, this.size());
+    return onProgress(listener, LoaderProgressListener.STATE_LAYOUTING, p, this.size());
   }
 
   private boolean progressCache(LoaderProgressListener listener, int p) {
-    return listener.onProgress(LoaderProgressListener.STATE_CACHING, p, this.size());
+    return onProgress(listener, LoaderProgressListener.STATE_CACHING, p, this.size());
   }
+
+  public boolean onProgress(LoaderProgressListener listener, int state, int progress, int max) {
+    return (listener == null) || listener.onProgress(state, progress, max);
+  }
+
+  public void progressDone(LoaderProgressListener listener) {
+    if (listener != null)
+      listener.progressDone();
+  }
+
 
 }
