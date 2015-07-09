@@ -23,24 +23,20 @@ public class ChapterLoader {
   public void load(String m, int c) {
     manga = m;
     chapter = c;
-    loader = new Thread(new Runnable() {
-
-      @Override
-      public void run() {
-        Reader reader = Reader.get();
-        UILogic ui = IoC.get(UILogic.class);
-        int wait = 0;
-        while (reader.isBusy() && wait < 1000)
-          try {
-            Thread.sleep(10);
-            wait += 10;
-          } catch (InterruptedException ex) {
-          }
-
-        if (!reader.isBusy()) {
-          reader.prepareForChapter(manga, chapter, ui);
-          reader.flushCache(true);
+    loader = new Thread(() -> {
+      Reader reader = Reader.get();
+      UILogic ui = IoC.get(UILogic.class);
+      int wait = 0;
+      while (reader.isBusy() && wait < 1000)
+        try {
+          Thread.sleep(10);
+          wait += 10;
+        } catch (InterruptedException ex) {
         }
+      
+      if (!reader.isBusy()) {
+        reader.prepareForChapter(manga, chapter, ui);
+        reader.flushCache(true);
       }
     });
 
@@ -48,10 +44,7 @@ public class ChapterLoader {
   }
 
   final void layout() {
-    cacher = new Thread(new Runnable() {
-
-      @Override
-      public void run() {
+    cacher = new Thread(() -> {
       Reader reader = Reader.get();
       UILogic ui = IoC.get(UILogic.class);
       try {
@@ -69,7 +62,6 @@ public class ChapterLoader {
       } catch (InterruptedException ex) {
       }
 //        cacher = null;
-      }
     });
 
     cacher.start();
