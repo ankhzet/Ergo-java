@@ -4,14 +4,14 @@ import org.ankhzet.ergo.reader.chapter.ChapterLoader;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import org.ankhzet.ergo.reader.PageRenderOptions;
 import org.ankhzet.ergo.LoaderProgressListener;
 import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.UIPage;
+import org.ankhzet.ergo.reader.PageRenderOptions;
 import org.ankhzet.ergo.reader.Reader;
 import org.ankhzet.ergo.reader.SwipeHandler;
 import org.ankhzet.ergo.xgui.CommonControl;
+import org.ankhzet.ergo.xgui.XActions;
 import org.ankhzet.ergo.xgui.XButton;
 import org.ankhzet.ergo.xgui.XControls;
 
@@ -29,18 +29,15 @@ public class UIReaderPage extends UIPage {
   static String kRotate = "rotate";
   static String kOriginal = "original";
 
-  private interface Action {
-
-    public void perform(String name);
-  }
-
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
   Reader reader = null;
-  boolean swipeDirVertical = true;
   ChapterLoader loader;
+  PageRenderOptions options;
   UILogic ui;
+  boolean swipeDirVertical = true;
   Point pressPos = new Point();
 
+  XActions actions = new XActions();
 
   public void injectDependencies(UILogic ui, Reader reader, ChapterLoader loader, PageRenderOptions options) {
     this.ui = ui;
@@ -64,54 +61,37 @@ public class UIReaderPage extends UIPage {
     hud.putControl(new XButton(kRotate, "Режим подгонки страниц", "xbutton"), XControls.AREA_RIGHT);
     pgOrigSize = hud.putControl(new XButton(kOriginal, "Оригинальный размер", "xbutton"), XControls.AREA_RIGHT);
 
-    registerAction(kPrev, (String name) -> swipePage(-1));
-    registerAction(kNext, (String name) -> swipePage(1));
-
-    registerAction(kSwipedir, (String name) -> {
+    actions.registerActions(new String[]{kPrev, kPrev}, (String name) -> swipePage(name.equals(kPrev) ? -1 : 1));
+    actions.registerAction(kSwipedir, (String name) -> {
       swipeDirVertical = !swipeDirVertical;
     });
-    registerAction(kRotate, (String name) -> {
-      reader.options.toggleRotationToFit();
+    actions.registerAction(kRotate, (String name) -> {
+      options.toggleRotationToFit();
       if (loader != null)
         reader.flushCache(true);
     });
 
-    registerAction(kOriginal, (String name) -> {
-       reader.options.toggleOriginalSize();
-        if (loader != null)
-          reader.flushCache(true);
+    actions.registerAction(kOriginal, (String name) -> {
+      options.toggleOriginalSize();
+      if (loader != null)
+        reader.flushCache(true);
     });
 
-    registerAction(kMagnify, (String name) -> {
+    actions.registerAction(kMagnify, (String name) -> {
       reader.showMagnifier(!reader.getMagnifying());
     });
 
   }
 
-  HashMap<String, Action> actions = new HashMap<>();
-
-  void registerAction(String actionName, Action action) {
-//    for (String name : actionName)
-    actions.put(actionName, action);
-  }
-
-  Action performAction(String a) {
-    Action action = actions.get(a);
-    try {
-      action.perform(a);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
-    return action;
-  }
-
   @Override
   public boolean actionPerformed(String a) {
-    boolean handled = performAction(a) != null;
-    if (!handled) {
-      
-    }
-    
+    boolean handled = actions.performAction(a) != null;
+//    if (!handled) {
+//      switch (a) {
+//      default:
+//      }
+//    }
+
     return handled;
   }
 
