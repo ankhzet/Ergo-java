@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.reader;
+package org.ankhzet.ergo.pages;
 
 import org.ankhzet.ergo.reader.chapter.ChapterLoader;
 import java.awt.Graphics2D;
@@ -9,6 +9,8 @@ import org.ankhzet.ergo.ClassFactory.IoC;
 import org.ankhzet.ergo.LoaderProgressListener;
 import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.UIPage;
+import org.ankhzet.ergo.reader.Reader;
+import org.ankhzet.ergo.reader.SwipeHandler;
 import org.ankhzet.ergo.xgui.CommonControl;
 import org.ankhzet.ergo.xgui.XButton;
 import org.ankhzet.ergo.xgui.XControls;
