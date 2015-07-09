@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
-import org.ankhzet.ergo.ClassFactory.IoC;
+import org.ankhzet.ergo.reader.PageRenderOptions;
 import org.ankhzet.ergo.LoaderProgressListener;
 import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.UIPage;
@@ -37,13 +37,16 @@ public class UIReaderPage extends UIPage {
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
   Reader reader = null;
   boolean swipeDirVertical = true;
-  ChapterLoader loader = null;
+  ChapterLoader loader;
   UILogic ui;
   Point pressPos = new Point();
 
-  public UIReaderPage() {
-    reader = Reader.get();
-    ui = IoC.get(UILogic.class);
+
+  public void injectDependencies(UILogic ui, Reader reader, ChapterLoader loader, PageRenderOptions options) {
+    this.ui = ui;
+    this.reader = reader;
+    this.loader = loader;
+    this.options = options;
   }
 
   @Override
@@ -116,7 +119,7 @@ public class UIReaderPage extends UIPage {
     if (reader == null || reader.totalPages() == 0 || reader.isLoading())
       return false;
 
-    if (!reader.options.showOriginalSize())
+    if (!options.showOriginalSize())
       return SwipeHandler.makeSwipe(swipeDirVertical, dir, ui.clientArea.width, ui.clientArea.height);
     else
       if (dir > 0)
@@ -133,7 +136,7 @@ public class UIReaderPage extends UIPage {
     boolean canSwipe = !(swiping || reader.totalPages() == 0 || reader.isLoading());
     pgNext.enabled = canSwipe;
     pgPrev.enabled = canSwipe;
-    pgOrigSize.toggled = reader.options.showOriginalSize();
+    pgOrigSize.toggled = options.showOriginalSize();
     pgMagnify.toggled = reader.getMagnifying();
     ui.intensiveRepaint(swiping);
     reader.process();
@@ -159,7 +162,7 @@ public class UIReaderPage extends UIPage {
       mouseDown = true;
       ui.getHUD().unfocus();
     }
-    if (reader.options.showOriginalSize() && e.getID() == MouseEvent.MOUSE_DRAGGED) {
+    if (options.showOriginalSize() && e.getID() == MouseEvent.MOUSE_DRAGGED) {
       int dx = pressPos.x - mx;
       int dy = pressPos.y - my;
       reader.scroll(dx, dy);
@@ -168,7 +171,7 @@ public class UIReaderPage extends UIPage {
     if (mouseDown && e.getID() == MouseEvent.MOUSE_RELEASED) {
       int dx = pressPos.x - mx;
       int dy = pressPos.y - my;
-      if (reader.options.showOriginalSize()) {
+      if (options.showOriginalSize()) {
       } else {
         int dir = swipeDirVertical ? dy : dx;
         if (Math.abs(dir) > 5)//(swipeDirVertical ? clientArea.height : clientArea.width) * 0.1)
@@ -180,8 +183,6 @@ public class UIReaderPage extends UIPage {
   }
 
   public void loadChapter(String manga, int chapter) {
-    if (loader == null)
-      loader = new ChapterLoader();
     loader.load(manga, chapter);
   }
 
@@ -201,4 +202,5 @@ public class UIReaderPage extends UIPage {
     }
     return true;
   }
+  
 }
