@@ -1,6 +1,6 @@
-package org.ankhzet.ergo.ClassFactory;
+package org.ankhzet.ergo.classfactory;
 
-import org.ankhzet.ergo.ClassFactory.Builder.Builder;
+import org.ankhzet.ergo.classfactory.builder.Builder;
 
 /**
  *

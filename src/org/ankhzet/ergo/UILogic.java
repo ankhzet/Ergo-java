@@ -17,10 +17,11 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import org.ankhzet.ergo.ClassFactory.IoC;
+import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.xgui.XActionListener;
 import org.ankhzet.ergo.xgui.XButton;
 import org.ankhzet.ergo.xgui.XControls;
+import org.ankhzet.ergo.pages.UIHomePage;
 
 
 /**
@@ -259,7 +260,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     initiated = true;
   }
 
-  UIPage navigateTo(Class c) {
+  public UIPage navigateTo(Class c) {
     prevUI = currentUI;
 
     currentUI = (UIPage)IoC.<UIPage>get(c);

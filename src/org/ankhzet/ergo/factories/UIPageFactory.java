@@ -1,10 +1,10 @@
 package org.ankhzet.ergo.factories;
 
 import org.ankhzet.ergo.ClassFactory.Builder.Builder;
-import org.ankhzet.ergo.ClassFactory.ClassFactory;
-import org.ankhzet.ergo.UIHomePage;
+import org.ankhzet.ergo.classfactory.ClassFactory;
+import org.ankhzet.ergo.pages.UIHomePage;
 import org.ankhzet.ergo.UIPage;
-import org.ankhzet.ergo.reader.UIReaderPage;
+import org.ankhzet.ergo.pages.UIReaderPage;
 
 /**
  *

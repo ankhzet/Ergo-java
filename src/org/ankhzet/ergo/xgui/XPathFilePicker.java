@@ -9,7 +9,7 @@ import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.files.Parser;
 import org.ankhzet.ergo.utils.Strings;
 import java.io.*;
-import org.ankhzet.ergo.ClassFactory.IoC;
+import org.ankhzet.ergo.classfactory.IoC;
 
 /**
  *

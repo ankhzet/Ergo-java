@@ -8,13 +8,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 import javax.imageio.ImageIO;
-import org.ankhzet.ergo.LoaderProgressListener;
 import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.reader.PageRenderOptions;
 

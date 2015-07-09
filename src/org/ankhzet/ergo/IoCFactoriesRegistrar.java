@@ -2,10 +2,10 @@
 package org.ankhzet.ergo;
 
 import org.ankhzet.ergo.ClassFactory.Builder.Builder;
-import org.ankhzet.ergo.ClassFactory.CommonFactoryRegistrar;
+import org.ankhzet.ergo.classfactory.CommonFactoryRegistrar;
 import org.ankhzet.ergo.factories.UIPageFactory;
 import org.ankhzet.ergo.factories.UILogicFactory;
-import org.ankhzet.ergo.ClassFactory.FactoryRegistrar;
+import org.ankhzet.ergo.classfactory.FactoryRegistrar;
 import org.ankhzet.ergo.xgui.XPathFilePicker;
 
 /**
