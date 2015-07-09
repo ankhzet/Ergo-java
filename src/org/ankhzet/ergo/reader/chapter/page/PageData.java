@@ -37,7 +37,7 @@ public class PageData {
     pageH = image != null ? image.getHeight() : 32;
   }
 
-  static PageData load(String imageFile) {
+  public static PageData load(String imageFile) {
     return new PageData(imageFile);
   }
 
@@ -66,13 +66,13 @@ public class PageData {
     return image;
   }
 
-  void calcLayout(int w, int h, PageRenderOptions ro) {
+  public void calcLayout(int w, int h, PageRenderOptions ro) {
     layout.clientW = w;
     layout.clientH = h;
     layout.calcLayout(pageW, pageH, ro);
   }
 
-  void makeCache(PageRenderOptions options) {
+  public void makeCache(PageRenderOptions options) {
     UILogic.log("caching \"%s\"", file);
 
     int nw = layout.newPageW;
@@ -123,7 +123,7 @@ public class PageData {
       }
   }
 
-  void drawPage(Graphics g, int dx, int dy, int scrollX, int scrollY) {
+  public void drawPage(Graphics g, int dx, int dy, int scrollX, int scrollY) {
     g.drawImage(
     cache//
     , dx + layout.renderX - scrollX//
@@ -132,63 +132,3 @@ public class PageData {
   }
 }
 
-class ChapterData extends HashMap<String, PageData> {
-
-  public final ReentrantLock lock = new ReentrantLock();
-
-  boolean isBusy() {
-    return lock.isLocked();
-  }
-
-  public synchronized void calcLayout(int w, int h, PageRenderOptions ro, LoaderProgressListener listener) {
-    if (isBusy())
-      return;
-    lock.lock();
-    try {
-      if (listener != null && !progressLayout(listener, 0))
-        return;
-      int pos = 0;
-      for (PageData page : this.values()) {
-        page.calcLayout(w, h, ro);
-        if (listener != null && !progressLayout(listener, ++pos))
-          return;
-      }
-      if (listener != null)
-        listener.progressDone();
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  public synchronized void prepareCache(PageRenderOptions options, LoaderProgressListener listener) {
-    if (isBusy())
-      return;
-    lock.lock();
-    try {
-      if (listener != null && !progressCache(listener, 0))
-        return;
-      int pos = 0;
-      List<String> l = new ArrayList<String>(this.keySet());
-      Collections.sort(l);
-      for (String fileKey : l) {
-        PageData page = get(fileKey);
-        page.makeCache(options);
-        if (listener != null && !progressCache(listener, ++pos))
-          return;
-      }
-      if (listener != null)
-        listener.progressDone();
-      System.gc();
-    } finally {
-      lock.unlock();
-    }
-  }
-
-  private boolean progressLayout(LoaderProgressListener listener, int p) {
-    return listener.onProgress(LoaderProgressListener.STATE_LAYOUTING, p, this.size());
-  }
-
-  private boolean progressCache(LoaderProgressListener listener, int p) {
-    return listener.onProgress(LoaderProgressListener.STATE_CACHING, p, this.size());
-  }
-}

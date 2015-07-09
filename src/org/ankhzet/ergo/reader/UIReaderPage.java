@@ -72,7 +72,7 @@ public class UIReaderPage extends UIPage {
     });
 
     registerAction(kOriginal, (String name) -> {
-       reader.toggleOriginalSize();
+       reader.options.toggleOriginalSize();
         if (loader != null)
           reader.flushCache(true);
     });
@@ -114,7 +114,7 @@ public class UIReaderPage extends UIPage {
     if (reader == null || reader.totalPages() == 0 || reader.isLoading())
       return false;
 
-    if (!reader.showOriginalSize())
+    if (!reader.options.showOriginalSize())
       return SwipeHandler.makeSwipe(swipeDirVertical, dir, ui.clientArea.width, ui.clientArea.height);
     else
       if (dir > 0)
@@ -131,7 +131,7 @@ public class UIReaderPage extends UIPage {
     boolean canSwipe = !(swiping || reader.totalPages() == 0 || reader.isLoading());
     pgNext.enabled = canSwipe;
     pgPrev.enabled = canSwipe;
-    pgOrigSize.toggled = reader.showOriginalSize();
+    pgOrigSize.toggled = reader.options.showOriginalSize();
     pgMagnify.toggled = reader.getMagnifying();
     ui.intensiveRepaint(swiping);
     reader.process();
@@ -157,7 +157,7 @@ public class UIReaderPage extends UIPage {
       mouseDown = true;
       ui.getHUD().unfocus();
     }
-    if (reader.showOriginalSize() && e.getID() == MouseEvent.MOUSE_DRAGGED) {
+    if (reader.options.showOriginalSize() && e.getID() == MouseEvent.MOUSE_DRAGGED) {
       int dx = pressPos.x - mx;
       int dy = pressPos.y - my;
       reader.scroll(dx, dy);
@@ -166,7 +166,7 @@ public class UIReaderPage extends UIPage {
     if (mouseDown && e.getID() == MouseEvent.MOUSE_RELEASED) {
       int dx = pressPos.x - mx;
       int dy = pressPos.y - my;
-      if (reader.showOriginalSize()) {
+      if (reader.options.showOriginalSize()) {
       } else {
         int dir = swipeDirVertical ? dy : dx;
         if (Math.abs(dir) > 5)//(swipeDirVertical ? clientArea.height : clientArea.width) * 0.1)

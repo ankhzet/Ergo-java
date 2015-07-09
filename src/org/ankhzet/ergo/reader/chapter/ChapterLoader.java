@@ -14,13 +14,13 @@ public class ChapterLoader {
   int chapter;
   Thread loader, cacher;
 
-  ChapterLoader() {
+  public ChapterLoader() {
     manga = null;
     chapter = 0;
     layout();
   }
 
-  void load(String m, int c) {
+  public void load(String m, int c) {
     manga = m;
     chapter = c;
     loader = new Thread(new Runnable() {
@@ -52,22 +52,22 @@ public class ChapterLoader {
 
       @Override
       public void run() {
-        Reader reader = Reader.get();
-        UILogic ui = IoC.get(UILogic.class);
-        try {
-          while (true) {
-            if (reader.flushPending()) {
-              while (reader.isBusy())
-                Thread.sleep(10);
-              reader.flushCache(false);
-              reader.calcLayout(ui.clientArea.width, ui.clientArea.height - UILogic.UIPANEL_HEIGHT, ui);
-              ui.progressDone();
-            }
-
-            Thread.sleep(10);
+      Reader reader = Reader.get();
+      UILogic ui = IoC.get(UILogic.class);
+      try {
+        while (true) {
+          if (reader.flushPending()) {
+            while (reader.isBusy())
+              Thread.sleep(10);
+            reader.flushCache(false);
+            reader.calcLayout(ui.clientArea.width, ui.clientArea.height - UILogic.UIPANEL_HEIGHT, ui);
+            ui.progressDone();
           }
-        } catch (InterruptedException ex) {
+
+          Thread.sleep(10);
         }
+      } catch (InterruptedException ex) {
+      }
 //        cacher = null;
       }
     });

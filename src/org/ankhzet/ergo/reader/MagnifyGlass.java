@@ -115,8 +115,8 @@ public class MagnifyGlass {
     if (data == null)
       return;
 
-    double dx = data.layout.newPageW / (double) data.pageW;
-    double dy = data.layout.newPageH / (double) data.pageH;
+    double dx = data.getLayout().newPageW / (double) data.pageW;
+    double dy = data.getLayout().newPageH / (double) data.pageH;
 
     // get magnification parameters
     width = (int) (SAMPLED_SIZE / dx);
