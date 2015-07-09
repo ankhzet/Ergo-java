@@ -67,8 +67,11 @@ public class PageData {
   }
 
   public void makeCache(PageRenderOptions options) {
-    UILogic.log("caching \"%s\"", file);
+    if (!layout.wasResized())
+      return;
 
+    UILogic.log("caching \"%s\": %b", file);
+    
     int nw = layout.newPageW;
     int nh = layout.newPageH;
     if (image == null) {
