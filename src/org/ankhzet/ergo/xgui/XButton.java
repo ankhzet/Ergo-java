@@ -3,7 +3,7 @@ package org.ankhzet.ergo.xgui;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import org.ankhzet.ergo.ClassFactory.IoC;
+import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.files.Parser;
 

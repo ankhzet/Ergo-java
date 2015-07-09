@@ -1,5 +1,5 @@
 
-package org.ankhzet.ergo.ClassFactory.Builder;
+package org.ankhzet.ergo.classfactory.builder;
 
 import java.util.concurrent.Callable;
 

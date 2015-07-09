@@ -12,7 +12,7 @@ import org.ankhzet.ergo.LoaderProgressListener;
 import org.ankhzet.ergo.Skin;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
-import org.ankhzet.ergo.reader.chapter.ChapterData;
+import org.ankhzet.ergo.reader.chapter.ChapterCacher;
 import org.ankhzet.ergo.reader.chapter.page.PageData;
 
 /**
@@ -25,7 +25,7 @@ public class Reader {
 
   protected Strings mangaRoots = new Strings();
   protected PageRenderOptions options = new PageRenderOptions();
-  protected ChapterData pages = new ChapterData();
+  protected ChapterCacher pages = new ChapterCacher();
   protected MagnifyGlass magnifier = new MagnifyGlass();
 
   public static Reader i = null;

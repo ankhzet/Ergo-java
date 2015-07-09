@@ -1,8 +1,8 @@
 
-package org.ankhzet.ergo.ClassFactory;
+package org.ankhzet.ergo.classfactory;
 
-import org.ankhzet.ergo.ClassFactory.Builder.Builder;
 import java.util.HashMap;
+import org.ankhzet.ergo.classfactory.builder.Builder;
 
 abstract class AbstractClassFactory<ProducesType> implements AbstractFactory<Class, ProducesType> {
 

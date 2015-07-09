@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.ClassFactory;
+package org.ankhzet.ergo.classfactory;
 
 import java.util.HashMap;
 
