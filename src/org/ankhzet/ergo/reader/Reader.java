@@ -1,7 +1,5 @@
 package org.ankhzet.ergo.reader;
 
-import org.ankhzet.ergo.reader.chapter.page.ChapterData;
-import org.ankhzet.ergo.reader.chapter.page.PageData;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -9,10 +7,13 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.concurrent.locks.ReentrantLock;
+
 import org.ankhzet.ergo.LoaderProgressListener;
 import org.ankhzet.ergo.Skin;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
+import org.ankhzet.ergo.reader.chapter.ChapterData;
+import org.ankhzet.ergo.reader.chapter.page.PageData;
 
 /**
  *
@@ -293,7 +294,7 @@ public class Reader {
 
     if (options.originalSize) { // draw scrolls if needed
       int scrollbarSize = 4;
-      int sx = data.layout.scrollX;
+      int sx = data.getLayout().scrollX;
       if (sx > 0) {
         int cw = w - scrollbarSize;
         double swRatio = cw / (double) (cw + sx);
@@ -301,7 +302,7 @@ public class Reader {
         int scrollPos = x + (int) (scrollPosX * swRatio);
         Skin.drawScrollbar(g, scrollPos, y + h - scrollbarSize - 1, scrollWidth, scrollbarSize);
       }
-      int sy = data.layout.scrollY;
+      int sy = data.getLayout().scrollY;
       if (sy > 0) {
         int ch = h - scrollbarSize;
         double swRatio = ch / (double) (ch + sy);
@@ -321,8 +322,8 @@ public class Reader {
     if (data == null)
       return;
 
-    scrollPosX = Utils.constraint(scrollPosX + dx, 0, data.layout.scrollX);
-    scrollPosY = Utils.constraint(scrollPosY + dy, 0, data.layout.scrollY);
+    scrollPosX = Utils.constraint(scrollPosX + dx, 0, data.getLayout().scrollX);
+    scrollPosY = Utils.constraint(scrollPosY + dy, 0, data.getLayout().scrollY);
   }
 
   public boolean showMagnifier(boolean show) {
