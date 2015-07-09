@@ -76,13 +76,7 @@ public class Reader {
       if (!chapterFolder.isDirectory())
         continue;
 
-      File[] files = chapterFolder.listFiles(new FilenameFilter() {
-
-        @Override
-        public boolean accept(File dir, String name) {
-          return name.matches(PAGE_PATTERN);
-        }
-      });
+      File[] files = chapterFolder.listFiles((File dir, String name) -> name.matches(PAGE_PATTERN));
       for (File file : files)
         pageFiles.add(storage + path + "/" + file.getName());
 

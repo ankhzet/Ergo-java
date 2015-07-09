@@ -28,24 +28,29 @@ public class XControls extends ArrayList<CommonControl> {
     g.setColor(Skin.get().UI_PANEL);
     g.fillRect(0, 0, cw, ch - 1);
 
-    for (CommonControl c : this)
-      if (c.isVisible())
-        c.Draw(g);
+    this.stream().filter((c) ->
+      (c.isVisible())
+    ).forEach((c) -> {
+      c.Draw(g);
+    });
 
     g.setColor(Color.GRAY);
     g.drawRoundRect(x, y - 3, cw - 1, ch + 2, 6, 6);
   }
 
   public void Process() {
-    for (CommonControl c : this)
+    this.stream().forEach((c) -> {
       c.Process();
+    });
   }
 
   public boolean mouseEvent(MouseEvent e) {
     focused = null;
-    for (CommonControl c : this)
-      if (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
-        focused = c;
+    this.stream().filter((c) -> 
+      (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
+    ).forEach((c) -> {
+      focused = c;
+    });
 
     /*    for (CommonControl c : this)
     if (c != focused)
