@@ -23,9 +23,12 @@ public class ClassBuilder<Type> implements Builder<Type> {
    */
   @Override
   public Type build(Class<? extends Type> c) throws Exception {
-   Constructor<?> constructor = c.getConstructor();
-    if ((constructor == null) || (constructor.getParameterCount() > 0))
+   Constructor<?> constructor;
+    try {
+      constructor = c.getConstructor();
+    } catch (NoSuchMethodException | SecurityException ex) {
       throw new FailedFactoryProductException(c, new Exception("Must have default constructor"));
+    }
 
     Type instance = (Type) constructor.newInstance();
 
