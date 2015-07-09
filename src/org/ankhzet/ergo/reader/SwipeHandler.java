@@ -1,6 +1,8 @@
 
 package org.ankhzet.ergo.reader;
 
+import org.ankhzet.ergo.classfactory.IoC;
+
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
@@ -14,7 +16,7 @@ public class SwipeHandler implements Runnable {
   int cw, ch;
   double progress;
   long start, end;
-  public static final int ANIMATE_FOR = 1000;
+  public static final int ANIMATE_FOR = 500;
   public static final double MIN_SPEED = 0.1;
   public static final double MAX_SPEED = 0.8;
 
@@ -39,7 +41,7 @@ public class SwipeHandler implements Runnable {
     swipe.ch = ch;
     swipe.progress = 0.0;
     swipe.start = System.currentTimeMillis();
-    swipe.end = swipe.start + (long)((1.0 - swipeSpeed()) * ANIMATE_FOR);
+    swipe.end = swipe.start + (long) ((1.0 - swipeSpeed()) * ANIMATE_FOR);
     swipe.worker = new Thread(swipe);
     swipe.worker.start();
     return true;
@@ -53,12 +55,13 @@ public class SwipeHandler implements Runnable {
     inprocess = true;
     long t;
     while ((t = System.currentTimeMillis()) <= end) {
-      long delta = end - t;
-      try {
-        Thread.sleep(delta);
-      } catch (InterruptedException ex) {
-        ex.printStackTrace();
-      }
+      long delta = Math.max(end - t, 0);
+      if (delta > 0)
+        try {
+          Thread.sleep(delta);
+        } catch (InterruptedException ex) {
+          ex.printStackTrace();
+        }
     }
     inprocess = false;
     switch (direction()) {
