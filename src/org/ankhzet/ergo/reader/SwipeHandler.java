@@ -7,7 +7,6 @@ package org.ankhzet.ergo.reader;
  */
 public class SwipeHandler implements Runnable {
 
-  static SwipeHandler swipe = null;
   public boolean inprocess = false;
   Thread worker = null;
   boolean vertical = true;
@@ -19,11 +18,21 @@ public class SwipeHandler implements Runnable {
   public static final double MIN_SPEED = 0.1;
   public static final double MAX_SPEED = 0.8;
 
-  static boolean makeSwipe(boolean vertical, int direction, int cw, int ch) {
-    if (swipe == null)
-      swipe = new SwipeHandler();
+  Reader reader;
+
+  public void injectDependencies(Reader reader) {
+    this.reader = reader;
+  }
+
+  public static SwipeHandler swipe() {
+    return IoC.get(SwipeHandler.class);
+  }
+
+  public static boolean makeSwipe(boolean vertical, int direction, int cw, int ch) {
+    SwipeHandler swipe = swipe();
     if (swipe.inprocess)
       return false;
+
     swipe.vertical = vertical;
     swipe.direction = direction;
     swipe.cw = cw;
@@ -54,15 +63,16 @@ public class SwipeHandler implements Runnable {
     inprocess = false;
     switch (direction()) {
     case -1:
-      Reader.get().prevPage();
+      reader.prevPage();
       break;
     case 01:
-      Reader.get().nextPage();
+      reader.nextPage();
       break;
     }
   }
 
   public static boolean done() {
+    SwipeHandler swipe = swipe();
     if (swipe == null)
       return true;
 
@@ -70,14 +80,15 @@ public class SwipeHandler implements Runnable {
   }
 
   public static int direction() {
-    return swipe == null ? 0 : Integer.signum(swipe.direction);
+    return Integer.signum(swipe().direction);
   }
 
   public static boolean vertical() {
-    return swipe == null ? false : swipe.vertical;
+    return swipe().vertical;
   }
 
   public static double getProgress() {
+    SwipeHandler swipe = swipe();
     long t = System.currentTimeMillis();
     if (t >= swipe.end)
       return 1.0;
@@ -88,6 +99,7 @@ public class SwipeHandler implements Runnable {
   }
 
   public static double swipeSpeed() {
+    SwipeHandler swipe = swipe();
     double delta = vertical() ? swipe.ch : swipe.cw;
     delta = Math.abs((double)swipe.direction) / delta;
     

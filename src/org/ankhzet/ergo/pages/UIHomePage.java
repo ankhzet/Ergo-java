@@ -1,11 +1,9 @@
 package org.ankhzet.ergo.pages;
 
 import java.awt.Graphics2D;
-import org.ankhzet.ergo.ClassFactory.IoC;
 import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.UIPage;
 import org.ankhzet.ergo.reader.Reader;
-import org.ankhzet.ergo.reader.UIReaderPage;
 import org.ankhzet.ergo.xgui.CommonControl;
 import org.ankhzet.ergo.xgui.XButton;
 import org.ankhzet.ergo.xgui.XControls;
@@ -18,34 +16,32 @@ import org.ankhzet.ergo.xgui.XPathFilePicker;
 public class UIHomePage extends UIPage {
 
   CommonControl pgLoad;
+  
+  UILogic ui;
+  XPathFilePicker picker;
+  Reader reader;
 
-  public UIHomePage() {
+  public void injectDependencies(UILogic ui, Reader reader, XPathFilePicker picker) {
+    this.ui = ui;
+    this.picker = picker;
+    this.reader = reader;
     fetchMangas();
   }
-
-  UILogic ui() {
-    return IoC.<UILogic>get(UILogic.class);
-  }
-
-  XPathFilePicker picker() {
-    return IoC.get(XPathFilePicker.class);
-  }
-
 
   @Override
   public void navigateIn() {
     super.navigateIn();
-    XControls hud = ui().hud;
+    XControls hud = ui.getHUD();
     hud.clear();
     pgLoad = hud.putControl(new XButton("load", "Загрузить главу", "xbutton"), XControls.AREA_LEFT);
-    hud.add(picker());
+    hud.add(picker);
   }
 
   @Override
   public boolean actionPerformed(String a) {
     boolean handled = true;
     if (a.equals("load")) {
-      String path = picker().getSelectedPath();
+      String path = picker.getSelectedPath();
       String[] parts = path.replace('\\', '/').split("/");
       int l = parts.length - 1;
       if (l < 0)
@@ -75,13 +71,13 @@ public class UIHomePage extends UIPage {
   }
 
   void loadChapter(String manga, int chapter) {
-    UIReaderPage page = (UIReaderPage) ui().navigateTo(UIReaderPage.class);
+    UIReaderPage page = (UIReaderPage) ui.navigateTo(UIReaderPage.class);
     page.loadChapter(manga, chapter);
   }
 
   @Override
   public void process() {
-    pgLoad.enabled = !(!picker().hasSelected() || Reader.get().isBusy());
+    pgLoad.enabled = !(!picker.hasSelected() || reader.isBusy());
   }
 
   @Override
@@ -89,11 +85,11 @@ public class UIHomePage extends UIPage {
   }
 
   private void fetchMangas() {
-    picker().setList(Reader.get().getMangaRoots());
+    picker.setList(reader.getMangaRoots());
   }
 
   @Override
   public void resized(int x, int y, int w, int h) {
-    picker().move(0, y, w, h - y);
+    picker.move(0, y, w, h - y);
   }
 }

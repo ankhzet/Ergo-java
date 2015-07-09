@@ -27,8 +27,11 @@ public class MagnifyGlass {
   PageData data = null;
   boolean layouted = false;
   Image sample = null;
+  
+  Reader reader;
 
-  public MagnifyGlass() {
+  public void injectDependencies(Reader reader) {
+    this.reader = reader;
   }
 
   public void mouseEvent(MouseEvent e) {
@@ -37,14 +40,14 @@ public class MagnifyGlass {
 
     switch (e.getID()) {
     case MouseEvent.MOUSE_PRESSED:
-      active = !Reader.get().isLoading();
+      active = !reader.isLoading();
       break;
     case MouseEvent.MOUSE_RELEASED:
       active = false;
       break;
     }
 
-    if (!active || data == null || !layouted || Reader.get().options.originalSize)
+    if (!active || data == null || !layouted || reader.options.originalSize)
       return;
 
     // translate view coordinates to image coordinates
@@ -70,7 +73,6 @@ public class MagnifyGlass {
     if (!activated)
       return;
 
-    Reader reader = Reader.get();
     if (prevPage != reader.currentPage) { // page changed
 
       active = false;
@@ -106,9 +108,9 @@ public class MagnifyGlass {
   }
 
   public void layouted() {
-    Reader reader = Reader.get();
     if (reader.isBusy())
       return;
+    
     prevPage = reader.currentPage;
     data = reader.getPage(reader.currentPage);
 

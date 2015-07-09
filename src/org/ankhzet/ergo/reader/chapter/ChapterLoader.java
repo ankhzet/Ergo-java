@@ -1,6 +1,5 @@
 package org.ankhzet.ergo.reader.chapter;
 
-import org.ankhzet.ergo.ClassFactory.IoC;
 import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.reader.Reader;
 
@@ -13,10 +12,17 @@ public class ChapterLoader {
   String manga;
   int chapter;
   Thread loader, cacher;
+  UILogic ui;
+  Reader reader;
 
   public ChapterLoader() {
     manga = null;
     chapter = 0;
+  }
+  
+  public void injectDependencies(UILogic ui, Reader reader) {
+    this.ui = ui;
+    this.reader = reader;
     layout();
   }
 
@@ -24,8 +30,6 @@ public class ChapterLoader {
     manga = m;
     chapter = c;
     loader = new Thread(() -> {
-      Reader reader = Reader.get();
-      UILogic ui = IoC.get(UILogic.class);
       int wait = 0;
       while (reader.isBusy() && wait < 1000)
         try {
@@ -45,13 +49,12 @@ public class ChapterLoader {
 
   final void layout() {
     cacher = new Thread(() -> {
-      Reader reader = Reader.get();
-      UILogic ui = IoC.get(UILogic.class);
       try {
         while (true) {
           if (reader.flushPending()) {
             while (reader.isBusy())
               Thread.sleep(10);
+            
             reader.flushCache(false);
             reader.calcLayout(ui.clientArea.width, ui.clientArea.height - UILogic.UIPANEL_HEIGHT, ui);
             ui.progressDone();

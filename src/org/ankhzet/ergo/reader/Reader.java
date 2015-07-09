@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.ankhzet.ergo.LoaderProgressListener;
@@ -24,11 +23,10 @@ public class Reader {
   private final ReentrantLock lock = new ReentrantLock();
 
   protected Strings mangaRoots = new Strings();
-  protected PageRenderOptions options = new PageRenderOptions();
+  protected PageRenderOptions options;
+  protected MagnifyGlass magnifier;
   protected ChapterCacher pages = new ChapterCacher();
-  protected MagnifyGlass magnifier = new MagnifyGlass();
 
-  public static Reader i = null;
   public Strings pageFiles = new Strings();
   public int currentPage = -1;
   public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
@@ -36,15 +34,10 @@ public class Reader {
   private boolean flushCache = false;
   int scrollPosX = 0, scrollPosY = 0;
 
-  private Reader() {
+  public void injectDependencies(MagnifyGlass magnifier, PageRenderOptions options) {
+    this.magnifier = magnifier;
+    this.options = options;
     mangaRoots.add("F:/myprogs/engines/ErgoProxy/client v. 1.0/bin/manga");
-  }
-
-  public static Reader get() {
-    if (i == null)
-      i = new Reader();
-
-    return i;
   }
 
   public Strings getMangaRoots() {
