@@ -15,6 +15,9 @@ class CtlMap extends HashMap<Integer, CommonControl> {
 
 public class XControls extends ArrayList<CommonControl> {
 
+  public static final String kBackAction = "back";
+  static final String kBackLabel = "Back";
+
   CommonControl focused = null;
   CtlMap left = new CtlMap();
   CtlMap right = new CtlMap();
@@ -73,6 +76,45 @@ public class XControls extends ArrayList<CommonControl> {
       break;
     }
     return c;
+  }
+
+  public CommonControl putAtLeft(CommonControl c) {
+    return putControl(c, AREA_LEFT);
+  }
+
+  public CommonControl putAtRight(CommonControl c) {
+    return putControl(c, AREA_RIGHT);
+  }
+
+  public XAction putActionAtLeft(String caption, XAction action) {
+    return putAction(caption, XControls.AREA_LEFT, action);
+  }
+
+  public XAction putActionAtRight(String caption, XAction action) {
+    return putAction(caption, XControls.AREA_RIGHT, action);
+  }
+
+  public XAction putAction(String caption, int area, XAction action) {
+    XActionButton button = (XActionButton) putControl(new XActionButton(action, caption), area);
+    return button.action;
+  }
+
+  public XAction putBackAction(int area, XAction action) {
+    if (action == null)
+      action = new XAction(kBackAction, null);
+    return putAction(kBackLabel, area, action);
+  }
+
+  public XAction putSpacer(int area) {
+    XAction xAction = new XAction("", null);
+    putControl(new XButton(xAction, null, "xspacer"), area);
+    return xAction;
+  }
+
+  public XAction putMover(int area) {
+    XAction xAction = new XAction("", null);
+    putControl(new XButton(xAction, null, "xmover"), area);
+    return xAction;
   }
 
   public void pack(int cw, int ch) {

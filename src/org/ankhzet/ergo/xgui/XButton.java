@@ -19,9 +19,9 @@ public class XButton extends CommonControl {
   private int[][] states = {{STATE_NORMAL, STATE_PRESSED}, {STATE_OVERED, STATE_PRESSED}};
   String caption = "";
 
-  public XButton(String command, String caption, String src) {
+  public XButton(XAction action, String caption, String src) {
     super(-1000, 0, 0, 0);
-    setActionCommand(command);
+    setAction(action);
     setActionListener(IoC.<UILogic>get(UILogic.class));
     try {
       Parser p = new Parser(UILogic.LocalDir + "/config/" + src + ".cfg");
@@ -52,17 +52,20 @@ public class XButton extends CommonControl {
 
   @Override
   public void DoDraw(Graphics2D g) {
+    boolean isEnabled = isEnabled();
+    boolean isToggled = action.isToggled();
+    
     Image i;
-    if (isEnabled())
-      i = ims[states[overed ? 1 : 0][clicked || toggled ? 1 : 0]];
+    if (isEnabled)
+      i = ims[states[overed ? 1 : 0][clicked || isToggled ? 1 : 0]];
     else
       i = ims[STATE_DISABLED];
 
     int dx = 0;
     int dy = 0;
     g.setColor(Color.GRAY);
-    if (isEnabled())
-      switch (states[overed ? 1 : 0][(clicked || toggled) ? 1 : 0]) {
+    if (isEnabled)
+      switch (states[overed ? 1 : 0][(clicked || isToggled) ? 1 : 0]) {
       case STATE_NORMAL:
         break;
       case STATE_PRESSED:
