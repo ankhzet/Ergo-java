@@ -260,7 +260,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     initiated = true;
   }
 
-  public UIPage navigateTo(Class c) {
+  public UIPage navigateTo(Class c, Object... params) {
     prevUI = currentUI;
 
     currentUI = (UIPage)IoC.<UIPage>get(c);
@@ -274,7 +274,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     if (prevUI != null)
       prevUI.navigateOut();
 
-    currentUI.navigateIn();
+    currentUI.navigateIn(params);
     int l = hud.onLeft();
     while (l++ < 2)
       hud.putControl(new XButton("", null, "xspacer"), XControls.AREA_LEFT);

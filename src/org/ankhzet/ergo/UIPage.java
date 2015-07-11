@@ -33,7 +33,7 @@ public class UIPage {
     return true;
   }
 
-  public void navigateIn() {
+  public void navigateIn(Object... params) {
     active = true;
   }
 
