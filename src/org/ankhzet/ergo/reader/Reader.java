@@ -30,7 +30,6 @@ public class Reader extends PageNavigator {
   protected ChapterLoader loader;
 
   public Strings pageFiles = new Strings();
-  public int currentPage = -1;
   public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
   public static final int TAB_BAR_HEIGHT = 8;
   private boolean flushCache = false;
@@ -154,8 +153,8 @@ public class Reader extends PageNavigator {
 
     x--;
     y--;
-    if (currentPage >= 0) {
-      int tab = (int) (currentPage * (tabs / (double) pageCount)) + 1;
+    if (currentPage() >= 0) {
+      int tab = (int) (currentPage() * (tabs / (double) pageCount)) + 1;
       int px = (int) ((tab - 1) * pixelsPerTab);
       int pw = (int) (tab * pixelsPerTab) - px;
       g.setColor(Color.LIGHT_GRAY);
@@ -179,14 +178,12 @@ public class Reader extends PageNavigator {
       g.drawRoundRect(x + px + 3, y + 3, pw - 2, tabHeight - 2, 4, 4);
     }
 
-    magnifier.draw(g, 0, TAB_BAR_HEIGHT, w, h - TAB_BAR_HEIGHT);
+    if (magnifierShown())
+      magnifier.draw(g, 0, TAB_BAR_HEIGHT, w, h - TAB_BAR_HEIGHT);
   }
 
   void drawPages(Graphics2D g, int x, int y, int w, int h) {
     //if no pages - we'r done here
-    if (currentPage < 0)
-      return;
-
     PageData data = getCurrentPageData();
     if (data == null)
       return;
@@ -199,7 +196,7 @@ public class Reader extends PageNavigator {
 
     if (!SwipeHandler.done()) { // swipe in process
       int dir = SwipeHandler.direction();
-      int next = currentPage + dir;
+      int next = currentPage() + dir;
       if (next >= pageCount) // we'r on next chapter
       ;
       if (next < 0) // we'r on prev chapter
@@ -273,11 +270,13 @@ public class Reader extends PageNavigator {
   }
 
   public void process() {
-    magnifier.process();
+    if (magnifierShown())
+      magnifier.process();
   }
 
   public void mouseEvent(MouseEvent e) {
-    magnifier.mouseEvent(e);
+    if (magnifierShown())
+      magnifier.mouseEvent(e);
   }
   
   // *** di start
