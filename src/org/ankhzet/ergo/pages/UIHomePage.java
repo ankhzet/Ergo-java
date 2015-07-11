@@ -21,11 +21,11 @@ public class UIHomePage extends UIPage {
   Reader reader;
 
   @Override
+  public void navigateIn(Object... params) {
+    super.navigateIn(params);
     XControls hud = ui.getHUD();
     hud.clear();
     pgLoad = hud.putControl(new XButton("load", "Загрузить главу", "xbutton"), XControls.AREA_LEFT);
-  public void navigateIn(Object... params) {
-    super.navigateIn(params);
     hud.add(picker);
   }
 
