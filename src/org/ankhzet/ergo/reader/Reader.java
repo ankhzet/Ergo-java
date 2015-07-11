@@ -4,47 +4,40 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.ankhzet.ergo.LoaderProgressListener;
 import org.ankhzet.ergo.Skin;
+import org.ankhzet.ergo.reader.chapter.Chapter;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
-import org.ankhzet.ergo.reader.chapter.ChapterData;
+import org.ankhzet.ergo.reader.chapter.ChapterCacher;
+import org.ankhzet.ergo.reader.chapter.ChapterLoader;
 import org.ankhzet.ergo.reader.chapter.page.PageData;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-public class Reader {
+public class Reader extends PageNavigator {
 
   private final ReentrantLock lock = new ReentrantLock();
 
   protected Strings mangaRoots = new Strings();
-  protected PageRenderOptions options = new PageRenderOptions();
-  protected ChapterData pages = new ChapterData();
-  protected MagnifyGlass magnifier = new MagnifyGlass();
+  protected PageRenderOptions options;
+  protected MagnifyGlass magnifier;
+  protected ChapterCacher pages = new ChapterCacher();
+  protected ChapterLoader loader;
 
-  public static Reader i = null;
   public Strings pageFiles = new Strings();
-  public int currentPage = -1;
   public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
   public static final int TAB_BAR_HEIGHT = 8;
   private boolean flushCache = false;
   int scrollPosX = 0, scrollPosY = 0;
 
-  private Reader() {
+  public Reader() {
     mangaRoots.add("F:/myprogs/engines/ErgoProxy/client v. 1.0/bin/manga");
-  }
-
-  public static Reader get() {
-    if (i == null)
-      i = new Reader();
-
-    return i;
+    mangaRoots.add("H:/manga/manga");
   }
 
   public Strings getMangaRoots() {
@@ -67,43 +60,7 @@ public class Reader {
     return flushCache;
   }
 
-  public final Strings fetchPages(String manga, int chapter) {
-    String path = chapPath(manga, chapter);
-    pages.clear();
-
-    for (String storage : mangaRoots) {
-      File chapterFolder = new File(storage + path);
-      if (!chapterFolder.isDirectory())
-        continue;
-
-      File[] files = chapterFolder.listFiles(new FilenameFilter() {
-
-        @Override
-        public boolean accept(File dir, String name) {
-          return name.matches(PAGE_PATTERN);
-        }
-      });
-      for (File file : files)
-        pageFiles.add(storage + path + "/" + file.getName());
-
-      break;
-    }
-
-    return pageFiles;
-  }
-
-  public static String clearFileName(String oldName) {
-    oldName = oldName.replaceAll("\\[[^\\]+]\\]", "");
-    oldName = oldName.replaceAll("[^\\W\\w\\d-_ \\.,\\+%]", "");
-
-    return oldName;
-  }
-
-  public static String chapPath(String mangaLink, int chapter) {
-    return String.format("/%s/%04d", mangaLink, chapter);
-  }
-
-  public synchronized void prepareForChapter(String manga, int chapter, LoaderProgressListener listener) {
+  public synchronized void cacheChapter(Chapter chapter, LoaderProgressListener listener) {
     lock.lock();
     try {
       pageFiles.clear();
@@ -111,7 +68,7 @@ public class Reader {
       if (listener != null)
         progressLoading(listener, 0);
 
-      fetchPages(manga, chapter);
+      pageFiles.addAll(chapter.fetchPages());
       int pos = 0;
       for (String imageFile : pageFiles) {
         pages.put(imageFile, PageData.load(imageFile));
@@ -120,11 +77,16 @@ public class Reader {
       }
       if (listener != null)
         listener.progressDone();
-      firstPage();
+
+      toFirstPage();
     } finally {
       lock.unlock();
       System.gc();
     }
+  }
+
+  public void loadChapter(Chapter chapter) {
+    loader.load(chapter);
   }
 
   private boolean progressLoading(LoaderProgressListener listener, int p) {
@@ -136,60 +98,33 @@ public class Reader {
       return;
 
     pages.calcLayout(cw, ch - TAB_BAR_HEIGHT, options, listener);
+    pages.prepareCache(options, listener);
     if (magnifier.activated)
       magnifier.layouted();
-    pages.prepareCache(options, listener);
     scroll(0, 0);
   }
 
-  public int firstPage() {
-    currentPage = -1;
-    return nextPage();
+  @Override
+  public int totalPages() {
+    return pageFiles.size();
   }
 
-  public int lastPage() {
+  @Override
+  public int setPage(int page) {
+    page = super.setPage(page);
     scrollPosX = 0;
     scrollPosY = 0;
-    currentPage = pageFiles.size() - 1;
     if (magnifier.activated)
       magnifier.layouted();
-    return currentPage;
+    return page;
   }
 
-  public int nextPage() {
-    scrollPosX = 0;
-    scrollPosY = 0;
-    int idx = currentPage + 1;
-    int last = pageFiles.size() - 1;
-    if (idx > last)
-      idx = last;
-
-    currentPage = idx;
-    if (magnifier.activated)
-      magnifier.layouted();
-    return currentPage;
-  }
-
-  public int prevPage() {
-    int idx = currentPage - 1;
-    int last = pageFiles.size() - 1;
-    if (idx < 0)
-      idx = 0;
-    if (idx > last)
-      idx = last;
-
-    currentPage = idx;
-    if (magnifier.activated)
-      magnifier.layouted();
-    return currentPage;
-  }
-
-  public PageData getPage(int idx) {
+  public PageData getPageData(int idx) {
     return (idx < 0 || idx >= totalPages()) ? null : pages.get(pageFiles.get(idx));
   }
 
-  public int totalPages() {
-    return pageFiles.size();
+  public PageData getCurrentPageData() {
+    return getPageData(currentPage());
   }
 
   public void draw(Graphics2D g, int x, int y, int w, int h) {
@@ -219,8 +154,8 @@ public class Reader {
 
     x--;
     y--;
-    if (currentPage >= 0) {
-      int tab = (int) (currentPage * (tabs / (double) pageCount)) + 1;
+    if (currentPage() >= 0) {
+      int tab = (int) (currentPage() * (tabs / (double) pageCount)) + 1;
       int px = (int) ((tab - 1) * pixelsPerTab);
       int pw = (int) (tab * pixelsPerTab) - px;
       g.setColor(Color.LIGHT_GRAY);
@@ -244,15 +179,13 @@ public class Reader {
       g.drawRoundRect(x + px + 3, y + 3, pw - 2, tabHeight - 2, 4, 4);
     }
 
-    magnifier.draw(g, 0, TAB_BAR_HEIGHT, w, h - TAB_BAR_HEIGHT);
+    if (magnifierShown())
+      magnifier.draw(g, 0, TAB_BAR_HEIGHT, w, h - TAB_BAR_HEIGHT);
   }
 
   void drawPages(Graphics2D g, int x, int y, int w, int h) {
     //if no pages - we'r done here
-    if (currentPage < 0)
-      return;
-
-    PageData data = getPage(currentPage);
+    PageData data = getCurrentPageData();
     if (data == null)
       return;
 
@@ -264,7 +197,7 @@ public class Reader {
 
     if (!SwipeHandler.done()) { // swipe in process
       int dir = SwipeHandler.direction();
-      int next = currentPage + dir;
+      int next = currentPage() + dir;
       if (next >= pageCount) // we'r on next chapter
       ;
       if (next < 0) // we'r on prev chapter
@@ -284,8 +217,7 @@ public class Reader {
       else
         nx = dx - dir * w;
 
-
-      PageData nextPage = getPage(next);
+      PageData nextPage = getPageData(next);
       if (nextPage != null)
         nextPage.drawPage(g, x - nx, y - ny, 0, 0);
     }
@@ -318,7 +250,7 @@ public class Reader {
   }
 
   public void scroll(int dx, int dy) {
-    PageData data = getPage(currentPage);
+    PageData data = getCurrentPageData();
     if (data == null)
       return;
 
@@ -334,15 +266,31 @@ public class Reader {
     return old;
   }
 
-  public boolean getMagnifying() {
+  public boolean magnifierShown() {
     return magnifier.activated;
   }
 
   public void process() {
-    magnifier.process();
+    if (magnifierShown())
+      magnifier.process();
   }
 
   public void mouseEvent(MouseEvent e) {
-    magnifier.mouseEvent(e);
+    if (magnifierShown())
+      magnifier.mouseEvent(e);
   }
+
+  // *** di start
+  public PageRenderOptions diPageRenderOptions(PageRenderOptions options) {
+    return (options != null) ? this.options = options : this.options;
+  }
+
+  public MagnifyGlass diMagnifyGlass(MagnifyGlass magnifier) {
+    return (magnifier != null) ? this.magnifier = magnifier : this.magnifier;
+  }
+
+  public ChapterLoader diChapterLoader(ChapterLoader loader) {
+    return (loader != null) ? this.loader = loader : this.loader;
+  }
+  // *** di end
 }

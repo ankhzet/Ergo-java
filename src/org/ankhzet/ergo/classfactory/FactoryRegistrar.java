@@ -1,20 +1,22 @@
-package org.ankhzet.ergo.ClassFactory;
+package org.ankhzet.ergo.classfactory;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class FactoryRegistrar {
-  static final HashMap<Class, Boolean> counters = new HashMap<Class, Boolean>();
+
+  static final HashMap<Class, Boolean> counters = new HashMap<>();
 
   public FactoryRegistrar(Object identifier) {
 
     Class factoryClass = getFactoryClass(identifier);
-    synchronized(counters) {
+    synchronized (counters) {
       Boolean registered = counters.get(factoryClass);
-      if (registered != Boolean.TRUE) {
+      if (!Objects.equals(registered, Boolean.TRUE)) {
         counters.put(factoryClass, Boolean.TRUE);
 
         System.out.printf("Registering %s..\n", factoryClass.getName());
@@ -35,7 +37,7 @@ public class FactoryRegistrar {
 
   static ClassFactory getInstance(Object identifier) throws Exception {
     if (identifier instanceof Class)
-      return (ClassFactory) ((Class)identifier).newInstance();
+      return (ClassFactory) ((Class) identifier).newInstance();
     else
       return (ClassFactory) identifier;
 

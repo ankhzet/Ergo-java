@@ -36,18 +36,16 @@ public class Parser {
   }
 
   private char c() {
-    if (position >= length) {
+    if (position >= length)
       return 0;
-    }
     if ((readed <= position) && (readed < length)) {
       start = position;
       try {
         int r = f.read(buffer, 0, (length - readed < MAX_BUFF_SIZE) ? length - readed : MAX_BUFF_SIZE);
-        if (r >= 0) {
+        if (r >= 0)
           readed += r;
-        } else {
+        else
           readed = length;
-        }
       } catch (IOException e) {
       }
     }
@@ -68,23 +66,24 @@ public class Parser {
         break;
       case '\\':
         position++;
-        if ((chr = c()) != '\\') {
+        chr = c();
+        if (chr != '\\') {
           Token += '\\';
           break;
         }
 
         while ((chr = c()) != 0) {
           position++;
-          if ((chr == 13) || (chr == 10)) 
+          if ((chr == 13) || (chr == 10))
             break;
-          
+
         }
         continue;
       case '\t':
       case ' ':
-        while (((chr = c()) == ' ') || (chr == '\t') || (chr == 13) || (chr == 10)) 
+        while (((chr = c()) == ' ') || (chr == '\t') || (chr == 13) || (chr == 10))
           position++;
-        
+
         continue;
       case '\'':
       case '"':
@@ -92,31 +91,33 @@ public class Parser {
         position++;
         while ((chr = c()) != 0) {
           position++;
-          if (chr == tc) 
+          if (chr == tc)
             break;
-          
+
           Token += chr;
         }
         ;
         break;
       default:
-        if ((chr >= '0') && (chr <= '9')) {
+        if ((chr >= '0') && (chr <= '9'))
           while ((((chr = c()) >= '0') && (chr <= '9')) || (chr == '.')) {
             Token += chr;
             position++;
           }
-        } else if (((chr >= 'a') && (chr <= 'z')) || ((chr >= 'A') && (chr <= 'Z')) || (chr == '_')) {
-          while ((((chr = c()) >= '0') && (chr <= '9')) || ((chr >= 'a') && (chr <= 'z')) || ((chr >= 'A') && (chr <= 'Z')) || (chr == '_')) {
-            Token += chr;
-            position++;
-          }
-        } else if (((chr >= 1) && (chr <= 31))) {
-          position++;
-          continue;
-        } else {
-          Token += chr;
-          position++;
-        }
+        else
+          if (((chr >= 'a') && (chr <= 'z')) || ((chr >= 'A') && (chr <= 'Z')) || (chr == '_'))
+            while ((((chr = c()) >= '0') && (chr <= '9')) || ((chr >= 'a') && (chr <= 'z')) || ((chr >= 'A') && (chr <= 'Z')) || (chr == '_')) {
+              Token += chr;
+              position++;
+            }
+          else
+            if (((chr >= 1) && (chr <= 31))) {
+              position++;
+              continue;
+            } else {
+              Token += chr;
+              position++;
+            }
 
       }
       break;
@@ -133,8 +134,8 @@ public class Parser {
   }
 
   /**
-   * Return integer between left and right tokens (current token
-   * must be {@code left}).
+   * Return integer between left and right tokens (current token must be
+   * {@code left}).
    *
    * @returns int
    */
@@ -147,21 +148,19 @@ public class Parser {
    *
    */
   public void check(String token) throws Throwable {
-    if (!token.equalsIgnoreCase(Token)) {
+    if (!token.equalsIgnoreCase(Token))
       throw new Throwable(String.format("[%s] expected, but [%s] found", token, Token));
-    }
   }
 
   /**
-   * If token != parser current token - throws exception, else returns
-   * next token.
+   * If token != parser current token - throws exception, else returns next
+   * token.
    *
    * @return {@code String} next token.
    */
   public String checkNext(String token) throws Throwable {
-    if (!token.equalsIgnoreCase(Token)) {
+    if (!token.equalsIgnoreCase(Token))
       throw new Throwable(String.format("[%s] expected, but [%s] found", token, Token));
-    }
     return next();
   }
 
@@ -169,17 +168,17 @@ public class Parser {
    * If token = parser current token - returns true and goes to next token.
    *
    * @return {@code true} if current token == {@code token};
-   * 
-   *         {@code false} current token != {@code token}
+   *
+   * {@code false} current token != {@code token}
    */
   public boolean isToken(String token) throws Throwable {
     return token.equalsIgnoreCase(Token) ? !next().isEmpty() : false;
   }
 
   /**
-   * Returns value between {@code left} and {@code right} tokens.
-   * Current token must be equal to {@code left}. After that current token
-   * points on {@code right} word.
+   * Returns value between {@code left} and {@code right} tokens. Current token
+   * must be equal to {@code left}. After that current token points on
+   * {@code right} word.
    *
    * @return {@code String} token.
    */
@@ -195,8 +194,7 @@ public class Parser {
    * @return {@code String} token.
    */
   public void nextCheck(String token) throws Throwable {
-    if (!token.equalsIgnoreCase(next())) {
+    if (!token.equalsIgnoreCase(next()))
       throw new Throwable(String.format("[%s] expected, but [%s] found", token, Token));
-    }
   }
 }

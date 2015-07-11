@@ -8,13 +8,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 import javax.imageio.ImageIO;
-import org.ankhzet.ergo.LoaderProgressListener;
 import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.reader.PageRenderOptions;
 
@@ -45,23 +39,23 @@ public class PageData {
     try {
 
       /*Image i = Toolkit.getDefaultToolkit().createImage(src);
-      int w = i.getWidth(null);
-      int h = i.getHeight(null);
-      BufferedImage b = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-      Graphics g = b.getGraphics();
-      g.drawImage(i, w, h, null);
-      return b;*/
+       int w = i.getWidth(null);
+       int h = i.getHeight(null);
+       BufferedImage b = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+       Graphics g = b.getGraphics();
+       g.drawImage(i, w, h, null);
+       return b;*/
       return ImageIO.read(new File(src));
     } catch (Exception ex) {
       ex.printStackTrace();
       return null;
     }
   }
-  
+
   public PageLayout getLayout() {
     return layout;
   }
-  
+
   public BufferedImage getImage() {
     return image;
   }
@@ -73,6 +67,9 @@ public class PageData {
   }
 
   public void makeCache(PageRenderOptions options) {
+    if (!layout.wasResized())
+      return;
+
     UILogic.log("caching \"%s\"", file);
 
     int nw = layout.newPageW;
@@ -131,4 +128,3 @@ public class PageData {
     , null);
   }
 }
-

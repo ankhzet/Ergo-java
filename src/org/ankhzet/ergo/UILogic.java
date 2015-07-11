@@ -17,17 +17,20 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import org.ankhzet.ergo.ClassFactory.IoC;
+import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.xgui.XActionListener;
-import org.ankhzet.ergo.xgui.XButton;
 import org.ankhzet.ergo.xgui.XControls;
-
+import org.ankhzet.ergo.pages.UIHomePage;
+import org.ankhzet.ergo.xgui.XAction;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class UILogic implements Runnable, XActionListener, LoaderProgressListener {
+
+  static final String kExitAction = "exit";
+  static final String kExitLabel = "Exit";
 
   public static UILogic instance;
   static UIContainerListener container;
@@ -52,7 +55,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   String tooltip = null;
   int tooltipX, tooltipY;
   UIPage currentUI, prevUI = null;
-  String actionToPerform = null;
+  XAction actionToPerform = null;
 
   public UILogic() {
     toolkit = Toolkit.getDefaultToolkit();
@@ -131,27 +134,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     return toolkit.getImage(LocalDir + src);
   }
 
-// <editor-fold defaultstate="collapsed" desc="cursor handling">
-/*  public Cursor loadCursor(String src, int hotx, int hoty, String name) {
-  Cursor c = toolkit.createCustomCursor(loadImage(src), new java.awt.Point(hotx, hoty), name);
-  cursors.add(c);
-  return c;
-  }
-
-  public Cursor setCursor(String name) {
-  for (Cursor c : cursors)
-  if (c.getName().equalsIgnoreCase(name))
-  //container.setCursor(c);
-  return c;
-
-  Cursor c = loadCursor("/res/" + name + ".png", 1, 1, name);
-  c = (c == null) ? defCursor : c;
-  if (c != null) //container.setCursor(c)
-  ;
-  return c;
-  }
-   */
-// </editor-fold>
   public static void log(String format, Object... args) {
     System.out.printf(format, args);
     System.out.println();
@@ -259,10 +241,10 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     initiated = true;
   }
 
-  UIPage navigateTo(Class c) {
+  public UIPage navigateTo(Class c, Object... params) {
     prevUI = currentUI;
 
-    currentUI = (UIPage)IoC.<UIPage>get(c);
+    currentUI = (UIPage) IoC.<UIPage>get(c);
 
     if (currentUI == null)
       currentUI = prevUI;
@@ -273,13 +255,14 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     if (prevUI != null)
       prevUI.navigateOut();
 
-    currentUI.navigateIn();
+    hud.clear();
+    currentUI.navigateIn(params);
     int l = hud.onLeft();
     while (l++ < 2)
-      hud.putControl(new XButton("", null, "xspacer"), XControls.AREA_LEFT);
+      hud.putSpacer(XControls.AREA_LEFT);
 
-    hud.putControl(new XButton("", null, "xmover"), XControls.AREA_LEFT);
-    hud.putControl(new XButton("exit", "Выход", "xbutton"), XControls.AREA_LEFT);
+    hud.putMover(XControls.AREA_LEFT);
+    hud.putActionAtLeft(kExitLabel, currentUI.registerAction(kExitAction, action -> System.exit(0)));
 
     hud.pack(clientArea.width, clientArea.height);
     currentUI.resized(clientArea.x, clientArea.y, clientArea.width, clientArea.height);
@@ -296,16 +279,13 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   void process() {
     if (actionToPerform != null) {
-      String action = actionToPerform;
+      XAction action = actionToPerform;
       actionToPerform = null;
       if (currentUI.actionPerformed(action))
         return;
 
-      if (action.equals("exit"))
-        System.exit(0);
-      else
-        if (action.equals("back"))
-          softNavigateBack();
+      if (action.isA(XControls.kBackAction))
+        softNavigateBack();
     }
     hud.Process();
     currentUI.process();
@@ -316,7 +296,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   }
 
   @Override
-  public void actionPerformed(String a) {
+  public void actionPerformed(XAction a) {
     actionToPerform = a;
   }
 
@@ -386,5 +366,3 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     tooltipY = y;
   }
 }
-
-

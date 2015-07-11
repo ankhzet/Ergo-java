@@ -1,6 +1,9 @@
-package org.ankhzet.ergo.ClassFactory;
+package org.ankhzet.ergo.classfactory;
 
-import org.ankhzet.ergo.ClassFactory.Builder.Builder;
+import java.util.Set;
+import org.ankhzet.ergo.classfactory.exceptions.*;
+import org.ankhzet.ergo.classfactory.builder.Builder;
+import org.ankhzet.ergo.classfactory.builder.DependantClassBuilder;
 
 /**
  *
@@ -21,7 +24,7 @@ public class IoC {
   public static <C> ClassFactory<C> factory(Class<C> c) {
     try {
       return factories().get(c);
-    } catch (UnknownFactoryProductException ex) {
+    } catch (FactoryException ex) {
       ex.printStackTrace();
       return null;
     }
@@ -30,19 +33,19 @@ public class IoC {
   public static <C> C get(Class<C> c) {
     ClassFactory<C> factory = factory(c);
 
-    if (factory != null)
+    if (factory == null)
       return null;
 
     try {
       return factory.get(c);
-    } catch (UnknownFactoryProductException ex) {
+    } catch (FactoryException ex) {
       ex.printStackTrace();
     }
 
     return null;
   }
 
-  public static <C> C make(Class<C> c) throws UnknownFactoryProductException {
+  public static <C> C make(Class<C> c) throws FactoryException {
     ClassFactory<C> factory = factory(c);
     if (factory == null)
       throw new UnknownFactoryProductException(c.getName());
@@ -53,25 +56,18 @@ public class IoC {
   public static ClassFactory register(ClassFactory factory) {
     Factories f = factories();
 
-    Builder<ClassFactory> builder = new DependantBuilder(factory);
+    Builder<ClassFactory> builder = new DependantClassBuilder(factory) {
+      @Override
+      public Object build(Class c) throws Exception {
+        return getDependency();
+      }
+    };
 
-    for (Class identifier : factory.produces())
+    ((Set<Class>) factory.produces()).forEach((identifier) -> {
       f.register(identifier, builder);
+    });
 
     return factory;
   }
 
-  private static class DependantBuilder extends Builder<ClassFactory> {
-
-    ClassFactory dependency;
-
-    public DependantBuilder(ClassFactory dependency) {
-      this.dependency = dependency;
-    }
-
-    @Override
-    public ClassFactory call() throws Exception {
-      return this.dependency;
-    }
-  }
 }

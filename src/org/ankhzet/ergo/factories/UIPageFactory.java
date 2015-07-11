@@ -1,34 +1,32 @@
 package org.ankhzet.ergo.factories;
 
-import org.ankhzet.ergo.ClassFactory.Builder.Builder;
-import org.ankhzet.ergo.ClassFactory.ClassFactory;
-import org.ankhzet.ergo.UIHomePage;
+import org.ankhzet.ergo.classfactory.ClassFactory;
+import org.ankhzet.ergo.pages.UIHomePage;
 import org.ankhzet.ergo.UIPage;
-import org.ankhzet.ergo.reader.UIReaderPage;
+import org.ankhzet.ergo.reader.Reader;
+import org.ankhzet.ergo.pages.UIReaderPage;
+import org.ankhzet.ergo.reader.MagnifyGlass;
+import org.ankhzet.ergo.reader.PageRenderOptions;
+import org.ankhzet.ergo.reader.SwipeHandler;
+import org.ankhzet.ergo.reader.chapter.ChapterLoader;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class UIPageFactory extends ClassFactory<UIPage> {
-  
+
   public UIPageFactory() {
 
-    register(UIHomePage.class, new Builder<UIPage>() {
+    register(UIHomePage.class);
+    register(UIReaderPage.class);
 
-      @Override
-      public UIPage call() throws Exception {
-        return new UIHomePage();
-      }
-    });
-
-    register(UIReaderPage.class, new Builder<UIPage>() {
-
-      @Override
-      public UIPage call() throws Exception {
-        return new UIReaderPage();
-      }
-    });
+    register(Reader.class);
+    register(PageRenderOptions.class);
+//    register(ChapterData.class);
+    register(ChapterLoader.class);
+    register(MagnifyGlass.class);
+    register(SwipeHandler.class);
 
   }
 }

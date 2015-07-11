@@ -13,6 +13,8 @@ public class PageLayout {
   clientH = 0,
   renderX = 0,
   renderY = 0,
+  oldPageW = 0,
+  oldPageH = 0,
   newPageW = 0,
   newPageH = 0,
   scrollX = 0,
@@ -24,6 +26,9 @@ public class PageLayout {
   }
 
   public boolean calcLayout(int pageW, int pageH, PageRenderOptions ro) {
+    oldPageW = newPageW;
+    oldPageH = newPageH;
+
     if (pageW * pageH == 0)
       return false;
 
@@ -34,7 +39,6 @@ public class PageLayout {
       return true;
 
     // first, we need to scale page, if needed
-
     boolean clientPortret = clientW < clientH;
     boolean pagePortret = pageW < pageH;
     newPageW = pageW;
@@ -60,7 +64,6 @@ public class PageLayout {
           newPageH = (int) (newPageW / ratio);
         }
 
-
       // fit in view, if needed
       if (newPageW > clientW) {
         newPageW = clientW;
@@ -72,7 +75,6 @@ public class PageLayout {
       }
 
       // now, center page in view, if not scrolling
-
       posX = (clientW - newPageW) / 2;
       posY = (clientH - newPageH) / 2;
     } else {
@@ -94,5 +96,9 @@ public class PageLayout {
     renderY = posY;
 
     return true;
+  }
+
+  public boolean wasResized() {
+    return (oldPageW != newPageW) || (oldPageH != newPageH);
   }
 }

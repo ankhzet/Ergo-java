@@ -18,7 +18,7 @@ import org.ankhzet.ergo.utils.Utils;
 public class MagnifyGlass {
 
   static final int SAMPLED_SIZE = 32;
-  boolean activated = true, active = false;
+  boolean activated = false, active = false;
   int posX = 0, posY = 0, width = 32, height = 32;
   int imgX = 0, imgY = 0;
   int projX = 0, projY = 0;
@@ -28,8 +28,7 @@ public class MagnifyGlass {
   boolean layouted = false;
   Image sample = null;
 
-  public MagnifyGlass() {
-  }
+  Reader reader;
 
   public void mouseEvent(MouseEvent e) {
     posX = e.getX();
@@ -37,18 +36,17 @@ public class MagnifyGlass {
 
     switch (e.getID()) {
     case MouseEvent.MOUSE_PRESSED:
-      active = !Reader.get().isLoading();
+      active = !reader.isLoading();
       break;
     case MouseEvent.MOUSE_RELEASED:
       active = false;
       break;
     }
 
-    if (!active || data == null || !layouted || Reader.get().options.originalSize)
+    if (!active || data == null || !layouted || reader.options.originalSize)
       return;
 
     // translate view coordinates to image coordinates
-
     PageLayout layout = data.getLayout();
     double dx = layout.newPageW / (double) data.pageW;
     double dy = layout.newPageH / (double) data.pageH;
@@ -60,7 +58,7 @@ public class MagnifyGlass {
 
     int mw = SAMPLED_SIZE * magnification;
     int mh = SAMPLED_SIZE * magnification;
-    Graphics2D g = (Graphics2D)sample.getGraphics();
+    Graphics2D g = (Graphics2D) sample.getGraphics();
     g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     g.drawImage(data.getImage(), 0, 0, mw, mh, imgX - width / 2, imgY - height / 2, imgX + width / 2, imgY + height / 2, null);
     g.dispose();
@@ -70,9 +68,7 @@ public class MagnifyGlass {
     if (!activated)
       return;
 
-    Reader reader = Reader.get();
-    if (prevPage != reader.currentPage) { // page changed
-
+    if (prevPage != reader.currentPage()) { // page changed
       active = false;
       layouted = false;
     }
@@ -106,11 +102,11 @@ public class MagnifyGlass {
   }
 
   public void layouted() {
-    Reader reader = Reader.get();
     if (reader.isBusy())
       return;
-    prevPage = reader.currentPage;
-    data = reader.getPage(reader.currentPage);
+
+    prevPage = reader.currentPage();
+    data = reader.getCurrentPageData();
 
     if (data == null)
       return;
@@ -133,4 +129,9 @@ public class MagnifyGlass {
 
     layouted = true;
   }
+
+  public Reader diReader(Reader reader) {
+    return (reader != null) ? this.reader = reader : this.reader;
+  }
+
 }

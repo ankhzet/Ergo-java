@@ -1,6 +1,6 @@
-package org.ankhzet.ergo.ClassFactory;
+package org.ankhzet.ergo.classfactory;
 
-import org.ankhzet.ergo.ClassFactory.Builder.Builder;
+import org.ankhzet.ergo.classfactory.builder.Builder;
 
 class CommonClassFactory<Produces> extends ClassFactory<Produces> {
 
@@ -9,7 +9,6 @@ class CommonClassFactory<Produces> extends ClassFactory<Produces> {
   }
 
 }
-
 
 /**
  *
@@ -21,4 +20,3 @@ public class CommonFactoryRegistrar<Produces> extends FactoryRegistrar {
     super(new CommonClassFactory(c, builder));
   }
 }
-

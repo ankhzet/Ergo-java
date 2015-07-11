@@ -7,7 +7,7 @@ package org.ankhzet.ergo;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
-import org.ankhzet.ergo.ClassFactory.IoC;
+import org.ankhzet.ergo.classfactory.IoC;
 import org.jdesktop.application.Application;
 
 /**
@@ -57,4 +57,3 @@ public class Launcher extends Application {
     }
   }
 }
-
