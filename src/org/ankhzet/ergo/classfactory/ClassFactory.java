@@ -1,14 +1,20 @@
 package org.ankhzet.ergo.classfactory;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.ankhzet.ergo.classfactory.builder.Builder;
 import org.ankhzet.ergo.classfactory.builder.ClassBuilder;
 import org.ankhzet.ergo.classfactory.exceptions.*;
+
+import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 
 abstract class AbstractClassFactory<ProducesType> implements AbstractFactory<Class, ProducesType> {
 
@@ -20,8 +26,6 @@ abstract class AbstractClassFactory<ProducesType> implements AbstractFactory<Cla
  * @param <ProducesType> Class, produced by factory
  */
 public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesType> {
-
-  static final String injectorPrefix = "di";
 
   HashMap<Class, ProducesType> container = new HashMap<>();
   HashMap<Class, Builder<ProducesType>> builders = new HashMap<>();
@@ -52,15 +56,13 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
       if (builder == null)
         throw new UnknownFactoryProductException(identifier);
 
-      ProducesType instance = null;
       try {
-        instance = (ProducesType) builder.build(identifier);
+        return (ProducesType) builder.build(identifier);
       } catch (Exception ex) {
         boolean wrap = (!(ex instanceof FactoryException));
         throw wrap ? new FailedFactoryProductException(identifier, ex) : (FactoryException) ex;
       }
 
-      return instance;
     }
   }
 
@@ -78,46 +80,129 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
     return register(identifier, new ClassBuilder<>());
   }
 
-  void injectDependencies(Object instance) throws FailedFactoryProductException {
+  void injectDependencies(Object instance) throws FactoryException {
     Class c = instance.getClass();
+    DependencyNode dependencies = collectDependencies(instance, c);
 
-    HashMap<Class, Method> injectors = getInjectPoints(c);
-    if (injectors.size() > 0)
-      injectors.forEach((classToInject, injector) -> {
-        Object parameter = buildParam(classToInject);
-        if (parameter == null)
-          System.err.printf("Problems with instantiation %s in %s", classToInject.getName(), c.getName());
-
-        try {
-          injector.invoke(instance, parameter);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-          throw new RuntimeException(new FailedFactoryProductException(c, ex));
-        }
-      });
+    while (dependencies != null) {
+      dependencies.inject(instance);
+      dependencies = dependencies.next;
+    }
   }
 
-  HashMap<Class, Method> getInjectPoints(Class c) {
-    Method[] allMethods = c.getMethods();
-    HashMap<Class, Method> injectors = new HashMap<>(allMethods.length);
-    for (Method m : allMethods) {
-      String methodName = m.getName();
-      if (!methodName.startsWith(injectorPrefix))
-        continue;
+  private DependencyNode collectDependencies(Object instance, Class c) {
 
-      Class returnType = m.getReturnType();
-      if (returnType.isPrimitive() || injectors.get(returnType) != null)
-        continue;
+    Method method = Stream.of(c.getDeclaredMethods())
+            .filter(m -> m.isAnnotationPresent(DependenciesInjected.class
+                    ))
+            .findFirst()
+            .orElse(null);
 
-      String returns = returnType.getSimpleName();
-      if (methodName.equals(injectorPrefix + returns))
-        injectors.put(returnType, m);
+    FieldsList fields = new FieldsList(Stream.of(c.getDeclaredFields())
+            .filter(field -> field.isAnnotationPresent(DependencyInjection.class))
+            .collect(Collectors.toList()));
+
+    DependencyNode current = new DependencyNode(fields, method, c);
+
+    boolean suppress = false;
+    boolean reversed = false;
+
+    if (method != null) {
+      method.setAccessible(true);
+      DependenciesInjected annotation = method.getAnnotation(DependenciesInjected.class);
+      suppress = annotation.suppressInherited();
+      reversed = annotation.beforeInherited();
     }
 
-    return injectors;
+    DependencyNode superclass = null;
+    if (!suppress) {
+      c = c.getSuperclass();
+      if (c != null && c != Object.class)
+        superclass = collectDependencies(instance, c);
+    }
+
+    if (superclass != null)
+      if (!reversed) {
+        superclass.append(current);
+        current = superclass;
+      } else
+        current.append(superclass);
+
+    return current.empty() ? current.next : current;
   }
 
-  protected Object buildParam(Class c) {
-    return IoC.get(c);
+  private class FieldsList extends ArrayList<Field> {
+
+    public FieldsList(Collection<? extends Field> c) {
+      super(c);
+    }
+
+  };
+
+  private class DependencyNode {
+
+    FieldsList fields;
+    Method finisher;
+    Class forClass;
+    DependencyNode next;
+
+    DependencyNode(FieldsList fields, Method finisher, Class forClass) {
+      this.fields = fields;
+      this.finisher = finisher;
+      this.forClass = forClass;
+    }
+
+    void append(DependencyNode node) {
+      if (this.next == null)
+        this.next = node;
+      else
+        this.next.append(node);
+    }
+    
+    boolean empty() {
+      return (finisher == null) && (fields.size() == 0);
+    }
+
+    @SuppressWarnings({"ThrowableInstanceNotThrown", "ThrowableInstanceNeverThrown"})
+    void inject(Object instance) throws FactoryException {
+      try {
+        if (!fields.isEmpty())
+          makeDependencies(instance);
+        
+        if (finisher != null)
+          invokeFinisher(instance);
+      } catch (Exception ex) {
+        if (!(ex instanceof FactoryException))
+          ex = new FailedFactoryProductException(forClass, ex);
+        throw (FactoryException) ex;
+      }
+    }
+
+    void makeDependencies(Object instance) throws Exception {
+      for (Field field : fields) {
+//        System.out.printf("Dependency [(%s)%s] -> (%s)%s\n", 
+//                forClass.getSimpleName(), 
+//                instance.getClass().getSimpleName(), 
+//                field.getType().getSimpleName(),
+//                field.getName());
+        DependencyInjection di = field.getAnnotation(DependencyInjection.class);
+
+        Object param = makeDependency(field.getType(), di.instantiate());
+
+        field.setAccessible(true);
+        field.set(instance, param);
+      }
+    }
+
+    void invokeFinisher(Object instance) throws Exception {
+      finisher.setAccessible(true);
+      finisher.invoke(instance);
+    }
+
+    Object makeDependency(Class c, boolean instantiate) throws FactoryException {
+      return instantiate ? IoC.make(c) : IoC.get(c);
+    }
+
   }
 
 }
