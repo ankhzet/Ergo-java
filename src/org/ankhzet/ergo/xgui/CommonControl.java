@@ -41,7 +41,6 @@ public class CommonControl {
     if (e.getButton() != MouseEvent.BUTTON1)
       return false;
 
-
     switch (e.getID()) {
     case MouseEvent.MOUSE_RELEASED:
       if (clicked && overed)

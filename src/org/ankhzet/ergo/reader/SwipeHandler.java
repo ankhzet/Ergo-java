@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.reader;
 
 import org.ankhzet.ergo.classfactory.IoC;
@@ -107,8 +106,8 @@ public class SwipeHandler implements Runnable {
   public static double swipeSpeed() {
     SwipeHandler swipe = swipe();
     double delta = vertical() ? swipe.ch : swipe.cw;
-    delta = Math.abs((double)swipe.direction) / delta;
-    
+    delta = Math.abs((double) swipe.direction) / delta;
+
     return Math.max(Math.min(delta * 2.0, MAX_SPEED), MIN_SPEED);
   }
 }

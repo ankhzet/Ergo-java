@@ -25,7 +25,7 @@ public class ChapterLoader {
           wait += 1;
         } catch (InterruptedException ex) {
         }
-      
+
       if (!reader.isBusy()) {
         reader.cacheChapter(chapter, ui);
         reader.flushCache(true);
@@ -42,7 +42,7 @@ public class ChapterLoader {
           if (reader.flushPending()) {
             while (reader.isBusy())
               Thread.sleep(10);
-            
+
             reader.flushCache(false);
             reader.calcLayout(ui.clientArea.width, ui.clientArea.height - UILogic.UIPANEL_HEIGHT, ui);
             ui.progressDone();

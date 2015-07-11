@@ -10,7 +10,6 @@ class CommonClassFactory<Produces> extends ClassFactory<Produces> {
 
 }
 
-
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
@@ -21,4 +20,3 @@ public class CommonFactoryRegistrar<Produces> extends FactoryRegistrar {
     super(new CommonClassFactory(c, builder));
   }
 }
-

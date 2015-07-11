@@ -43,7 +43,7 @@ public class IoC {
     }
 
     return null;
-  } 
+  }
 
   public static <C> C make(Class<C> c) throws FactoryException {
     ClassFactory<C> factory = factory(c);
@@ -63,7 +63,7 @@ public class IoC {
       }
     };
 
-    ((Set<Class>)factory.produces()).forEach((identifier) -> {
+    ((Set<Class>) factory.produces()).forEach((identifier) -> {
       f.register(identifier, builder);
     });
 

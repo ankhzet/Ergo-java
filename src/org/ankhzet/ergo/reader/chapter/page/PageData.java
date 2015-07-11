@@ -39,23 +39,23 @@ public class PageData {
     try {
 
       /*Image i = Toolkit.getDefaultToolkit().createImage(src);
-      int w = i.getWidth(null);
-      int h = i.getHeight(null);
-      BufferedImage b = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-      Graphics g = b.getGraphics();
-      g.drawImage(i, w, h, null);
-      return b;*/
+       int w = i.getWidth(null);
+       int h = i.getHeight(null);
+       BufferedImage b = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+       Graphics g = b.getGraphics();
+       g.drawImage(i, w, h, null);
+       return b;*/
       return ImageIO.read(new File(src));
     } catch (Exception ex) {
       ex.printStackTrace();
       return null;
     }
   }
-  
+
   public PageLayout getLayout() {
     return layout;
   }
-  
+
   public BufferedImage getImage() {
     return image;
   }
@@ -71,7 +71,7 @@ public class PageData {
       return;
 
     UILogic.log("caching \"%s\"", file);
-    
+
     int nw = layout.newPageW;
     int nh = layout.newPageH;
     if (image == null) {
@@ -128,4 +128,3 @@ public class PageData {
     , null);
   }
 }
-

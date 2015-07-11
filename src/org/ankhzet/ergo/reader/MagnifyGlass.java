@@ -27,7 +27,7 @@ public class MagnifyGlass {
   PageData data = null;
   boolean layouted = false;
   Image sample = null;
-  
+
   Reader reader;
 
   public void mouseEvent(MouseEvent e) {
@@ -47,7 +47,6 @@ public class MagnifyGlass {
       return;
 
     // translate view coordinates to image coordinates
-
     PageLayout layout = data.getLayout();
     double dx = layout.newPageW / (double) data.pageW;
     double dy = layout.newPageH / (double) data.pageH;
@@ -59,7 +58,7 @@ public class MagnifyGlass {
 
     int mw = SAMPLED_SIZE * magnification;
     int mh = SAMPLED_SIZE * magnification;
-    Graphics2D g = (Graphics2D)sample.getGraphics();
+    Graphics2D g = (Graphics2D) sample.getGraphics();
     g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     g.drawImage(data.getImage(), 0, 0, mw, mh, imgX - width / 2, imgY - height / 2, imgX + width / 2, imgY + height / 2, null);
     g.dispose();
@@ -105,7 +104,7 @@ public class MagnifyGlass {
   public void layouted() {
     if (reader.isBusy())
       return;
-    
+
     prevPage = reader.currentPage();
     data = reader.getCurrentPageData();
 
