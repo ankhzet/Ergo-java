@@ -8,14 +8,14 @@ public class CommonControl {
   protected boolean overed = false,
   clicked = false;
   protected int x, y, w, h;
-  private String action = null;
+  protected XAction action = null;
   private XActionListener l = null;
   public boolean visible = true;
-  public boolean enabled = true;
   public boolean toggled = false;
 
   CommonControl(int x, int y, int w, int h) {
     move(x, y, w, h);
+    setAction(null);
   }
 
   final public void move(int x, int y, int w, int h) {
@@ -26,14 +26,16 @@ public class CommonControl {
   }
 
   public boolean mouseEvent(MouseEvent e, boolean process) {
-//		System.out.println("process button ["+e.getID()+"]");
+    if (!visible)
+      return false;
+
     overed = ptInRect(e.getX(), e.getY());
     if (!process) {
       clicked = false;
       return overed;
     }
 
-    if (!enabled)
+    if (!isEnabled())
       return false;
 
     if (e.getButton() != MouseEvent.BUTTON1)
@@ -84,16 +86,15 @@ public class CommonControl {
     return visible;
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
-
   public boolean isEnabled() {
-    return enabled;
+    return action.isEnabled();
   }
 
-  public void setActionCommand(String value) {
-    action = value;
+  public final void setAction(XAction action) {
+    if (action == null)
+      action = new XAction("", null);
+
+    this.action = action;
   }
 
   public void setActionListener(XActionListener listener) {
