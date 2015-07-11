@@ -2,11 +2,13 @@ package org.ankhzet.ergo.pages;
 
 import java.awt.Graphics2D;
 import org.ankhzet.ergo.UILogic;
+import java.io.File;
 import org.ankhzet.ergo.UIPage;
 import org.ankhzet.ergo.reader.Reader;
 import org.ankhzet.ergo.xgui.CommonControl;
 import org.ankhzet.ergo.xgui.XButton;
 import org.ankhzet.ergo.xgui.XControls;
+import org.ankhzet.ergo.reader.chapter.Chapter;
 import org.ankhzet.ergo.xgui.XPathFilePicker;
 
 /**
@@ -33,38 +35,25 @@ public class UIHomePage extends UIPage {
   public boolean actionPerformed(String a) {
     boolean handled = true;
     if (a.equals("load")) {
-      String path = picker.getSelectedPath();
-      String[] parts = path.replace('\\', '/').split("/");
-      int l = parts.length - 1;
-      if (l < 0)
-        return true;
-
-      if (parts[l].isEmpty())
-        l--;
-
-      if (parts[l].matches(".*\\.(png|gif|bmp|jpe?g)"))
-        l--;
-
-      int chapter = 1;
-      try {
-        chapter = Integer.parseInt(parts[l]);
-        l--;
-      } catch (Exception e) {
-      }
-
-
-      UILogic.log("loading [%s]:%d", parts[l], chapter);
-      loadChapter(parts[l], chapter);
-
+      loadChapter();
     } else
       handled = false;
 
     return handled;
   }
 
-  void loadChapter(String manga, int chapter) {
-    UIReaderPage page = (UIReaderPage) ui.navigateTo(UIReaderPage.class);
-    page.loadChapter(manga, chapter);
+  public boolean loadChapter() {
+    String path = picker.getSelectedPath();
+    File fsPath = new File(path);
+
+    if (!fsPath.isDirectory())
+      fsPath = fsPath.getParentFile();
+    if ((fsPath == null) || !fsPath.isDirectory())
+      return false;
+
+    Chapter chapter = new Chapter(fsPath.getPath());
+    ui.navigateTo(UIReaderPage.class, chapter);
+    return true;
   }
 
   @Override

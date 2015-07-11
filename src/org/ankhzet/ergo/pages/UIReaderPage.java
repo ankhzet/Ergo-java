@@ -1,6 +1,6 @@
 package org.ankhzet.ergo.pages;
 
-import org.ankhzet.ergo.reader.chapter.ChapterLoader;
+import org.ankhzet.ergo.reader.chapter.Chapter;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -29,7 +29,6 @@ public class UIReaderPage extends UIPage {
   static String kOriginal = "original";
 
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
-  ChapterLoader loader;
   Reader reader;
   PageRenderOptions options;
   boolean swipeDirVertical = true;
@@ -73,6 +72,11 @@ public class UIReaderPage extends UIPage {
       reader.showMagnifier(!reader.getMagnifying());
     });
 
+    if (params.length > 0 && params[0] != null) {
+      Chapter chapter = (Chapter) params[0];
+      UILogic.log("loading [%s]:%.1f", chapter.getMangaFolder(), chapter.id());
+      di.reader.loadChapter(chapter);
+    }
   }
 
   @Override
@@ -152,10 +156,6 @@ public class UIReaderPage extends UIPage {
       mouseDown = false;
     }
     return mouseDown;
-  }
-
-  public void loadChapter(String manga, int chapter) {
-    loader.load(manga, chapter);
   }
 
   @Override
