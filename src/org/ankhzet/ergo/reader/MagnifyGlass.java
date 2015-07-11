@@ -69,8 +69,7 @@ public class MagnifyGlass {
     if (!activated)
       return;
 
-    if (prevPage != reader.currentPage) { // page changed
-
+    if (prevPage != reader.currentPage()) { // page changed
       active = false;
       layouted = false;
     }
@@ -107,8 +106,8 @@ public class MagnifyGlass {
     if (reader.isBusy())
       return;
     
-    prevPage = reader.currentPage;
-    data = reader.getPage(reader.currentPage);
+    prevPage = reader.currentPage();
+    data = reader.getCurrentPageData();
 
     if (data == null)
       return;

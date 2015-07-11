@@ -19,7 +19,7 @@ import org.ankhzet.ergo.reader.chapter.page.PageData;
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-public class Reader {
+public class Reader extends PageNavigator {
 
   private final ReentrantLock lock = new ReentrantLock();
 
@@ -77,7 +77,8 @@ public class Reader {
       }
       if (listener != null)
         listener.progressDone();
-      firstPage();
+
+      toFirstPage();
     } finally {
       lock.unlock();
       System.gc();
@@ -103,54 +104,27 @@ public class Reader {
     scroll(0, 0);
   }
 
-  public int firstPage() {
-    currentPage = -1;
-    return nextPage();
+  @Override
+  public int totalPages() {
+    return pageFiles.size();
   }
 
-  public int lastPage() {
+  @Override
+  public int setPage(int page) {
+    page = super.setPage(page);
     scrollPosX = 0;
     scrollPosY = 0;
-    currentPage = pageFiles.size() - 1;
     if (magnifier.activated)
       magnifier.layouted();
-    return currentPage;
+    return page;
   }
 
-  public int nextPage() {
-    scrollPosX = 0;
-    scrollPosY = 0;
-    int idx = currentPage + 1;
-    int last = pageFiles.size() - 1;
-    if (idx > last)
-      idx = last;
-
-    currentPage = idx;
-    if (magnifier.activated)
-      magnifier.layouted();
-    return currentPage;
-  }
-
-  public int prevPage() {
-    int idx = currentPage - 1;
-    int last = pageFiles.size() - 1;
-    if (idx < 0)
-      idx = 0;
-    if (idx > last)
-      idx = last;
-
-    currentPage = idx;
-    if (magnifier.activated)
-      magnifier.layouted();
-    return currentPage;
-  }
-
-  public PageData getPage(int idx) {
+  public PageData getPageData(int idx) {
     return (idx < 0 || idx >= totalPages()) ? null : pages.get(pageFiles.get(idx));
   }
 
-  public int totalPages() {
-    return pageFiles.size();
+  public PageData getCurrentPageData() {
+    return getPageData(currentPage());
   }
 
   public void draw(Graphics2D g, int x, int y, int w, int h) {
@@ -213,7 +187,7 @@ public class Reader {
     if (currentPage < 0)
       return;
 
-    PageData data = getPage(currentPage);
+    PageData data = getCurrentPageData();
     if (data == null)
       return;
 
@@ -245,8 +219,7 @@ public class Reader {
       else
         nx = dx - dir * w;
 
-
-      PageData nextPage = getPage(next);
+      PageData nextPage = getPageData(next);
       if (nextPage != null)
         nextPage.drawPage(g, x - nx, y - ny, 0, 0);
     }
@@ -279,7 +252,7 @@ public class Reader {
   }
 
   public void scroll(int dx, int dy) {
-    PageData data = getPage(currentPage);
+    PageData data = getCurrentPageData();
     if (data == null)
       return;
 
