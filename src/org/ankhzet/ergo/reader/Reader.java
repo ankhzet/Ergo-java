@@ -4,14 +4,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.ankhzet.ergo.LoaderProgressListener;
 import org.ankhzet.ergo.Skin;
+import org.ankhzet.ergo.reader.chapter.Chapter;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
 import org.ankhzet.ergo.reader.chapter.ChapterCacher;
+import org.ankhzet.ergo.reader.chapter.ChapterLoader;
 import org.ankhzet.ergo.reader.chapter.page.PageData;
 
 /**
@@ -26,6 +27,7 @@ public class Reader {
   protected PageRenderOptions options;
   protected MagnifyGlass magnifier;
   protected ChapterCacher pages = new ChapterCacher();
+  protected ChapterLoader loader;
 
   public Strings pageFiles = new Strings();
   public int currentPage = -1;
@@ -58,37 +60,7 @@ public class Reader {
     return flushCache;
   }
 
-  public final Strings fetchPages(String manga, int chapter) {
-    String path = chapPath(manga, chapter);
-    pages.clear();
-
-    for (String storage : mangaRoots) {
-      File chapterFolder = new File(storage + path);
-      if (!chapterFolder.isDirectory())
-        continue;
-
-      File[] files = chapterFolder.listFiles((File dir, String name) -> name.matches(PAGE_PATTERN));
-      for (File file : files)
-        pageFiles.add(storage + path + "/" + file.getName());
-
-      break;
-    }
-
-    return pageFiles;
-  }
-
-  public static String clearFileName(String oldName) {
-    oldName = oldName.replaceAll("\\[[^\\]+]\\]", "");
-    oldName = oldName.replaceAll("[^\\W\\w\\d-_ \\.,\\+%]", "");
-
-    return oldName;
-  }
-
-  public static String chapPath(String mangaLink, int chapter) {
-    return String.format("/%s/%04d", mangaLink, chapter);
-  }
-
-  public synchronized void prepareForChapter(String manga, int chapter, LoaderProgressListener listener) {
+  public synchronized void cacheChapter(Chapter chapter, LoaderProgressListener listener) {
     lock.lock();
     try {
       pageFiles.clear();
@@ -96,7 +68,7 @@ public class Reader {
       if (listener != null)
         progressLoading(listener, 0);
 
-      fetchPages(manga, chapter);
+      pageFiles.addAll(chapter.fetchPages());
       int pos = 0;
       for (String imageFile : pageFiles) {
         pages.put(imageFile, PageData.load(imageFile));
@@ -110,6 +82,10 @@ public class Reader {
       lock.unlock();
       System.gc();
     }
+  }
+
+  public void loadChapter(Chapter chapter) {
+    loader.load(chapter);
   }
 
   private boolean progressLoading(LoaderProgressListener listener, int p) {
@@ -338,6 +314,10 @@ public class Reader {
   
   public MagnifyGlass diMagnifyGlass(MagnifyGlass magnifier) {
     return (magnifier != null) ? this.magnifier = magnifier : this.magnifier;
+  }
+
+  public ChapterLoader diChapterLoader(ChapterLoader loader) {
+    return (loader != null) ? this.loader = loader : this.loader;
   }
   // *** di end
 }

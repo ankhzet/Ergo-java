@@ -9,21 +9,14 @@ import org.ankhzet.ergo.reader.Reader;
  */
 public class ChapterLoader {
 
-  String manga;
-  int chapter;
+  Chapter chapter;
   Thread loader, cacher;
   UILogic ui;
   Reader reader;
 
-  public ChapterLoader() {
-    manga = null;
-    chapter = 0;
-  }
-  
+  public void load(Chapter chapter) {
+    this.chapter = chapter;
 
-  public void load(String m, int c) {
-    manga = m;
-    chapter = c;
     loader = new Thread(() -> {
       int wait = 0;
       while (reader.isBusy() && wait < 100)
@@ -34,7 +27,7 @@ public class ChapterLoader {
         }
       
       if (!reader.isBusy()) {
-        reader.prepareForChapter(manga, chapter, ui);
+        reader.cacheChapter(chapter, ui);
         reader.flushCache(true);
       }
     });
