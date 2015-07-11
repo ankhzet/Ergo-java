@@ -4,14 +4,16 @@
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>Ergo</name>
-            <explicit-platform explicit-source-supported="true"/>
+            <minimum-ant-version>1.6.5</minimum-ant-version>
             <source-roots>
                 <root id="src.dir"/>
-                <root id="src.config.dir" name="userconfig"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>
             </test-roots>
         </data>
+        <swingapp xmlns="http://www.netbeans.org/ns/form-swingapp/1">
+            <application-class name="org.ankhzet.ergo.Launcher"/>
+        </swingapp>
     </configuration>
 </project>

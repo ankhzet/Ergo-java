@@ -4,11 +4,14 @@
  */
 package org.ankhzet.ergo;
 
+import org.ankhzet.ergo.ui.UILogic;
+import javax.swing.JFrame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
-import org.ankhzet.ergo.classfactory.IoC;
 import org.jdesktop.application.Application;
+import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.factories.IoCFactoriesRegistrar;
+import org.ankhzet.ergo.ui.UIContainerListener;
 
 /**
  *
@@ -28,7 +31,7 @@ public class Launcher extends Application {
 
     ui = IoC.get(UILogic.class);
 
-    mainFrame = new UIContainerListener(ui);
+    mainFrame = IoC.get(UIContainerListener.class);
     mainFrame.addWindowListener(new LauncherListener());
     mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
