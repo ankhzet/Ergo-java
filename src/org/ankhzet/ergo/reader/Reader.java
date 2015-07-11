@@ -295,7 +295,7 @@ public class Reader {
     return old;
   }
 
-  public boolean getMagnifying() {
+  public boolean magnifierShown() {
     return magnifier.activated;
   }
 
