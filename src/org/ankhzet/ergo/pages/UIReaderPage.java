@@ -39,6 +39,8 @@ public class UIReaderPage extends UIPage {
 
 
   @Override
+  public void navigateIn(Object... params) {
+    super.navigateIn(params);
     XControls hud = ui.getHUD();
     hud.clear();
     pgPrev = hud.putControl(new XButton(kPrev, "Предыдущая страница", "xbutton"), XControls.AREA_LEFT);
@@ -66,8 +68,6 @@ public class UIReaderPage extends UIPage {
       if (loader != null)
         reader.flushCache(true);
     });
-  public void navigateIn(Object... params) {
-    super.navigateIn(params);
 
     actions.registerAction(kMagnify, (String name) -> {
       reader.showMagnifier(!reader.getMagnifying());
