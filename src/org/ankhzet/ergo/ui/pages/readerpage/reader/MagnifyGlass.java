@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 
 import org.ankhzet.ergo.chapter.page.PageData;
 import org.ankhzet.ergo.chapter.page.PageLayout;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.utils.Utils;
 
 /**
@@ -28,6 +29,7 @@ public class MagnifyGlass {
   boolean layouted = false;
   Image sample = null;
 
+  @DependencyInjection
   Reader reader;
 
   public void mouseEvent(MouseEvent e) {
@@ -128,10 +130,6 @@ public class MagnifyGlass {
     sample = new BufferedImage(mw, mh, BufferedImage.TYPE_BYTE_GRAY);
 
     layouted = true;
-  }
-
-  public Reader diReader(Reader reader) {
-    return (reader != null) ? this.reader = reader : this.reader;
   }
 
 }

@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.io.File;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 import org.ankhzet.ergo.chapter.Chapter;
+import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XPathFilePicker;
 
@@ -17,9 +19,16 @@ public class UIHomePage extends UIPage {
   static final String kLoadChapterAction = "load";
   static final String kLoadChapterLabel = "Load chapter";
 
+  @DependencyInjection
   XPathFilePicker picker;
+  @DependencyInjection
   Reader reader;
 
+  @DependenciesInjected
+  private void di() {
+    fetchMangas();
+  }
+  
   @Override
   public void navigateIn(Object... params) {
     super.navigateIn(params);
@@ -73,25 +82,5 @@ public class UIHomePage extends UIPage {
   public void resized(int x, int y, int w, int h) {
     picker.move(0, y, w, h - y);
   }
-
-  // Dependencies injections
-  public Reader diReader(Reader reader) {
-    if (reader != null) {
-      this.reader = reader;
-      if (this.picker != null)
-        fetchMangas();
-    }
-    return this.reader;
-  }
-
-  public XPathFilePicker diXPathFilePicker(XPathFilePicker picker) {
-    if (picker != null) {
-      this.picker = picker;
-      if (this.reader != null)
-        fetchMangas();
-    }
-    return this.picker;
-  }
-  // ...end injections
 
 }

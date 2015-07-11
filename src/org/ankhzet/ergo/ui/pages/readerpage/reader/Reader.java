@@ -14,6 +14,7 @@ import org.ankhzet.ergo.utils.Utils;
 import org.ankhzet.ergo.chapter.ChapterCacher;
 import org.ankhzet.ergo.chapter.ChapterLoader;
 import org.ankhzet.ergo.chapter.page.PageData;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 
 /**
  *
@@ -21,13 +22,17 @@ import org.ankhzet.ergo.chapter.page.PageData;
  */
 public class Reader extends PageNavigator {
 
+  @DependencyInjection
+  protected PageRenderOptions options;
+  @DependencyInjection
+  protected MagnifyGlass magnifier;
+  @DependencyInjection
+  protected ChapterLoader loader;
+
   private final ReentrantLock lock = new ReentrantLock();
 
   protected Strings mangaRoots = new Strings();
-  protected PageRenderOptions options;
-  protected MagnifyGlass magnifier;
   protected ChapterCacher pages = new ChapterCacher();
-  protected ChapterLoader loader;
 
   public Strings pageFiles = new Strings();
   public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
@@ -280,17 +285,4 @@ public class Reader extends PageNavigator {
       magnifier.mouseEvent(e);
   }
 
-  // *** di start
-  public PageRenderOptions diPageRenderOptions(PageRenderOptions options) {
-    return (options != null) ? this.options = options : this.options;
-  }
-
-  public MagnifyGlass diMagnifyGlass(MagnifyGlass magnifier) {
-    return (magnifier != null) ? this.magnifier = magnifier : this.magnifier;
-  }
-
-  public ChapterLoader diChapterLoader(ChapterLoader loader) {
-    return (loader != null) ? this.loader = loader : this.loader;
-  }
-  // *** di end
 }

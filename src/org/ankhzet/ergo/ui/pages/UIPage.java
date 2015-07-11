@@ -2,6 +2,8 @@ package org.ankhzet.ergo.ui.pages;
 
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
+import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.xgui.XActions;
 import org.ankhzet.ergo.ui.xgui.XAction;
@@ -14,6 +16,7 @@ import org.ankhzet.ergo.ui.xgui.XControls;
  */
 public class UIPage {
 
+  @DependencyInjection
   protected UILogic ui;
   protected XControls hud;
   
@@ -22,6 +25,11 @@ public class UIPage {
   XActions actions = new XActions();
 
   boolean active = false;
+  
+  @DependenciesInjected
+  private void di() {
+    hud = ui.getHUD();
+  }
 
   public XAction registerAction(String name, Action action) {
     return actions.registerAction(name, action);
@@ -64,15 +72,5 @@ public class UIPage {
   public void navigateOut() {
     active = false;
   }
-
-  // *** di
-  public UILogic diUILogic(UILogic ui) {
-    if (ui != null) {
-      this.ui = ui;
-      this.hud = ui.getHUD();
-    }
-    return this.ui;
-  }
-  // *** end di
 
 }

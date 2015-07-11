@@ -1,5 +1,7 @@
 package org.ankhzet.ergo.chapter;
 
+import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 
@@ -9,10 +11,18 @@ import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
  */
 public class ChapterLoader {
 
+  @DependencyInjection
+  UILogic ui;
+  @DependencyInjection
+  Reader reader;
+
   Chapter chapter;
   Thread loader, cacher;
-  UILogic ui;
-  Reader reader;
+
+  @DependenciesInjected
+  void dependenciesInjected() {
+    layout();
+  }
 
   public void load(Chapter chapter) {
     this.chapter = chapter;
@@ -56,24 +66,6 @@ public class ChapterLoader {
     });
 
     cacher.start();
-  }
-
-  public UILogic diUILogic(UILogic ui) {
-    if (ui != null) {
-      this.ui = ui;
-      if (this.reader != null)
-        layout();
-    }
-    return this.ui;
-  }
-
-  public Reader diReader(Reader reader) {
-    if (reader != null) {
-      this.reader = reader;
-      if (this.ui != null)
-        layout();
-    }
-    return this.reader;
   }
 
 }

@@ -1,6 +1,7 @@
 package org.ankhzet.ergo.classfactory.builder;
 
 import java.lang.reflect.Constructor;
+import java.util.concurrent.locks.ReentrantLock;
 import org.ankhzet.ergo.classfactory.exceptions.FailedFactoryProductException;
 
 /**
@@ -14,6 +15,8 @@ import org.ankhzet.ergo.classfactory.exceptions.FailedFactoryProductException;
  */
 public class ClassBuilder<Type> implements Builder<Type> {
 
+  ReentrantLock lock = new ReentrantLock();
+
   /**
    *
    * @param c Class to be instantiated
@@ -22,17 +25,32 @@ public class ClassBuilder<Type> implements Builder<Type> {
    * constructor or can't resolve it's dependencies.
    */
   @Override
-  public Type build(Class<? extends Type> c) throws Exception {
-    Constructor<?> constructor;
+  synchronized public Type build(Class<? extends Type> c) throws Exception {
+    if (!lock.tryLock())
+      return null;
+
     try {
-      constructor = c.getConstructor();
-    } catch (NoSuchMethodException | SecurityException ex) {
-      throw new FailedFactoryProductException(c, new Exception("Must have default constructor"));
+      if (lock.getHoldCount() > 1)
+        return null;
+
+      Constructor<?> constructor;
+      try {
+        constructor = c.getConstructor();
+      } catch (NoSuchMethodException | SecurityException ex) {
+        throw new FailedFactoryProductException(c, new Exception("Must have default constructor"));
+      }
+
+      Type instance = (Type) constructor.newInstance();
+
+      return instance;
+    } finally {
+      lock.unlock();
     }
+  }
 
-    Type instance = (Type) constructor.newInstance();
-
-    return instance;
+  @Override
+  public boolean isBuilding() {
+    return lock.isLocked();
   }
 
 }

@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 
 /**
  *
@@ -13,11 +14,8 @@ import javax.swing.JFrame;
  */
 public class UIContainerListener extends JFrame {
 
+  @DependencyInjection
   UILogic ui;
-  
-  public UILogic diUILogic(UILogic ui) {
-    return (ui != null) ? this.ui = ui : this.ui;
-  }
 
   public UIContainerListener() {
     super("Ergo reader");
