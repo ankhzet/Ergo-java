@@ -20,11 +20,6 @@ public class ChapterLoader {
     chapter = 0;
   }
   
-  public void injectDependencies(UILogic ui, Reader reader) {
-    this.ui = ui;
-    this.reader = reader;
-    layout();
-  }
 
   public void load(String m, int c) {
     manga = m;
@@ -69,4 +64,23 @@ public class ChapterLoader {
 
     cacher.start();
   }
+
+  public UILogic diUILogic(UILogic ui) {
+    if (ui != null) {
+      this.ui = ui;
+      if (this.reader != null)
+        layout();
+    }
+    return this.ui;
+  }
+
+  public Reader diReader(Reader reader) {
+    if (reader != null) {
+      this.reader = reader;
+      if (this.ui != null)
+        layout();
+    }
+    return this.reader;
+  }
+
 }

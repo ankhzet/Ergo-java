@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class UIPage {
+  protected UILogic ui;
 
   protected boolean mouseDown = false;
   boolean active = false;
@@ -40,4 +41,15 @@ public class UIPage {
   public void navigateOut() {
     active = false;
   }
+
+  // *** di
+  public UILogic diUILogic(UILogic ui) {
+    if (ui != null) {
+      this.ui = ui;
+      this.hud = ui.getHUD();
+    }
+    return this.ui;
+  }
+  // *** end di
+
 }

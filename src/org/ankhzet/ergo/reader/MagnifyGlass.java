@@ -30,10 +30,6 @@ public class MagnifyGlass {
   
   Reader reader;
 
-  public void injectDependencies(Reader reader) {
-    this.reader = reader;
-  }
-
   public void mouseEvent(MouseEvent e) {
     posX = e.getX();
     posY = e.getY() - Reader.TAB_BAR_HEIGHT;
@@ -135,4 +131,9 @@ public class MagnifyGlass {
 
     layouted = true;
   }
+
+  public Reader diReader(Reader reader) {
+    return (reader != null) ? this.reader = reader : this.reader;
+  }
+
 }
