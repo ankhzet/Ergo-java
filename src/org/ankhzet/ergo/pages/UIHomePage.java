@@ -17,16 +17,8 @@ public class UIHomePage extends UIPage {
 
   CommonControl pgLoad;
   
-  UILogic ui;
   XPathFilePicker picker;
   Reader reader;
-
-  public void injectDependencies(UILogic ui, Reader reader, XPathFilePicker picker) {
-    this.ui = ui;
-    this.picker = picker;
-    this.reader = reader;
-    fetchMangas();
-  }
 
   @Override
     XControls hud = ui.getHUD();
@@ -92,4 +84,25 @@ public class UIHomePage extends UIPage {
   public void resized(int x, int y, int w, int h) {
     picker.move(0, y, w, h - y);
   }
+
+  // Dependencies injections
+  public Reader diReader(Reader reader) {
+    if (reader != null) {
+      this.reader = reader;
+      if (this.picker != null)
+        fetchMangas();
+    }
+    return this.reader;
+  }
+
+  public XPathFilePicker diXPathFilePicker(XPathFilePicker picker) {
+    if (picker != null) {
+      this.picker = picker;
+      if (this.reader != null)
+        fetchMangas();
+    }
+    return this.picker;
+  }
+  // ...end injections
+  
 }
