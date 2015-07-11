@@ -15,12 +15,12 @@ import org.ankhzet.ergo.reader.chapter.ChapterLoader;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class UIPageFactory extends ClassFactory<UIPage> {
-  
+
   public UIPageFactory() {
 
     register(UIHomePage.class);
     register(UIReaderPage.class);
-    
+
     register(Reader.class);
     register(PageRenderOptions.class);
 //    register(ChapterData.class);

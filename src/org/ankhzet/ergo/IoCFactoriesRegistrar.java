@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo;
 
 import org.ankhzet.ergo.classfactory.CommonFactoryRegistrar;

@@ -128,20 +128,12 @@ public class XPathFilePicker extends CommonControl {
     } catch (IOException ex) {
     }
 
-    File[] filesList = path.listFiles(new FilenameFilter() {
-
-      @Override
-      public boolean accept(File dir, String name) {
-        return !name.matches("^\\..*$");
-      }
-    });
+    File[] filesList = path.listFiles((File dir, String name) -> !name.matches("^\\..*$"));
     for (File entry : filesList)
       if (entry.isDirectory())
         dirs.add(entry.getName());
       else
         files.add(entry.getName());
-
-
   }
 
   public void setRoot(String root) {
@@ -157,8 +149,9 @@ public class XPathFilePicker extends CommonControl {
     this.root = "/";
     dirs.clear();
     files.clear();
-    for (String s : list)
+    list.stream().forEach((s) -> {
       dirs.add(s);
+    });
     selected = -1;
     higlited = -1;
     aim = -1;
@@ -166,13 +159,16 @@ public class XPathFilePicker extends CommonControl {
 
   @Override
   public boolean mouseEvent(MouseEvent e, boolean process) {
+    if (!visible)
+      return false;
+
     overed = ptInRect(e.getX(), e.getY());
     if (!process) {
       clicked = false;
       return overed;
     }
 
-    if (!enabled)
+    if (!isEnabled())
       return false;
 
     int mx = e.getX() - x;

@@ -1,12 +1,11 @@
 package org.ankhzet.ergo.pages;
 
 import java.awt.Graphics2D;
-import org.ankhzet.ergo.UILogic;
+import java.io.File;
 import org.ankhzet.ergo.UIPage;
 import org.ankhzet.ergo.reader.Reader;
-import org.ankhzet.ergo.xgui.CommonControl;
-import org.ankhzet.ergo.xgui.XButton;
-import org.ankhzet.ergo.xgui.XControls;
+import org.ankhzet.ergo.reader.chapter.Chapter;
+import org.ankhzet.ergo.xgui.XAction;
 import org.ankhzet.ergo.xgui.XPathFilePicker;
 
 /**
@@ -15,69 +14,51 @@ import org.ankhzet.ergo.xgui.XPathFilePicker;
  */
 public class UIHomePage extends UIPage {
 
-  CommonControl pgLoad;
-  
-  UILogic ui;
+  static final String kLoadChapterAction = "load";
+  static final String kLoadChapterLabel = "Load chapter";
+
   XPathFilePicker picker;
   Reader reader;
 
-  public void injectDependencies(UILogic ui, Reader reader, XPathFilePicker picker) {
-    this.ui = ui;
-    this.picker = picker;
-    this.reader = reader;
-    fetchMangas();
-  }
-
   @Override
-    XControls hud = ui.getHUD();
-    hud.clear();
-    pgLoad = hud.putControl(new XButton("load", "Загрузить главу", "xbutton"), XControls.AREA_LEFT);
   public void navigateIn(Object... params) {
     super.navigateIn(params);
+    hud.putActionAtLeft(kLoadChapterLabel, registerAction(kLoadChapterAction, action -> {
+      loadChapter();
+    }).enabledAs(action -> {
+      return !(!picker.hasSelected() || reader.isBusy());
+    }));
     hud.add(picker);
   }
 
   @Override
-  public boolean actionPerformed(String a) {
+  public boolean actionPerformed(XAction a) {
     boolean handled = true;
-    if (a.equals("load")) {
-      String path = picker.getSelectedPath();
-      String[] parts = path.replace('\\', '/').split("/");
-      int l = parts.length - 1;
-      if (l < 0)
-        return true;
-
-      if (parts[l].isEmpty())
-        l--;
-
-      if (parts[l].matches(".*\\.(png|gif|bmp|jpe?g)"))
-        l--;
-
-      int chapter = 1;
-      try {
-        chapter = Integer.parseInt(parts[l]);
-        l--;
-      } catch (Exception e) {
-      }
-
-
-      UILogic.log("loading [%s]:%d", parts[l], chapter);
-      loadChapter(parts[l], chapter);
-
-    } else
+    if (a.isA(kLoadChapterAction))
+      loadChapter();
+    else
       handled = false;
 
     return handled;
   }
 
-  void loadChapter(String manga, int chapter) {
-    UIReaderPage page = (UIReaderPage) ui.navigateTo(UIReaderPage.class);
-    page.loadChapter(manga, chapter);
+  public boolean loadChapter() {
+    String path = picker.getSelectedPath();
+    File fsPath = new File(path);
+
+    if (!fsPath.isDirectory())
+      fsPath = fsPath.getParentFile();
+    if ((fsPath == null) || !fsPath.isDirectory())
+      return false;
+
+    Chapter chapter = new Chapter(fsPath.getPath());
+    ui.navigateTo(UIReaderPage.class, chapter);
+    return true;
   }
 
   @Override
   public void process() {
-    pgLoad.enabled = !(!picker.hasSelected() || reader.isBusy());
+
   }
 
   @Override
@@ -92,4 +73,25 @@ public class UIHomePage extends UIPage {
   public void resized(int x, int y, int w, int h) {
     picker.move(0, y, w, h - y);
   }
+
+  // Dependencies injections
+  public Reader diReader(Reader reader) {
+    if (reader != null) {
+      this.reader = reader;
+      if (this.picker != null)
+        fetchMangas();
+    }
+    return this.reader;
+  }
+
+  public XPathFilePicker diXPathFilePicker(XPathFilePicker picker) {
+    if (picker != null) {
+      this.picker = picker;
+      if (this.reader != null)
+        fetchMangas();
+    }
+    return this.picker;
+  }
+  // ...end injections
+
 }

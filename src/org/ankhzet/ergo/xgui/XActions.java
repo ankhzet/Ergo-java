@@ -1,6 +1,7 @@
 package org.ankhzet.ergo.xgui;
 
 import java.util.HashMap;
+import org.ankhzet.ergo.xgui.XAction.Action;
 
 /**
  *
@@ -8,29 +9,23 @@ import java.util.HashMap;
  */
 public class XActions {
 
-  public interface Action {
-    public void perform(String name);
-  }
+  HashMap<String, XAction> actions = new HashMap<>();
 
-  HashMap<String, Action> actions = new HashMap<>();
-
-  public void registerAction(String actionName, Action action) {
-    actions.put(actionName, action);
+  public XAction registerAction(String actionName, Action action) {
+    XAction xAction = new XAction(actionName, action);
+    actions.put(actionName, xAction);
+    return xAction;
   }
 
   public void registerActions(String[] actionNames, Action action) {
-    for (String actionName : actionNames) {
-      actions.put(actionName, action);    
-    }
+    for (String actionName : actionNames)
+      actions.put(actionName, new XAction(actionName, action));
   }
 
-  public Action performAction(String a) {
-    Action action = actions.get(a);
-    
-    if (action != null)
-      action.perform(a);
-    
-    return action;
+  public boolean performAction(XAction a) {
+    XAction action = actions.get(a.name);
+
+    return (action != null) && action.perform();
   }
 
 }

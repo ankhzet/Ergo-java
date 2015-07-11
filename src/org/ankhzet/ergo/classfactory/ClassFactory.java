@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.classfactory;
 
 import java.lang.reflect.InvocationTargetException;
@@ -21,6 +20,8 @@ abstract class AbstractClassFactory<ProducesType> implements AbstractFactory<Cla
  * @param <ProducesType> Class, produced by factory
  */
 public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesType> {
+
+  static final String injectorPrefix = "di";
 
   HashMap<Class, ProducesType> container = new HashMap<>();
   HashMap<Class, Builder<ProducesType>> builders = new HashMap<>();
@@ -56,7 +57,7 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
         instance = (ProducesType) builder.build(identifier);
       } catch (Exception ex) {
         boolean wrap = (!(ex instanceof FactoryException));
-        throw wrap ? new FailedFactoryProductException(identifier, ex) : (FactoryException)ex;
+        throw wrap ? new FailedFactoryProductException(identifier, ex) : (FactoryException) ex;
       }
 
       return instance;
@@ -79,32 +80,40 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
 
   void injectDependencies(Object instance) throws FailedFactoryProductException {
     Class c = instance.getClass();
-    
-    Method injectAt = getInjectPoint(c);
-    if (injectAt != null) {
-      ArrayList<Object> params = new ArrayList<>();
-      for (Class pClass : injectAt.getParameterTypes()) {
-        Object parameter = buildParam(pClass);
-        if (parameter == null)
-          System.err.printf("Problems with instantiation %s in %s", pClass.getName(), c.getName());
 
-        params.add(parameter);
-      }
-      
-      try {
-        injectAt.invoke(instance, params.toArray());
-      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-        throw new FailedFactoryProductException(c, ex);
-      }
-    }
+    HashMap<Class, Method> injectors = getInjectPoints(c);
+    if (injectors.size() > 0)
+      injectors.forEach((classToInject, injector) -> {
+        Object parameter = buildParam(classToInject);
+        if (parameter == null)
+          System.err.printf("Problems with instantiation %s in %s", classToInject.getName(), c.getName());
+
+        try {
+          injector.invoke(instance, parameter);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+          throw new RuntimeException(new FailedFactoryProductException(c, ex));
+        }
+      });
   }
 
-  Method getInjectPoint(Class c) {
-    for (Method m : c.getMethods())
-      if (m.getName().equals("injectDependencies"))
-        return m;
+  HashMap<Class, Method> getInjectPoints(Class c) {
+    Method[] allMethods = c.getMethods();
+    HashMap<Class, Method> injectors = new HashMap<>(allMethods.length);
+    for (Method m : allMethods) {
+      String methodName = m.getName();
+      if (!methodName.startsWith(injectorPrefix))
+        continue;
 
-    return null;
+      Class returnType = m.getReturnType();
+      if (returnType.isPrimitive() || injectors.get(returnType) != null)
+        continue;
+
+      String returns = returnType.getSimpleName();
+      if (methodName.equals(injectorPrefix + returns))
+        injectors.put(returnType, m);
+    }
+
+    return injectors;
   }
 
   protected Object buildParam(Class c) {

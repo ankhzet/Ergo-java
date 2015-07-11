@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.reader.chapter;
 
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import org.ankhzet.ergo.reader.chapter.page.PageData;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class ChapterCacher extends HashMap<String, PageData> {
+
   public final ReentrantLock lock = new ReentrantLock();
 
   public boolean isBusy() {
@@ -24,20 +24,20 @@ public class ChapterCacher extends HashMap<String, PageData> {
   public synchronized void calcLayout(int w, int h, PageRenderOptions ro, LoaderProgressListener listener) {
     if (isBusy())
       return;
-    
+
     lock.lock();
     try {
       if (!progressLayout(listener, 0))
         return;
-      
+
       int pos = 0;
       for (PageData page : this.values()) {
         page.calcLayout(w, h, ro);
-        
+
         if (!progressLayout(listener, ++pos))
           return;
       }
-      
+
       progressDone(listener);
     } finally {
       lock.unlock();
@@ -47,25 +47,25 @@ public class ChapterCacher extends HashMap<String, PageData> {
   public synchronized void prepareCache(PageRenderOptions options, LoaderProgressListener listener) {
     if (isBusy())
       return;
-    
+
     lock.lock();
     try {
       if (!progressCache(listener, 0))
         return;
-      
+
       int pos = 0;
       List<String> l = new ArrayList<>(this.keySet());
       Collections.sort(l);
       for (String fileKey : l) {
         PageData page = get(fileKey);
         page.makeCache(options);
-        
+
         if (!progressCache(listener, ++pos))
           return;
       }
-      
+
       progressDone(listener);
-      
+
       System.gc();
     } finally {
       lock.unlock();
@@ -88,6 +88,5 @@ public class ChapterCacher extends HashMap<String, PageData> {
     if (listener != null)
       listener.progressDone();
   }
-
 
 }

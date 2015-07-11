@@ -15,6 +15,9 @@ class CtlMap extends HashMap<Integer, CommonControl> {
 
 public class XControls extends ArrayList<CommonControl> {
 
+  public static final String kBackAction = "back";
+  static final String kBackLabel = "Back";
+
   CommonControl focused = null;
   CtlMap left = new CtlMap();
   CtlMap right = new CtlMap();
@@ -28,8 +31,8 @@ public class XControls extends ArrayList<CommonControl> {
     g.setColor(Skin.get().UI_PANEL);
     g.fillRect(0, 0, cw, ch - 1);
 
-    this.stream().filter((c) ->
-      (c.isVisible())
+    this.stream().filter((c)
+    -> (c.isVisible())
     ).forEach((c) -> {
       c.Draw(g);
     });
@@ -46,15 +49,11 @@ public class XControls extends ArrayList<CommonControl> {
 
   public boolean mouseEvent(MouseEvent e) {
     focused = null;
-    this.stream().filter((c) -> 
-      (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
+    this.stream().filter(c
+    -> (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
     ).forEach((c) -> {
       focused = c;
     });
-
-    /*    for (CommonControl c : this)
-    if (c != focused)
-    c.mouseEvent(e, false);*/
 
     Process();
     if (focused == null)
@@ -79,11 +78,50 @@ public class XControls extends ArrayList<CommonControl> {
     return c;
   }
 
+  public CommonControl putAtLeft(CommonControl c) {
+    return putControl(c, AREA_LEFT);
+  }
+
+  public CommonControl putAtRight(CommonControl c) {
+    return putControl(c, AREA_RIGHT);
+  }
+
+  public XAction putActionAtLeft(String caption, XAction action) {
+    return putAction(caption, XControls.AREA_LEFT, action);
+  }
+
+  public XAction putActionAtRight(String caption, XAction action) {
+    return putAction(caption, XControls.AREA_RIGHT, action);
+  }
+
+  public XAction putAction(String caption, int area, XAction action) {
+    XActionButton button = (XActionButton) putControl(new XActionButton(action, caption), area);
+    return button.action;
+  }
+
+  public XAction putBackAction(int area, XAction action) {
+    if (action == null)
+      action = new XAction(kBackAction, null);
+    return putAction(kBackLabel, area, action);
+  }
+
+  public XAction putSpacer(int area) {
+    XAction xAction = new XAction("", null);
+    putControl(new XButton(xAction, null, "xspacer"), area);
+    return xAction;
+  }
+
+  public XAction putMover(int area) {
+    XAction xAction = new XAction("", null);
+    putControl(new XButton(xAction, null, "xmover"), area);
+    return xAction;
+  }
+
   public void pack(int cw, int ch) {
     ArrayList<Integer> l;
     int dx;
 
-    l = new ArrayList<Integer>(left.keySet());
+    l = new ArrayList<>(left.keySet());
     Collections.sort(l);
     dx = 3;
     for (Integer idx : l) {
@@ -93,7 +131,7 @@ public class XControls extends ArrayList<CommonControl> {
       dx += control.w + 5;
     }
 
-    l = new ArrayList<Integer>(right.keySet());
+    l = new ArrayList<>(right.keySet());
     Collections.sort(l);
     dx = cw - 3;
     for (Integer idx : l) {
@@ -115,6 +153,7 @@ public class XControls extends ArrayList<CommonControl> {
   public int onLeft() {
     return left.size();
   }
+
   public int onRight() {
     return right.size();
   }

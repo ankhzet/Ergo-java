@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.utils;
 
 /**
@@ -8,10 +7,10 @@ package org.ankhzet.ergo.utils;
 public class Utils {
 
   public static int constraint(int value, int min, int max) {
-    if (value < min)
-      value = min;
     if (value > max)
       value = max;
+    if (value < min)
+      value = min;
 
     return value;
   }

@@ -18,5 +18,5 @@ public class FailedFactoryProductException extends FactoryException {
   protected String messageFormat() {
     return "Doesn't know, how to produce %s";
   }
-  
+
 }

@@ -8,12 +8,13 @@ import java.util.Objects;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class FactoryRegistrar {
+
   static final HashMap<Class, Boolean> counters = new HashMap<>();
 
   public FactoryRegistrar(Object identifier) {
 
     Class factoryClass = getFactoryClass(identifier);
-    synchronized(counters) {
+    synchronized (counters) {
       Boolean registered = counters.get(factoryClass);
       if (!Objects.equals(registered, Boolean.TRUE)) {
         counters.put(factoryClass, Boolean.TRUE);
@@ -36,7 +37,7 @@ public class FactoryRegistrar {
 
   static ClassFactory getInstance(Object identifier) throws Exception {
     if (identifier instanceof Class)
-      return (ClassFactory) ((Class)identifier).newInstance();
+      return (ClassFactory) ((Class) identifier).newInstance();
     else
       return (ClassFactory) identifier;
 

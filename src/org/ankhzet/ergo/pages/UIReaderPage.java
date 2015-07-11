@@ -1,18 +1,17 @@
 package org.ankhzet.ergo.pages;
 
-import org.ankhzet.ergo.reader.chapter.ChapterLoader;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import org.ankhzet.ergo.LoaderProgressListener;
-import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.UIPage;
+import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.reader.PageRenderOptions;
 import org.ankhzet.ergo.reader.Reader;
 import org.ankhzet.ergo.reader.SwipeHandler;
+import org.ankhzet.ergo.reader.chapter.Chapter;
 import org.ankhzet.ergo.xgui.CommonControl;
-import org.ankhzet.ergo.xgui.XActions;
-import org.ankhzet.ergo.xgui.XButton;
+import org.ankhzet.ergo.xgui.XAction;
 import org.ankhzet.ergo.xgui.XControls;
 
 /**
@@ -23,76 +22,69 @@ public class UIReaderPage extends UIPage {
 
   static String kPrev = "prevpage";
   static String kNext = "nextpage";
-  static String kBack = "back";
   static String kMagnify = "magnify";
   static String kSwipedir = "swipedir";
   static String kRotate = "rotate";
   static String kOriginal = "original";
 
+  class Dependency {
+
+    Reader reader;
+    PageRenderOptions options;
+  }
+
+  Dependency di;
+
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
-  Reader reader = null;
-  ChapterLoader loader;
+  Reader reader;
   PageRenderOptions options;
-  UILogic ui;
-  boolean swipeDirVertical = true;
+  boolean swipeDirVertical = false;
   Point pressPos = new Point();
 
-  XActions actions = new XActions();
-
-  public void injectDependencies(UILogic ui, Reader reader, ChapterLoader loader, PageRenderOptions options) {
-    this.ui = ui;
-    this.reader = reader;
-    this.loader = loader;
-    this.options = options;
-  }
-
   @Override
-    XControls hud = ui.getHUD();
-    hud.clear();
-    pgPrev = hud.putControl(new XButton(kPrev, "Предыдущая страница", "xbutton"), XControls.AREA_LEFT);
-    pgNext = hud.putControl(new XButton(kNext, "Следующая страница", "xbutton"), XControls.AREA_RIGHT);
-
-    hud.putControl(new XButton(kBack, "Назад", "xbutton"), XControls.AREA_LEFT);
-
-    pgMagnify = hud.putControl(new XButton(kMagnify, "Увелечительное стекло", "xbutton"), XControls.AREA_RIGHT);
-    hud.putControl(new XButton(kSwipedir, "Направление листания", "xbutton"), XControls.AREA_RIGHT);
-    hud.putControl(new XButton(kRotate, "Режим подгонки страниц", "xbutton"), XControls.AREA_RIGHT);
-    pgOrigSize = hud.putControl(new XButton(kOriginal, "Оригинальный размер", "xbutton"), XControls.AREA_RIGHT);
-
-    actions.registerActions(new String[]{kPrev, kPrev}, (String name) -> swipePage(name.equals(kPrev) ? -1 : 1));
-    actions.registerAction(kSwipedir, (String name) -> {
-      swipeDirVertical = !swipeDirVertical;
-    });
-    actions.registerAction(kRotate, (String name) -> {
-      options.toggleRotationToFit();
-      if (loader != null)
-        reader.flushCache(true);
-    });
-
-    actions.registerAction(kOriginal, (String name) -> {
-      options.toggleOriginalSize();
-      if (loader != null)
-        reader.flushCache(true);
-    });
   public void navigateIn(Object... params) {
     super.navigateIn(params);
-
-    actions.registerAction(kMagnify, (String name) -> {
-      reader.showMagnifier(!reader.getMagnifying());
-    });
-
+    loadHUD();
+    if (params.length > 0 && params[0] != null) {
+      Chapter chapter = (Chapter) params[0];
+      UILogic.log("loading [%s]:%.1f", chapter.getMangaFolder(), chapter.id());
+      reader.loadChapter(chapter);
+    }
   }
 
-  @Override
-  public boolean actionPerformed(String a) {
-    boolean handled = actions.performAction(a) != null;
-//    if (!handled) {
-//      switch (a) {
-//      default:
-//      }
-//    }
+  void loadHUD() {
+    XAction.Action swipeAction = action -> swipePage(action.isA(kPrev) ? -1 : 1);
+    XAction.XActionStateListener canSwipeSelector = action -> canSwipe();
+    hud.putActionAtLeft("Предыдущая страница", registerAction(kPrev, swipeAction).enabledAs(canSwipeSelector));
+    hud.putActionAtLeft("Следующая страница", registerAction(kNext, swipeAction).enabledAs(canSwipeSelector));
 
-    return handled;
+    hud.putBackAction(XControls.AREA_LEFT, null);
+
+    hud.putActionAtRight("Увелечительное стекло", registerAction(kMagnify, action -> {
+      reader.showMagnifier(!reader.magnifierShown());
+    }).togglable((XAction action) -> {
+      return reader.magnifierShown();
+    }));
+
+    hud.putActionAtRight("Листать вертикально", registerAction(kSwipedir, action -> {
+      swipeDirVertical = !swipeDirVertical;
+    }).togglable((XAction action) -> {
+      return swipeDirVertical;
+    }));
+
+    hud.putActionAtRight("Подгонка поворота страниц", registerAction(kRotate, action -> {
+      options.toggleRotationToFit();
+      reader.flushCache(true);
+    }).togglable((XAction action) -> {
+      return options.rotateToFit();
+    }));
+
+    hud.putActionAtRight("Оригинальный размер", registerAction(kOriginal, action -> {
+      options.toggleOriginalSize();
+      reader.flushCache(true);
+    }).togglable((XAction action) -> {
+      return options.showOriginalSize();
+    }));
   }
 
   boolean swipePage(int dir) {
@@ -110,15 +102,17 @@ public class UIReaderPage extends UIPage {
     return true;
   }
 
+  boolean swiping() {
+    return !SwipeHandler.done();
+  }
+
+  boolean canSwipe() {
+    return !(swiping() || reader.totalPages() == 0 || reader.isLoading());
+  }
+
   @Override
   public void process() {
-    boolean swiping = !SwipeHandler.done();
-    boolean canSwipe = !(swiping || reader.totalPages() == 0 || reader.isLoading());
-    pgNext.enabled = canSwipe;
-    pgPrev.enabled = canSwipe;
-    pgOrigSize.toggled = options.showOriginalSize();
-    pgMagnify.toggled = reader.getMagnifying();
-    ui.intensiveRepaint(swiping);
+    ui.intensiveRepaint(swiping());
     reader.process();
   }
 
@@ -132,7 +126,7 @@ public class UIReaderPage extends UIPage {
     int mx = e.getX();
     int my = e.getY();
 
-    if (reader.getMagnifying()) {
+    if (reader.magnifierShown()) {
       reader.mouseEvent(e);
       return true;
     }
@@ -162,10 +156,6 @@ public class UIReaderPage extends UIPage {
     return mouseDown;
   }
 
-  public void loadChapter(String manga, int chapter) {
-    loader.load(manga, chapter);
-  }
-
   @Override
   public void draw(Graphics2D g, int w, int h) {
     reader.draw(g, 0, 0, w, h);
@@ -182,5 +172,19 @@ public class UIReaderPage extends UIPage {
     }
     return true;
   }
-  
+
+  // Dependencies injections
+  public Reader diReader(Reader reader) {
+    if (reader != null)
+      this.reader = reader;
+    return this.reader;
+  }
+
+  public PageRenderOptions diPageRenderOptions(PageRenderOptions options) {
+    if (options != null)
+      this.options = options;
+    return this.options;
+  }
+  // ...end injections
+
 }

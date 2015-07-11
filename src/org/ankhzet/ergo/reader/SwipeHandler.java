@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.reader;
 
 import org.ankhzet.ergo.classfactory.IoC;
@@ -20,14 +19,17 @@ public class SwipeHandler implements Runnable {
   public static final double MIN_SPEED = 0.1;
   public static final double MAX_SPEED = 0.8;
 
+  static SwipeHandler swiper;
   Reader reader;
 
-  public void injectDependencies(Reader reader) {
-    this.reader = reader;
+  public Reader diReader(Reader reader) {
+    return (reader != null) ? this.reader = reader : this.reader;
   }
 
   public static SwipeHandler swipe() {
-    return IoC.get(SwipeHandler.class);
+    if (swiper == null)
+      swiper = IoC.get(SwipeHandler.class);
+    return swiper;
   }
 
   public static boolean makeSwipe(boolean vertical, int direction, int cw, int ch) {
@@ -104,8 +106,8 @@ public class SwipeHandler implements Runnable {
   public static double swipeSpeed() {
     SwipeHandler swipe = swipe();
     double delta = vertical() ? swipe.ch : swipe.cw;
-    delta = Math.abs((double)swipe.direction) / delta;
-    
+    delta = Math.abs((double) swipe.direction) / delta;
+
     return Math.max(Math.min(delta * 2.0, MAX_SPEED), MIN_SPEED);
   }
 }
