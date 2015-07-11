@@ -24,7 +24,7 @@ public class XActions {
 
   public boolean performAction(XAction a) {
     XAction action = actions.get(a.name);
-    
+
     return (action != null) && action.perform();
   }
 

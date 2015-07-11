@@ -54,7 +54,7 @@ public class XButton extends CommonControl {
   public void DoDraw(Graphics2D g) {
     boolean isEnabled = isEnabled();
     boolean isToggled = action.isToggled();
-    
+
     Image i;
     if (isEnabled)
       i = ims[states[overed ? 1 : 0][clicked || isToggled ? 1 : 0]];

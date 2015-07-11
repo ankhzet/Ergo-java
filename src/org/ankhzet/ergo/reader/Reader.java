@@ -28,7 +28,7 @@ public class Reader extends PageNavigator {
   protected MagnifyGlass magnifier;
   protected ChapterCacher pages = new ChapterCacher();
   protected ChapterLoader loader;
-  
+
   public Strings pageFiles = new Strings();
   public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
   public static final int TAB_BAR_HEIGHT = 8;
@@ -279,12 +279,12 @@ public class Reader extends PageNavigator {
     if (magnifierShown())
       magnifier.mouseEvent(e);
   }
-  
+
   // *** di start
   public PageRenderOptions diPageRenderOptions(PageRenderOptions options) {
     return (options != null) ? this.options = options : this.options;
   }
-  
+
   public MagnifyGlass diMagnifyGlass(MagnifyGlass magnifier) {
     return (magnifier != null) ? this.magnifier = magnifier : this.magnifier;
   }

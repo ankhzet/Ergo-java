@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.reader;
 
 /**
@@ -6,6 +5,7 @@ package org.ankhzet.ergo.reader;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class PageRenderOptions {
+
   public boolean manhwaMode = false;
   public boolean stretchToFit = true;
   public boolean originalSize = false;
@@ -16,7 +16,7 @@ public class PageRenderOptions {
   public PageRenderOptions() {
 
   }
-  
+
   public PageRenderOptions(boolean manhwaMode, boolean stretchToFit, boolean originalSize) {
     this.manhwaMode = manhwaMode;
     this.stretchToFit = stretchToFit;
@@ -42,4 +42,3 @@ public class PageRenderOptions {
   }
 
 }
-

@@ -5,6 +5,7 @@ package org.ankhzet.ergo.classfactory.exceptions;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class FactoryException extends Exception {
+
   Object specifier;
 
   public FactoryException(Object specifier) {
@@ -15,16 +16,16 @@ public class FactoryException extends Exception {
     super(cause);
     this.specifier = specifier;
   }
-  
+
   @Override
   public String getMessage() {
     return messageFromSpecifier(specifier);
   }
-  
+
   protected String messageFormat() {
     return "%s";
   }
-  
+
   protected String messageFromSpecifier(Object specifier) {
     return String.format(messageFormat(), specifierName(specifier));
   }
@@ -38,5 +39,5 @@ public class FactoryException extends Exception {
 
     return identifierString;
   }
-  
+
 }

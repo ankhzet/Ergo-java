@@ -1,4 +1,3 @@
- 
 package org.ankhzet.ergo;
 
 import java.awt.Color;
@@ -22,7 +21,8 @@ public class ProgressRenderer {
       return;
 
     int d = (int) (0.1 * (cw < ch ? cw : ch));
-    if (d < 32) d = 32;
+    if (d < 32)
+      d = 32;
 
     int x = (cw - d) / 2;
     int y = (ch - d) / 2;
@@ -39,7 +39,6 @@ public class ProgressRenderer {
     g.fillArc(x + 2, y + 2, d - 4, d - 4, 90, 360 - (int) (360 * progress / (double) max));
     g.setColor(Color.DARK_GRAY);
     g.fillOval(x + 12, y + 12, d - 24, d - 24);
-
 
     Font f = g.getFont();
     FontRenderContext frc = ((Graphics2D) g).getFontRenderContext();

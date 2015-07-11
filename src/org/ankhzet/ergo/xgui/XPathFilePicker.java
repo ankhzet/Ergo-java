@@ -161,7 +161,7 @@ public class XPathFilePicker extends CommonControl {
   public boolean mouseEvent(MouseEvent e, boolean process) {
     if (!visible)
       return false;
-    
+
     overed = ptInRect(e.getX(), e.getY());
     if (!process) {
       clicked = false;

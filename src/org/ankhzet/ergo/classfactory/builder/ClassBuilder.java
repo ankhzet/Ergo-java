@@ -23,7 +23,7 @@ public class ClassBuilder<Type> implements Builder<Type> {
    */
   @Override
   public Type build(Class<? extends Type> c) throws Exception {
-   Constructor<?> constructor;
+    Constructor<?> constructor;
     try {
       constructor = c.getConstructor();
     } catch (NoSuchMethodException | SecurityException ex) {

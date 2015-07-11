@@ -12,6 +12,7 @@ import org.ankhzet.ergo.xgui.XControls;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class UIPage {
+
   protected UILogic ui;
   protected XControls hud;
 

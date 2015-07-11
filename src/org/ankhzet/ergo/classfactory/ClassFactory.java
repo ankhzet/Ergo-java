@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.classfactory;
 
 import java.lang.reflect.InvocationTargetException;

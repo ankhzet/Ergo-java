@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.classfactory.builder;
 
 /**
@@ -8,6 +7,7 @@ package org.ankhzet.ergo.classfactory.builder;
  * @param <Dependency> Class, builder is dependent of
  */
 public class DependantClassBuilder<Type, Dependency> extends ClassBuilder<Type> {
+
   Dependency dependency;
 
   public DependantClassBuilder(Dependency dependency) {

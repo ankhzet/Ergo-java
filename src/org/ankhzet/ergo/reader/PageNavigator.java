@@ -15,7 +15,7 @@ public abstract class PageNavigator {
   public int currentPage() {
     return currentPage;
   }
-  
+
   public int lastPage() {
     return totalPages() - 1;
   }
@@ -40,9 +40,9 @@ public abstract class PageNavigator {
     int delta = backward ? -1 : 1;
     return setPage(currentPage + delta);
   }
-  
+
   public int setPage(int page) {
-    return currentPage = Utils.constraint(page, 0, lastPage());    
+    return currentPage = Utils.constraint(page, 0, lastPage());
   }
 
 }

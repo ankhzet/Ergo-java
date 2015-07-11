@@ -34,9 +34,9 @@ public class UIHomePage extends UIPage {
   @Override
   public boolean actionPerformed(XAction a) {
     boolean handled = true;
-    if (a.isA(kLoadChapterAction)) {
+    if (a.isA(kLoadChapterAction))
       loadChapter();
-    } else
+    else
       handled = false;
 
     return handled;
