@@ -28,7 +28,7 @@ public class Reader extends PageNavigator {
   protected MagnifyGlass magnifier;
   protected ChapterCacher pages = new ChapterCacher();
   protected ChapterLoader loader;
-
+  
   public Strings pageFiles = new Strings();
   public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
   public static final int TAB_BAR_HEIGHT = 8;
@@ -37,6 +37,7 @@ public class Reader extends PageNavigator {
 
   public Reader() {
     mangaRoots.add("F:/myprogs/engines/ErgoProxy/client v. 1.0/bin/manga");
+    mangaRoots.add("H:/manga/manga");
   }
 
   public Strings getMangaRoots() {
@@ -97,9 +98,9 @@ public class Reader extends PageNavigator {
       return;
 
     pages.calcLayout(cw, ch - TAB_BAR_HEIGHT, options, listener);
+    pages.prepareCache(options, listener);
     if (magnifier.activated)
       magnifier.layouted();
-    pages.prepareCache(options, listener);
     scroll(0, 0);
   }
 
