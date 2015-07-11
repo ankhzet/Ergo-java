@@ -1,14 +1,11 @@
 package org.ankhzet.ergo.pages;
 
 import java.awt.Graphics2D;
-import org.ankhzet.ergo.UILogic;
 import java.io.File;
 import org.ankhzet.ergo.UIPage;
 import org.ankhzet.ergo.reader.Reader;
-import org.ankhzet.ergo.xgui.CommonControl;
-import org.ankhzet.ergo.xgui.XButton;
-import org.ankhzet.ergo.xgui.XControls;
 import org.ankhzet.ergo.reader.chapter.Chapter;
+import org.ankhzet.ergo.xgui.XAction;
 import org.ankhzet.ergo.xgui.XPathFilePicker;
 
 /**
@@ -17,24 +14,27 @@ import org.ankhzet.ergo.xgui.XPathFilePicker;
  */
 public class UIHomePage extends UIPage {
 
-  CommonControl pgLoad;
-  
+  static final String kLoadChapterAction = "load";
+  static final String kLoadChapterLabel = "Load chapter";
+
   XPathFilePicker picker;
   Reader reader;
 
   @Override
   public void navigateIn(Object... params) {
     super.navigateIn(params);
-    XControls hud = ui.getHUD();
-    hud.clear();
-    pgLoad = hud.putControl(new XButton("load", "Загрузить главу", "xbutton"), XControls.AREA_LEFT);
+    hud.putActionAtLeft(kLoadChapterLabel, registerAction(kLoadChapterAction, action -> {
+      loadChapter();
+    }).enabledAs(action -> {
+      return !(!picker.hasSelected() || reader.isBusy());
+    }));
     hud.add(picker);
   }
 
   @Override
-  public boolean actionPerformed(String a) {
+  public boolean actionPerformed(XAction a) {
     boolean handled = true;
-    if (a.equals("load")) {
+    if (a.isA(kLoadChapterAction)) {
       loadChapter();
     } else
       handled = false;
@@ -58,7 +58,7 @@ public class UIHomePage extends UIPage {
 
   @Override
   public void process() {
-    pgLoad.enabled = !(!picker.hasSelected() || reader.isBusy());
+
   }
 
   @Override
@@ -93,5 +93,5 @@ public class UIHomePage extends UIPage {
     return this.picker;
   }
   // ...end injections
-  
+
 }
