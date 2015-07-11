@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.ui.xgui.XActionListener;
@@ -33,8 +34,9 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   static final String kExitAction = "exit";
   static final String kExitLabel = "Exit";
 
+  @DependencyInjection()
   UIContainerListener container;
-  
+
   public static Toolkit toolkit;
   private Thread thread = null;
   private Image backbuffer = null;
@@ -60,10 +62,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   public UILogic() {
     toolkit = Toolkit.getDefaultToolkit();
-  }
-  
-  public UIContainerListener diUIContainerListener(UIContainerListener container) {
-    return (container != null) ? this.container = container : this.container;
   }
 
   public void paint(Graphics g) {
@@ -370,4 +368,5 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     tooltipX = x;
     tooltipY = y;
   }
+
 }

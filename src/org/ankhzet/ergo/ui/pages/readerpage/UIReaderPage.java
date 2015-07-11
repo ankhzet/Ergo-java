@@ -6,10 +6,12 @@ import java.awt.event.MouseEvent;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.SwipeHandler;
 import org.ankhzet.ergo.chapter.Chapter;
+import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.CommonControl;
 import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XControls;
@@ -27,20 +29,15 @@ public class UIReaderPage extends UIPage {
   static String kRotate = "rotate";
   static String kOriginal = "original";
 
-  class Dependency {
-
-    Reader reader;
-    PageRenderOptions options;
-  }
-
-  Dependency di;
+  @DependencyInjection
+  Reader reader;
+  @DependencyInjection
+  PageRenderOptions options;
 
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
-  Reader reader;
-  PageRenderOptions options;
   boolean swipeDirVertical = false;
   Point pressPos = new Point();
-
+  
   @Override
   public void navigateIn(Object... params) {
     super.navigateIn(params);
@@ -172,19 +169,5 @@ public class UIReaderPage extends UIPage {
     }
     return true;
   }
-
-  // Dependencies injections
-  public Reader diReader(Reader reader) {
-    if (reader != null)
-      this.reader = reader;
-    return this.reader;
-  }
-
-  public PageRenderOptions diPageRenderOptions(PageRenderOptions options) {
-    if (options != null)
-      this.options = options;
-    return this.options;
-  }
-  // ...end injections
 
 }

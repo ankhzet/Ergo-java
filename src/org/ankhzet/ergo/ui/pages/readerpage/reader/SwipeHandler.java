@@ -1,6 +1,7 @@
 package org.ankhzet.ergo.ui.pages.readerpage.reader;
 
 import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 
 /**
  *
@@ -20,11 +21,9 @@ public class SwipeHandler implements Runnable {
   public static final double MAX_SPEED = 0.8;
 
   static SwipeHandler swiper;
+  
+  @DependencyInjection
   Reader reader;
-
-  public Reader diReader(Reader reader) {
-    return (reader != null) ? this.reader = reader : this.reader;
-  }
 
   public static SwipeHandler swipe() {
     if (swiper == null)
