@@ -128,7 +128,7 @@ public class UIReaderPage extends UIPage {
     int mx = e.getX();
     int my = e.getY();
 
-    if (reader.getMagnifying()) {
+    if (reader.magnifierShown()) {
       reader.mouseEvent(e);
       return true;
     }
