@@ -68,7 +68,8 @@ public class Parser {
         break;
       case '\\':
         position++;
-        if ((chr = c()) != '\\') {
+        chr = c();
+        if (chr != '\\') {
           Token += '\\';
           break;
         }

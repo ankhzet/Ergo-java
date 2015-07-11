@@ -11,11 +11,11 @@ import javax.swing.JFrame;
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-class UIContainerListener extends JFrame {
+public class UIContainerListener extends JFrame {
 
   UILogic ui = null;
 
-  UIContainerListener(UILogic ui) {
+  public UIContainerListener(UILogic ui) {
     super("Ergo reader");
     this.ui = ui;
     UILogic.container = this;

@@ -18,7 +18,7 @@ import org.ankhzet.ergo.utils.Utils;
 public class MagnifyGlass {
 
   static final int SAMPLED_SIZE = 32;
-  boolean activated = true, active = false;
+  boolean activated = false, active = false;
   int posX = 0, posY = 0, width = 32, height = 32;
   int imgX = 0, imgY = 0;
   int projX = 0, projY = 0;

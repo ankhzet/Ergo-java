@@ -31,10 +31,10 @@ public class ChapterLoader {
     chapter = c;
     loader = new Thread(() -> {
       int wait = 0;
-      while (reader.isBusy() && wait < 1000)
+      while (reader.isBusy() && wait < 100)
         try {
           Thread.sleep(10);
-          wait += 10;
+          wait += 1;
         } catch (InterruptedException ex) {
         }
       
