@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import org.ankhzet.ergo.LoaderProgressListener;
-import org.ankhzet.ergo.UILogic;
 import org.ankhzet.ergo.UIPage;
 import org.ankhzet.ergo.reader.PageRenderOptions;
 import org.ankhzet.ergo.reader.Reader;
@@ -30,21 +29,14 @@ public class UIReaderPage extends UIPage {
   static String kOriginal = "original";
 
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
-  Reader reader = null;
   ChapterLoader loader;
+  Reader reader;
   PageRenderOptions options;
-  UILogic ui;
   boolean swipeDirVertical = true;
   Point pressPos = new Point();
 
   XActions actions = new XActions();
 
-  public void injectDependencies(UILogic ui, Reader reader, ChapterLoader loader, PageRenderOptions options) {
-    this.ui = ui;
-    this.reader = reader;
-    this.loader = loader;
-    this.options = options;
-  }
 
   @Override
     XControls hud = ui.getHUD();
@@ -183,4 +175,17 @@ public class UIReaderPage extends UIPage {
     return true;
   }
   
+  // Dependencies injections
+  public Reader diReader(Reader reader) {
+    if (reader != null)
+      this.reader = reader;
+    return this.reader;
+  }
+  public PageRenderOptions diPageRenderOptions(PageRenderOptions options) {
+    if (options != null)
+      this.options = options;
+    return this.options;
+  }
+  // ...end injections
+
 }

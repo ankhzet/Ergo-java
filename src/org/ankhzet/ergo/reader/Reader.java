@@ -34,9 +34,7 @@ public class Reader {
   private boolean flushCache = false;
   int scrollPosX = 0, scrollPosY = 0;
 
-  public void injectDependencies(MagnifyGlass magnifier, PageRenderOptions options) {
-    this.magnifier = magnifier;
-    this.options = options;
+  public Reader() {
     mangaRoots.add("F:/myprogs/engines/ErgoProxy/client v. 1.0/bin/manga");
   }
 
@@ -332,4 +330,14 @@ public class Reader {
   public void mouseEvent(MouseEvent e) {
     magnifier.mouseEvent(e);
   }
+  
+  // *** di start
+  public PageRenderOptions diPageRenderOptions(PageRenderOptions options) {
+    return (options != null) ? this.options = options : this.options;
+  }
+  
+  public MagnifyGlass diMagnifyGlass(MagnifyGlass magnifier) {
+    return (magnifier != null) ? this.magnifier = magnifier : this.magnifier;
+  }
+  // *** di end
 }
