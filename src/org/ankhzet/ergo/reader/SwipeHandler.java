@@ -20,6 +20,7 @@ public class SwipeHandler implements Runnable {
   public static final double MIN_SPEED = 0.1;
   public static final double MAX_SPEED = 0.8;
 
+  static SwipeHandler swiper;
   Reader reader;
 
   public void injectDependencies(Reader reader) {
@@ -27,7 +28,9 @@ public class SwipeHandler implements Runnable {
   }
 
   public static SwipeHandler swipe() {
-    return IoC.get(SwipeHandler.class);
+    if (swiper == null)
+      swiper = IoC.get(SwipeHandler.class);
+    return swiper;
   }
 
   public static boolean makeSwipe(boolean vertical, int direction, int cw, int ch) {

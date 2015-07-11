@@ -37,5 +37,9 @@ public class PageRenderOptions {
     return originalSize;
   }
 
+  public boolean rotateToFit() {
+    return rotateToFit;
+  }
+
 }
 

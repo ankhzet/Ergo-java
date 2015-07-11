@@ -56,7 +56,7 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
         instance = (ProducesType) builder.build(identifier);
       } catch (Exception ex) {
         boolean wrap = (!(ex instanceof FactoryException));
-        throw wrap ? new FailedFactoryProductException(identifier, ex) : (FactoryException)ex;
+        throw wrap ? new FailedFactoryProductException(identifier, ex) : (FactoryException) ex;
       }
 
       return instance;

@@ -70,7 +70,7 @@ public class PageData {
     if (!layout.wasResized())
       return;
 
-    UILogic.log("caching \"%s\": %b", file);
+    UILogic.log("caching \"%s\"", file);
     
     int nw = layout.newPageW;
     int nh = layout.newPageH;

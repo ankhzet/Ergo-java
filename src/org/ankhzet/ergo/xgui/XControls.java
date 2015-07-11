@@ -28,8 +28,8 @@ public class XControls extends ArrayList<CommonControl> {
     g.setColor(Skin.get().UI_PANEL);
     g.fillRect(0, 0, cw, ch - 1);
 
-    this.stream().filter((c) ->
-      (c.isVisible())
+    this.stream().filter((c)
+    -> (c.isVisible())
     ).forEach((c) -> {
       c.Draw(g);
     });
@@ -46,15 +46,11 @@ public class XControls extends ArrayList<CommonControl> {
 
   public boolean mouseEvent(MouseEvent e) {
     focused = null;
-    this.stream().filter((c) -> 
-      (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
+    this.stream().filter(c
+    -> (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
     ).forEach((c) -> {
       focused = c;
     });
-
-    /*    for (CommonControl c : this)
-    if (c != focused)
-    c.mouseEvent(e, false);*/
 
     Process();
     if (focused == null)
@@ -83,7 +79,7 @@ public class XControls extends ArrayList<CommonControl> {
     ArrayList<Integer> l;
     int dx;
 
-    l = new ArrayList<Integer>(left.keySet());
+    l = new ArrayList<>(left.keySet());
     Collections.sort(l);
     dx = 3;
     for (Integer idx : l) {
@@ -93,7 +89,7 @@ public class XControls extends ArrayList<CommonControl> {
       dx += control.w + 5;
     }
 
-    l = new ArrayList<Integer>(right.keySet());
+    l = new ArrayList<>(right.keySet());
     Collections.sort(l);
     dx = cw - 3;
     for (Integer idx : l) {
@@ -115,6 +111,7 @@ public class XControls extends ArrayList<CommonControl> {
   public int onLeft() {
     return left.size();
   }
+
   public int onRight() {
     return right.size();
   }
