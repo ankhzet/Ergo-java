@@ -136,7 +136,10 @@ public class Parser {
    * Return integer between left and right tokens (current token
    * must be {@code left}).
    *
-   * @returns int
+   * @param left
+   * @param right
+   * @return int
+   * @throws java.lang.Throwable
    */
   public int getInt(String left, String right) throws Throwable {
     return Integer.parseInt(getValue(left, right));
@@ -145,6 +148,8 @@ public class Parser {
   /**
    * If token != parser current token - throws exception.
    *
+   * @param token
+   * @throws java.lang.Throwable
    */
   public void check(String token) throws Throwable {
     if (!token.equalsIgnoreCase(Token)) {
@@ -156,7 +161,9 @@ public class Parser {
    * If token != parser current token - throws exception, else returns
    * next token.
    *
+   * @param token
    * @return {@code String} next token.
+   * @throws java.lang.Throwable
    */
   public String checkNext(String token) throws Throwable {
     if (!token.equalsIgnoreCase(Token)) {
@@ -168,9 +175,11 @@ public class Parser {
   /**
    * If token = parser current token - returns true and goes to next token.
    *
+   * @param token
    * @return {@code true} if current token == {@code token};
    * 
    *         {@code false} current token != {@code token}
+   * @throws java.lang.Throwable
    */
   public boolean isToken(String token) throws Throwable {
     return token.equalsIgnoreCase(Token) ? !next().isEmpty() : false;
@@ -181,7 +190,10 @@ public class Parser {
    * Current token must be equal to {@code left}. After that current token
    * points on {@code right} word.
    *
+   * @param left
+   * @param right
    * @return {@code String} token.
+   * @throws java.lang.Throwable
    */
   public String getValue(String left, String right) throws Throwable {
     String r = checkNext(left);
@@ -192,7 +204,8 @@ public class Parser {
   /**
    * if next token != {@code token} - throws exception.
    *
-   * @return {@code String} token.
+   * @param token
+   * @throws java.lang.Throwable
    */
   public void nextCheck(String token) throws Throwable {
     if (!token.equalsIgnoreCase(next())) {
