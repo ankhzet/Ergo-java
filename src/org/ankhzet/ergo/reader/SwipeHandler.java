@@ -23,8 +23,8 @@ public class SwipeHandler implements Runnable {
   static SwipeHandler swiper;
   Reader reader;
 
-  public void injectDependencies(Reader reader) {
-    this.reader = reader;
+  public Reader diReader(Reader reader) {
+    return (reader != null) ? this.reader = reader : this.reader;
   }
 
   public static SwipeHandler swipe() {
