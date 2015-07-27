@@ -1,8 +1,10 @@
 package org.ankhzet.ergo.chapter;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
 
@@ -13,6 +15,7 @@ import org.ankhzet.ergo.utils.Utils;
 public class Chapter extends File {
 
   public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
+  public static final String CHAP_PATTERN = "^[\\d\\.]+";
 
   protected Strings pageFiles;
 
@@ -39,18 +42,19 @@ public class Chapter extends File {
   }
 
   public Chapter[] allChapters() {
-    String mangaPath = getParent();
+    File manga = getParentFile();
+    Path mangaPath = manga.toPath();
 
     ArrayList<Chapter> chapters = new ArrayList<>();
-    String[] chapterNames = list();
+    String[] chapterNames = manga.list((dir, name) -> name.matches(CHAP_PATTERN));
     for (String chapterName : chapterNames)
-      chapters.add(new Chapter(mangaPath + File.separator + chapterName));
+      chapters.add(new Chapter(mangaPath.resolve(chapterName).toString()));
 
-    return (Chapter[]) chapters.toArray();
+    return chapters.toArray(new Chapter[] {});
   }
 
   public Chapter seekChapter(boolean forward) {
-    ArrayList<Chapter> list = new ArrayList<>(Arrays.asList(allChapters()));
+    List<Chapter> list = Arrays.<Chapter>asList(allChapters());
 
     int i = list.indexOf(this);
 
@@ -59,7 +63,11 @@ public class Chapter extends File {
   }
 
   public float id() {
-    return Float.parseFloat(getName());
+    try {
+      return Float.parseFloat(getName());
+    } catch (Exception e) {
+      return 0.f;
+    }
   }
 
   public int idx() {

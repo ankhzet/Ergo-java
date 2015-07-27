@@ -48,7 +48,6 @@ public class ClassBuilder<Type> implements Builder<Type> {
     }
   }
 
-  @Override
   public boolean isBuilding() {
     return lock.isLocked();
   }

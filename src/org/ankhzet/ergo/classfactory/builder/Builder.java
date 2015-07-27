@@ -14,5 +14,4 @@ public interface Builder<Type> {
 
   public Type build(Class<? extends Type> c) throws Exception;
   
-  public boolean isBuilding();
 }

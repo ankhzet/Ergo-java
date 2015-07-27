@@ -73,6 +73,14 @@ public class PageLayout {
         newPageH = clientH;
         newPageW = (int) (newPageH * ratio);
       }
+      
+      float scale = newPageW / (float) pageW;
+      scale = 0.1f * (int) (scale * 10);
+      if ((int)scale == 1) {
+        newPageW = pageW;
+        newPageH = pageH;
+      }
+
 
       // now, center page in view, if not scrolling
       posX = (clientW - newPageW) / 2;

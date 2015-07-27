@@ -210,15 +210,15 @@ public class XPathFilePicker extends CommonControl {
 
   public String getSelectedPath() {
     String child = getSelected();
-    String path = root;
+    File f = new File(root);
     if (child.equals("..")) {
-      Strings parts = Strings.explode(path, File.separator);
-      if (parts.pop() != null)
-        return parts.join(File.separator);
+      f = f.getParentFile();
+      if (f != null)
+        return f.getPath();
       else
         return root;
     } else
-      return root + File.separator + child;
+      return f.toPath().resolve(child).toString();
   }
 
   public boolean hasSelected() {
