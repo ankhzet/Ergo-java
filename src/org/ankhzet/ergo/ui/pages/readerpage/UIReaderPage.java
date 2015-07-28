@@ -14,7 +14,7 @@ import org.ankhzet.ergo.ui.pages.UIPage;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.CommonControl;
 import org.ankhzet.ergo.ui.xgui.XAction;
-import org.ankhzet.ergo.ui.xgui.XControls;
+import org.ankhzet.ergo.ui.xgui.XKeyShortcut;
 
 /**
  *
@@ -52,16 +52,16 @@ public class UIReaderPage extends UIPage {
   void loadHUD() {
     XAction.Action swipeAction = action -> swipePage(action.isA(kPrev) ? -1 : 1);
     XAction.XActionStateListener canSwipeSelector = action -> canSwipe();
-    hud.putActionAtLeft("Предыдущая страница", registerAction(kPrev, swipeAction).enabledAs(canSwipeSelector));
-    hud.putActionAtLeft("Следующая страница", registerAction(kNext, swipeAction).enabledAs(canSwipeSelector));
-
-    hud.putBackAction(XControls.AREA_LEFT, null);
+    hud.putActionAtLeft("Предыдущая страница", registerAction(kPrev, swipeAction).enabledAs(canSwipeSelector))
+            .shortcut(XKeyShortcut.press("Left"));
+    hud.putActionAtLeft("Следующая страница", registerAction(kNext, swipeAction).enabledAs(canSwipeSelector))
+            .shortcut(XKeyShortcut.press("Right"));
 
     hud.putActionAtRight("Увелечительное стекло", registerAction(kMagnify, action -> {
       reader.showMagnifier(!reader.magnifierShown());
     }).togglable((XAction action) -> {
       return reader.magnifierShown();
-    }));
+    })).shortcut(XKeyShortcut.press("Shift"));
 
     hud.putActionAtRight("Листать вертикально", registerAction(kSwipedir, action -> {
       swipeDirVertical = !swipeDirVertical;
