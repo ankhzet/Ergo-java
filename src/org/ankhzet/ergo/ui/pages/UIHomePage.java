@@ -37,18 +37,14 @@ public class UIHomePage extends UIPage {
     }).enabledAs(action -> {
       return !(!picker.hasSelected() || reader.isBusy());
     }));
+    
+    hud.putActionAtLeft("Filter duplicates", registerAction("dups", action -> {
+      ui.navigateTo(UIDuplicatesPage.class, picker.getSelectedPath());
+    })).enabledAs(action -> {
+      return picker.hasSelected();
+    });
+    
     hud.add(picker);
-  }
-
-  @Override
-  public boolean actionPerformed(XAction a) {
-    boolean handled = true;
-    if (a.isA(kLoadChapterAction))
-      loadChapter();
-    else
-      handled = false;
-
-    return handled;
   }
 
   public boolean loadChapter() {
