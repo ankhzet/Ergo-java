@@ -25,6 +25,7 @@ import org.ankhzet.ergo.ui.xgui.XActionListener;
 import org.ankhzet.ergo.ui.xgui.XControls;
 import org.ankhzet.ergo.ui.pages.UIHomePage;
 import org.ankhzet.ergo.ui.xgui.XAction;
+import org.ankhzet.ergo.ui.xgui.XMessageBox;
 
 /**
  *
@@ -45,13 +46,11 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 //  private Vector<Cursor> cursors = new Vector<Cursor>();
 //  private Cursor defCursor = null;
   public static String LocalDir = "";
-  public static final int MSGBOX_TIMEOUT = 2000;
   private long threaddelay = 15;
   public Rectangle clientArea = new Rectangle();
   XControls hud = null;
 //  Point cursor = new Point(0, 0);
   boolean initiated = false;
-  long msgboxTimeout = 0;
   public static final int UIPANEL_HEIGHT = 30;
   static final int THREAD_DELAY_IDDLE = 60;
   static final int THREAD_DELAY_ANIMATE = 5;
@@ -60,6 +59,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   int tooltipX, tooltipY;
   UIPage currentUI, prevUI = null;
   XAction actionToPerform = null;
+  XMessageBox msgBox;
 
   public UILogic() {
     toolkit = Toolkit.getDefaultToolkit();
@@ -153,64 +153,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     hud.pack(clientArea.width, clientArea.height);
   }
 
-  void msgBox(Graphics2D g, String s) {
-    Font f = g.getFont();
-    FontRenderContext frc = g.getFontRenderContext();
-    Rectangle2D r;
-    String c, t;
-    int ch = f.getSize();
-    int th = 0, tp = 0, rw = 0, rh = 0, tw = 0;
-    c = s.replaceAll("(^[\10\40\09]+)|([\10\09\40]+$)", "");
-    while (!c.isEmpty()) {
-      th += ch;
-      int cp = c.indexOf('\n');
-      if (cp < 0)
-        cp = c.length() - 1;
-
-      r = f.getStringBounds(c, 0, cp, frc);
-      int cw = (int) r.getWidth();
-      if (cw > tw)
-        tw = cw;
-
-      if (c.length() - cp > 1)
-        c = c.substring(cp + 1);
-      else
-        break;
-    }
-
-    rw = tw + 100;
-    if (rw < 200)
-      rw = 200;
-
-    int x = clientArea.x;
-    int y = clientArea.y;
-    int w = clientArea.width;
-    int h = clientArea.height;
-
-    rh = th + 100;
-    g.setColor(Color.LIGHT_GRAY);
-    g.fillRect(x + (w - rw) / 2, y + (h - rh) / 2, rw, rh);
-    g.setColor(Color.BLACK);
-    g.drawRect(x + (w - rw) / 2, y + (h - rh) / 2, rw, rh);
-
-    while (!s.isEmpty()) {
-      tp += ch;
-      int len = s.length(), cp = s.indexOf('\n');
-      if (cp < 0)
-        cp = len;
-
-      t = s.substring(0, cp);
-      r = f.getStringBounds(t, frc);
-      int cw = (int) r.getWidth();
-      g.drawString(t, x + (w - cw) / 2, y + (h - th) / 2 + tp);
-
-      if (len - cp > 1)
-        s = s.substring(cp + 1);
-      else
-        break;
-    }
-  }
-
   public boolean mouseEvent(MouseEvent e) {
     if (!initiated)
       return false;
@@ -219,7 +161,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     if (hud.mouseEvent(e))
       return true;
 
-    if (System.currentTimeMillis() - msgboxTimeout < MSGBOX_TIMEOUT)
+    if (msgBox.isShown())
       return false;
 
     int mx = e.getX();
@@ -243,7 +185,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   }
 
   void init() {
-    msgboxTimeout = 0;
+    msgBox = new XMessageBox();
     hud = new XControls();
     navigateTo(UIHomePage.class);
     initiated = true;
@@ -350,7 +292,8 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
       g.setColor(Color.DARK_GRAY);
       g.drawString(tooltip, tx + 4, ty - ch + 3);
     }
-// todo: msgbox render
+
+    msgBox.draw(g, clientArea);
   }
 
   @Override
@@ -372,6 +315,10 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     tooltip = text;
     tooltipX = x;
     tooltipY = y;
+  }
+
+  public void message(String text) {
+    msgBox.show(text);
   }
 
 }
