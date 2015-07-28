@@ -32,7 +32,7 @@ public class MagnifyGlass {
   @DependencyInjection
   Reader reader;
 
-  public void mouseEvent(MouseEvent e) {
+  public boolean mouseEvent(MouseEvent e) {
     posX = e.getX();
     posY = e.getY() - Reader.TAB_BAR_HEIGHT;
 
@@ -46,7 +46,7 @@ public class MagnifyGlass {
     }
 
     if (!active || data == null || !layouted || reader.options.originalSize)
-      return;
+      return false;
 
     // translate view coordinates to image coordinates
     PageLayout layout = data.getLayout();
@@ -64,6 +64,8 @@ public class MagnifyGlass {
     g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     g.drawImage(data.getImage(), 0, 0, mw, mh, imgX - width / 2, imgY - height / 2, imgX + width / 2, imgY + height / 2, null);
     g.dispose();
+    
+    return true;
   }
 
   public void process() {

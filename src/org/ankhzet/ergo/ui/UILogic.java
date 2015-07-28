@@ -53,7 +53,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 //  Point cursor = new Point(0, 0);
   boolean initiated = false;
   public static final int UIPANEL_HEIGHT = 30;
-  static final int THREAD_DELAY_IDDLE = 60;
+  static final int THREAD_DELAY_IDDLE = 90;
   static final int THREAD_DELAY_ANIMATE = 5;
   ProgressRenderer progress = new ProgressRenderer();
   String tooltip = null;
@@ -159,11 +159,12 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
       return false;
 
     e.translatePoint(-clientArea.x, -clientArea.y);
-    if (hud.mouseEvent(e))
-      return true;
 
     if (msgBox.isShown())
       return false;
+
+    if (hud.mouseEvent(e))
+      return true;
 
     int mx = e.getX();
     int my = e.getY();
@@ -176,9 +177,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     }
 
     e.translatePoint(0, -UIPANEL_HEIGHT);
-    currentUI.mouseEvent(e);
-    process();
-    return true;
+    return currentUI.mouseEvent(e);
   }
 
   public void keyEvent(KeyEvent e) {

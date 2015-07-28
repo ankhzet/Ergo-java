@@ -13,8 +13,8 @@ public class PageLayout {
   clientH = 0,
   renderX = 0,
   renderY = 0,
-  oldPageW = 0,
-  oldPageH = 0,
+  oldPageW = -1,
+  oldPageH = -1,
   newPageW = 0,
   newPageH = 0,
   scrollX = 0,
@@ -32,11 +32,14 @@ public class PageLayout {
     if (pageW * pageH == 0)
       return false;
 
-    if (ro.manhwaMode) // page under page
+    if (ro.manhwaMode) {// page under page
+      if (ro.stretchToFit)
+        ;
       //stretchToFit - fit in view the width of pages
 //      if (totalX < pageW)
 //        totalX = pageW;
       return true;
+    }
 
     // first, we need to scale page, if needed
     boolean clientPortrait = clientW < clientH;

@@ -118,36 +118,42 @@ public class UIReaderPage extends UIPage {
 
   @Override
   public boolean mouseEvent(MouseEvent e) {
+    if (reader.mouseEvent(e))
+      return true;
+
     int mx = e.getX();
     int my = e.getY();
 
-    if (reader.magnifierShown()) {
-      reader.mouseEvent(e);
-      return true;
+    int dx = pressPos.x - mx;
+    int dy = pressPos.y - my;
+    switch (e.getID()) {
+      case MouseEvent.MOUSE_PRESSED:
+        pressPos.setLocation(mx, my);
+        mouseDown = true;
+        hud.unfocus();
+        break;
+      case MouseEvent.MOUSE_DRAGGED:
+        if (!options.showOriginalSize())
+          break;
+        reader.scroll(dx, dy);
+        pressPos.setLocation(mx, my);
+        break;
+      case MouseEvent.MOUSE_RELEASED:
+        if (!mouseDown)
+          break;
+
+        if (!options.showOriginalSize()) {
+          boolean vertSwipe = Math.abs(dy) > Math.abs(dx);
+          if (vertSwipe == swipeDirVertical) {
+            int dir = swipeDirVertical ? dy : dx;
+            if (Math.abs(dir) > 5)//(swipeDirVertical ? clientArea.height : clientArea.width) * 0.1)
+              swipePage(dir);
+          }
+        }
+        mouseDown = false;
+        break;
     }
 
-    if (e.getID() == MouseEvent.MOUSE_PRESSED) {
-      pressPos.setLocation(mx, my);
-      mouseDown = true;
-      ui.getHUD().unfocus();
-    }
-    if (options.showOriginalSize() && e.getID() == MouseEvent.MOUSE_DRAGGED) {
-      int dx = pressPos.x - mx;
-      int dy = pressPos.y - my;
-      reader.scroll(dx, dy);
-      pressPos.setLocation(mx, my);
-    }
-    if (mouseDown && e.getID() == MouseEvent.MOUSE_RELEASED) {
-      int dx = pressPos.x - mx;
-      int dy = pressPos.y - my;
-      if (options.showOriginalSize()) {
-      } else {
-        int dir = swipeDirVertical ? dy : dx;
-        if (Math.abs(dir) > 5)//(swipeDirVertical ? clientArea.height : clientArea.width) * 0.1)
-          swipePage(dir);
-      }
-      mouseDown = false;
-    }
     return mouseDown;
   }
 

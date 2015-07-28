@@ -76,6 +76,7 @@ public class Reader extends PageNavigator {
       this.chapter = chapter;
       pageFiles.clear();
       pages.clear();
+      toFirstPage();
       if (listener != null)
         progressLoading(listener, 0);
 
@@ -286,9 +287,11 @@ public class Reader extends PageNavigator {
       magnifier.process();
   }
 
-  public void mouseEvent(MouseEvent e) {
+  public boolean mouseEvent(MouseEvent e) {
     if (magnifierShown())
-      magnifier.mouseEvent(e);
+      return magnifier.mouseEvent(e);
+    
+    return false;
   }
 
 }
