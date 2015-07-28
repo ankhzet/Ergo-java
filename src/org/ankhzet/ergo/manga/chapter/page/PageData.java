@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.chapter.page;
+package org.ankhzet.ergo.manga.chapter.page;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;

@@ -4,7 +4,7 @@ import org.ankhzet.ergo.ui.pages.readerpage.UIReaderPage;
 import java.awt.Graphics2D;
 import java.io.File;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
-import org.ankhzet.ergo.chapter.Chapter;
+import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.xgui.XPathFilePicker;

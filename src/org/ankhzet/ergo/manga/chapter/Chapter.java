@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.chapter;
+package org.ankhzet.ergo.manga.chapter;
 
 import java.io.File;
 import java.nio.file.Path;

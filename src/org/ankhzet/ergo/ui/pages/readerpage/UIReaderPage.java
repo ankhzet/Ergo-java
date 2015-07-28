@@ -7,7 +7,7 @@ import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.SwipeHandler;
-import org.ankhzet.ergo.chapter.Chapter;
+import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.pages.UIPage;

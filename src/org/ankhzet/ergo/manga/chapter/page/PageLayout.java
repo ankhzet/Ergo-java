@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.chapter.page;
+package org.ankhzet.ergo.manga.chapter.page;
 
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
 

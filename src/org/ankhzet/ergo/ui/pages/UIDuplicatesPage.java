@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import org.ankhzet.ergo.chapter.Chapter;
+import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.utils.Strings;
 

@@ -8,12 +8,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.Skin;
-import org.ankhzet.ergo.chapter.Chapter;
+import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
-import org.ankhzet.ergo.chapter.ChapterCacher;
-import org.ankhzet.ergo.chapter.ChapterLoader;
-import org.ankhzet.ergo.chapter.page.PageData;
+import org.ankhzet.ergo.manga.chapter.ChapterCacher;
+import org.ankhzet.ergo.manga.chapter.ChapterLoader;
+import org.ankhzet.ergo.manga.chapter.page.PageData;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 
 /**

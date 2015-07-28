@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.chapter;
+package org.ankhzet.ergo.manga.chapter;
 
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;

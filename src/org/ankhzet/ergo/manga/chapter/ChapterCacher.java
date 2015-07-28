@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.chapter;
+package org.ankhzet.ergo.manga.chapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
-import org.ankhzet.ergo.chapter.page.PageData;
+import org.ankhzet.ergo.manga.chapter.page.PageData;
 
 /**
  *
