@@ -206,6 +206,9 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
       prevUI.navigateOut();
 
     hud.clear();
+    if (prevUI != null)
+      hud.putBackAction(XControls.AREA_LEFT, null);
+
     currentUI.navigateIn(params);
     int l = hud.onLeft();
     while (l++ < 2)
