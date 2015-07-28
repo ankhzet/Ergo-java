@@ -154,6 +154,14 @@ public class XControls extends ArrayList<CommonControl> {
     }
   }
 
+  public void keyEvent(KeyEvent e) {
+    synchronized (this) {
+      for (CommonControl c : this)
+        if (c.isVisible() && c.keyEvent(e))
+          break;
+    }
+    }
+
   @Override
   public void clear() {
     synchronized (this) {
@@ -170,4 +178,5 @@ public class XControls extends ArrayList<CommonControl> {
   public int onRight() {
     return right.size();
   }
+
 }

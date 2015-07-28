@@ -1,6 +1,7 @@
 package org.ankhzet.ergo.ui.xgui;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class CommonControl {
@@ -23,6 +24,10 @@ public class CommonControl {
     this.y = y;
     this.w = w;
     this.h = h;
+  }
+
+  public boolean keyEvent(KeyEvent e) {
+    return action.keyEvent(e);
   }
 
   public boolean mouseEvent(MouseEvent e, boolean process) {
@@ -53,12 +58,13 @@ public class CommonControl {
     }
     return clicked;
   }
-
+  
   public void doClick() {
     try {
       if (l != null)
         l.actionPerformed(action);
     } catch (Exception e) {
+      e.printStackTrace();
     }
   }
 
@@ -99,4 +105,5 @@ public class CommonControl {
   public void setActionListener(XActionListener listener) {
     l = listener;
   }
+
 }

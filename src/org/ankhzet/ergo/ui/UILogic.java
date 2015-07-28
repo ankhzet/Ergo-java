@@ -13,6 +13,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
@@ -235,6 +236,10 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     currentUI.mouseEvent(e);
     process();
     return true;
+  }
+
+  public void keyEvent(KeyEvent e) {
+    hud.keyEvent(e);
   }
 
   void init() {
