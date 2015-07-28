@@ -85,16 +85,13 @@ public class UIReaderPage extends UIPage {
   }
 
   boolean swipePage(int dir) {
-    if (reader == null || reader.totalPages() == 0 || reader.isLoading())
+    if (!canSwipe())
       return false;
 
     if (!options.showOriginalSize())
       return SwipeHandler.makeSwipe(swipeDirVertical, dir, ui.clientArea.width, ui.clientArea.height);
     else
-      if (dir > 0)
-        reader.nextPage();
-      else
-        reader.prevPage();
+      reader.changePage(dir < 0);
 
     return true;
   }
@@ -104,7 +101,7 @@ public class UIReaderPage extends UIPage {
   }
 
   boolean canSwipe() {
-    return !(swiping() || reader.totalPages() == 0 || reader.isLoading());
+    return !(swiping() || reader == null || reader.totalPages() == 0 || reader.isLoading());
   }
 
   @Override

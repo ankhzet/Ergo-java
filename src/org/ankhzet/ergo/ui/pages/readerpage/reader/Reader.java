@@ -76,7 +76,7 @@ public class Reader extends PageNavigator {
       pageFiles.addAll(chapter.fetchPages());
       int pos = 0;
       for (String imageFile : pageFiles) {
-        pages.put(imageFile, PageData.load(imageFile));
+        pages.put(imageFile, new PageData(imageFile));
         if (listener != null && !progressLoading(listener, ++pos))
           return;
       }
@@ -190,8 +190,8 @@ public class Reader extends PageNavigator {
 
   void drawPages(Graphics2D g, int x, int y, int w, int h) {
     //if no pages - we'r done here
-    PageData data = getCurrentPageData();
-    if (data == null)
+    PageData page = getCurrentPageData();
+    if (page == null)
       return;
 
     Rectangle clip = g.getClipBounds();
@@ -224,14 +224,14 @@ public class Reader extends PageNavigator {
 
       PageData nextPage = getPageData(next);
       if (nextPage != null)
-        nextPage.drawPage(g, x - nx, y - ny, 0, 0);
+        nextPage.draw(g, x - nx, y - ny);
     }
 
-    data.drawPage(g, x - dx - scrollPosX, y - dy - scrollPosY, 0, 0);
+    page.draw(g, x - dx - scrollPosX, y - dy - scrollPosY);
 
     if (options.originalSize) { // draw scrolls if needed
       int scrollbarSize = 4;
-      int sx = data.getLayout().scrollX;
+      int sx = page.getLayout().scrollX;
       if (sx > 0) {
         int cw = w - scrollbarSize;
         double swRatio = cw / (double) (cw + sx);
@@ -239,7 +239,7 @@ public class Reader extends PageNavigator {
         int scrollPos = x + (int) (scrollPosX * swRatio);
         Skin.drawScrollbar(g, scrollPos, y + h - scrollbarSize - 1, scrollWidth, scrollbarSize);
       }
-      int sy = data.getLayout().scrollY;
+      int sy = page.getLayout().scrollY;
       if (sy > 0) {
         int ch = h - scrollbarSize;
         double swRatio = ch / (double) (ch + sy);
@@ -255,12 +255,12 @@ public class Reader extends PageNavigator {
   }
 
   public void scroll(int dx, int dy) {
-    PageData data = getCurrentPageData();
-    if (data == null)
+    PageData page = getCurrentPageData();
+    if (page == null)
       return;
 
-    scrollPosX = Utils.constraint(scrollPosX + dx, 0, data.getLayout().scrollX);
-    scrollPosY = Utils.constraint(scrollPosY + dy, 0, data.getLayout().scrollY);
+    scrollPosX = Utils.constraint(scrollPosX + dx, 0, page.getLayout().scrollX);
+    scrollPosY = Utils.constraint(scrollPosY + dy, 0, page.getLayout().scrollY);
   }
 
   public boolean showMagnifier(boolean show) {

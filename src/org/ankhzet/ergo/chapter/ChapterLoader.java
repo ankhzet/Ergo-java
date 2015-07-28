@@ -28,13 +28,10 @@ public class ChapterLoader {
     this.chapter = chapter;
 
     loader = new Thread(() -> {
-      int wait = 0;
-      while (reader.isBusy() && wait < 100)
-        try {
-          Thread.sleep(10);
-          wait += 1;
-        } catch (InterruptedException ex) {
-        }
+      try {
+        synkReader();
+      } catch (InterruptedException ex) {
+      }
 
       if (!reader.isBusy()) {
         reader.cacheChapter(chapter, ui);
@@ -50,8 +47,7 @@ public class ChapterLoader {
       try {
         while (true) {
           if (reader.flushPending()) {
-            while (reader.isBusy())
-              Thread.sleep(10);
+            synkReader();
 
             reader.flushCache(false);
             reader.calcLayout(ui.clientArea.width, ui.clientArea.height - UILogic.UIPANEL_HEIGHT, ui);
@@ -62,10 +58,14 @@ public class ChapterLoader {
         }
       } catch (InterruptedException ex) {
       }
-//        cacher = null;
     });
 
     cacher.start();
+  }
+
+  void synkReader() throws InterruptedException {
+    while (reader.isBusy())
+      Thread.sleep(10);
   }
 
 }

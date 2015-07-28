@@ -227,7 +227,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
     Rectangle r = new Rectangle(0, 0, clientArea.width, UIPANEL_HEIGHT);
 
-    if (r.contains(mx, my)) {// || (mx >= clientArea.width) || (my >= clientArea.height)) {
+    if (r.contains(mx, my)) {
       currentUI.setFocused(false);
       return false;
     }

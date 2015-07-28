@@ -39,11 +39,11 @@ public class PageLayout {
       return true;
 
     // first, we need to scale page, if needed
-    boolean clientPortret = clientW < clientH;
-    boolean pagePortret = pageW < pageH;
+    boolean clientPortrait = clientW < clientH;
+    boolean pagePortrait = pageW < pageH;
     newPageW = pageW;
     newPageH = pageH;
-    if (ro.rotateToFit && (clientPortret ^ pagePortret)) {
+    if (ro.rotateToFit && (clientPortrait ^ pagePortrait)) {
       newPageW = pageH;
       newPageH = pageW;
     }
