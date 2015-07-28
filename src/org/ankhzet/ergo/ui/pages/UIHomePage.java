@@ -7,7 +7,6 @@ import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 import org.ankhzet.ergo.chapter.Chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
-import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XPathFilePicker;
 
 /**
@@ -35,7 +34,11 @@ public class UIHomePage extends UIPage {
     hud.putActionAtLeft(kLoadChapterLabel, registerAction(kLoadChapterAction, action -> {
       loadChapter();
     }).enabledAs(action -> {
-      return !(!picker.hasSelected() || reader.isBusy());
+      if ((!picker.hasSelected() || reader.isBusy()))
+        return false;
+      
+      Chapter c = new Chapter(picker.getSelectedPath());
+      return c.valid();
     }));
     
     hud.putActionAtLeft("Filter duplicates", registerAction("dups", action -> {
