@@ -15,6 +15,7 @@ import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.CommonControl;
 import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XKeyShortcut;
+import org.ankhzet.ergo.utils.Strings;
 
 /**
  *
@@ -165,6 +166,19 @@ public class UIReaderPage extends UIPage {
       break;
     }
     return true;
+  }
+
+  @Override
+  public String title() {
+    Chapter current = reader.chapter();
+    if (current == null)
+      return "Read chapter";
+
+    String manga = Strings.toTitleCase(current.getMangaFolder());
+    String chapter = current.idShort();
+    String last = current.lastChapter().idShort();
+    
+    return String.format("%s [%s/%s]", manga, chapter, last);
   }
 
 }

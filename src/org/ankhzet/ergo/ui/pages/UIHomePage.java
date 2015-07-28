@@ -79,4 +79,9 @@ public class UIHomePage extends UIPage {
     picker.move(0, y, w, h - y);
   }
 
+  @Override
+  public String title() {
+    return "Ergo manga reader";
+  }
+
 }

@@ -18,6 +18,7 @@ public class UIPage {
 
   @DependencyInjection
   protected UILogic ui;
+  
   protected XControls hud;
   
   protected boolean mouseDown = false;
@@ -71,6 +72,10 @@ public class UIPage {
 
   public void navigateOut() {
     active = false;
+  }
+  
+  public String title() {
+    return this.toString();
   }
 
 }

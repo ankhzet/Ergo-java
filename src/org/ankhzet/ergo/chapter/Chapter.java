@@ -61,6 +61,10 @@ public class Chapter extends File {
     int index = Utils.constraint(i + (forward ? 1 : -1), 0, list.size() - 1);
     return list.get(index);
   }
+  
+  public String idShort() {
+    return isBonus() ? String.format("%.1f", idx() / 10.f) : String.format("%d", idx() / 10);
+  }
 
   public float id() {
     try {
@@ -73,9 +77,30 @@ public class Chapter extends File {
   public int idx() {
     return (int) (id() * 10);
   }
+  
+  public boolean isBonus() {
+    return (idx() % 10) > 0;
+  }
+  
+  public boolean valid() {
+    return idx() > 0;
+  }
 
   public int compare(Chapter chapter) {
     return Integer.signum(idx() - chapter.idx());
+  }
+  
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof Chapter))
+      return false;
+    
+    return idx() == ((Chapter)o).idx();
+  }
+
+  @Override
+  public int hashCode() {
+    return idx();
   }
 
 }

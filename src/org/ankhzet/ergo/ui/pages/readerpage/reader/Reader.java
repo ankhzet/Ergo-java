@@ -33,7 +33,8 @@ public class Reader extends PageNavigator {
 
   protected Strings mangaRoots = new Strings();
   protected ChapterCacher pages = new ChapterCacher();
-
+  Chapter chapter;
+  
   public Strings pageFiles = new Strings();
   public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
   public static final int TAB_BAR_HEIGHT = 8;
@@ -43,6 +44,10 @@ public class Reader extends PageNavigator {
   public Reader() {
     mangaRoots.add("F:/myprogs/engines/ErgoProxy/client v. 1.0/bin/manga");
     mangaRoots.add("H:/manga/manga");
+  }
+  
+  public Chapter chapter() {
+    return chapter;
   }
 
   public Strings getMangaRoots() {
@@ -68,6 +73,7 @@ public class Reader extends PageNavigator {
   public synchronized void cacheChapter(Chapter chapter, LoaderProgressListener listener) {
     lock.lock();
     try {
+      this.chapter = chapter;
       pageFiles.clear();
       pages.clear();
       if (listener != null)

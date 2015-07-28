@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -258,9 +259,13 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     int w = clientArea.width;
     int h = clientArea.height;
 
-    g.translate(0, UIPANEL_HEIGHT);
-    currentUI.draw(g, w, h - UIPANEL_HEIGHT);
-    g.translate(0, -UIPANEL_HEIGHT);
+    if (currentUI != null) {
+      g.translate(0, UIPANEL_HEIGHT);
+      currentUI.draw(g, w, h - UIPANEL_HEIGHT);
+      g.translate(0, -UIPANEL_HEIGHT);
+      
+      drawCenteredString(new Point(w / 2, UIPANEL_HEIGHT / 4), clientArea, 0, g, currentUI.title(), true);
+    }
 
     try {
       hud.Draw(g, 0, 0, w, UIPANEL_HEIGHT);
