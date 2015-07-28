@@ -41,6 +41,16 @@ public class Chapter extends File {
     return pageFiles;
   }
 
+  public Chapter firstChapter() {
+    List<Chapter> list = Arrays.<Chapter>asList(allChapters());
+    return list.get(0);
+  }
+
+  public Chapter lastChapter() {
+    List<Chapter> list = Arrays.<Chapter>asList(allChapters());
+    return list.get(list.size() - 1);
+  }
+
   public Chapter[] allChapters() {
     File manga = getParentFile();
     Path mangaPath = manga.toPath();
@@ -52,7 +62,7 @@ public class Chapter extends File {
 
     return chapters.toArray(new Chapter[] {});
   }
-
+  
   public Chapter seekChapter(boolean forward) {
     List<Chapter> list = Arrays.<Chapter>asList(allChapters());
 

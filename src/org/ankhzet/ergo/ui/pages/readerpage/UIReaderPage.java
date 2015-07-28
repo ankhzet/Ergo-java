@@ -11,6 +11,7 @@ import org.ankhzet.ergo.chapter.Chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.pages.readerpage.reader.PageNavigator;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.CommonControl;
 import org.ankhzet.ergo.ui.xgui.XAction;
@@ -21,7 +22,7 @@ import org.ankhzet.ergo.utils.Strings;
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-public class UIReaderPage extends UIPage {
+public class UIReaderPage extends UIPage implements PageNavigator.NavigationListener {
 
   static String kPrev = "prevpage";
   static String kNext = "nextpage";
@@ -172,6 +173,25 @@ public class UIReaderPage extends UIPage {
       break;
     }
     return true;
+  }
+
+  @DependenciesInjected(suppressInherited = false, beforeInherited = false)
+  private void diInjected() {
+    reader.setNavListener(this);
+  }
+
+  @Override
+  public void pageSet(int requested, int set) {
+    if (requested != set) {
+      Chapter current = reader.chapter();
+      Chapter load = current.seekChapter(requested > set);
+      if (!load.equals(current))
+        reader.loadChapter(load);
+      else {
+        String dir = (requested > set) ? "last" : "first";
+        ui.message(String.format("This is %s available chapter (%s >> %s)", dir, current.getMangaFolder(), current.idShort()));
+      }
+    }
   }
 
   @Override
