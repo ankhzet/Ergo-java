@@ -270,27 +270,20 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     progress.draw(g, w, h);
 
     if (tooltip != null) {
-      Font f = g.getFont();
-      FontRenderContext frc = g.getFontRenderContext();
-      Rectangle2D r = f.getStringBounds(tooltip, frc);
-      int tw = (int) r.getWidth() + 6;
-      int tx = tooltipX - tw / 2;
-      tx = tx < 0 ? 0 : (tx + tw - 1 >= w ? w - tw - 1 : tx);
-      int ty = tooltipY + 3;
-      int th = (int) r.getHeight() + 6;
-      int ch = (int) r.getY();
+      int inset = 3;
+      int inse2 = inset * 2;
+      Point toolPos = new Point(tooltipX, tooltipY);
+      Rectangle r = drawCenteredString(toolPos, clientArea, inset, g, tooltip, false);
+      
       g.setColor(Color.LIGHT_GRAY);
-      g.fillRoundRect(tx, ty, tw, th, 6, 6);
+      g.fillRoundRect(r.x, r.y, r.width, r.height, inse2, inse2);
       g.setColor(Color.GRAY);
-      g.drawRoundRect(tx + 1, ty + 1, tw - 2, th, 6, 6);
+      g.drawRoundRect(r.x + 1, r.y + 1, r.width - 2, r.height, inse2, inse2);
       g.setColor(Color.BLACK);
-      g.drawRoundRect(tx, ty, tw, th, 6, 6);
+      g.drawRoundRect(r.x, r.y, r.width, r.height, inse2, inse2);
       g.setColor(Color.WHITE);
-      g.drawRoundRect(tx + 1, ty + 1, tw - 2, th - 2, 6, 6);
-      g.setColor(Color.WHITE);
-      g.drawString(tooltip, tx + 4, ty - ch + 4);
-      g.setColor(Color.DARK_GRAY);
-      g.drawString(tooltip, tx + 4, ty - ch + 3);
+      g.drawRoundRect(r.x + 1, r.y + 1, r.width - 2, r.height - 2, inse2, inse2);
+      drawCenteredString(toolPos, clientArea, inset, g, tooltip, true);
     }
 
     msgBox.draw(g, clientArea);
@@ -319,6 +312,28 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   public void message(String text) {
     msgBox.show(text);
+  }
+
+  Rectangle drawCenteredString(Point pos, Rectangle clip, int inset, Graphics2D g, String string, boolean draw) {
+    Font f = g.getFont();
+    FontRenderContext frc = g.getFontRenderContext();
+    Rectangle2D r = f.getStringBounds(string, frc);
+    int tw = (int) r.getWidth() + inset * 2;
+    int tx = pos.x - tw / 2;
+    tx = tx < clip.x ? clip.x : (tx + tw - 1 >= clip.width ? clip.width - tw - 1 : tx);
+
+    int ty = pos.y + inset;
+    int th = (int) r.getHeight() + inset * 2;
+    
+    if (draw) {
+      int ch = (int) r.getY();
+      g.setColor(Color.WHITE);
+      g.drawString(string, tx + inset + 1, ty - ch + inset + 1);
+      g.setColor(Color.DARK_GRAY);
+      g.drawString(string, tx + inset + 1, ty - ch + inset);
+    }
+
+    return new Rectangle(tx, ty, tw, th);
   }
 
 }
