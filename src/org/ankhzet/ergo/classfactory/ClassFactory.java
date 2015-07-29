@@ -41,7 +41,7 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
       ProducesType instance = null;
       try {
         instance = pick(container, identifier);
-      } catch (FactoryException e) {
+      } catch (UnknownFactoryProductException e) {
       }
 
       if (instance == null) {

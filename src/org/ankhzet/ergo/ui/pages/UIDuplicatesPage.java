@@ -64,7 +64,7 @@ public class UIDuplicatesPage extends UIPage {
         try {
           Integer avg = Integer.decode(n);
           avgs.put(parts.join("."), avg);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
         }
       }
 

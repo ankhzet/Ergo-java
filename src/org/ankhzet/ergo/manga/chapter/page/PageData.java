@@ -6,6 +6,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.ImgUtil;
@@ -27,7 +28,7 @@ public class PageData {
     file = imageFile;
     try {
       image = ImageIO.read(new File(file));
-    } catch (Exception ex) {
+    } catch (IOException ex) {
       ex.printStackTrace();
     }
     pageW = image != null ? image.getWidth() : 32;

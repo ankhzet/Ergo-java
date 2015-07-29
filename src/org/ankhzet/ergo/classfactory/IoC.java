@@ -1,6 +1,5 @@
 package org.ankhzet.ergo.classfactory;
 
-import java.util.Set;
 import org.ankhzet.ergo.classfactory.builder.Builder;
 import org.ankhzet.ergo.classfactory.builder.DependantClassBuilder;
 import org.ankhzet.ergo.classfactory.exceptions.FactoryException;

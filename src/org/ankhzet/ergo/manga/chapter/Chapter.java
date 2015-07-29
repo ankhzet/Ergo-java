@@ -92,7 +92,7 @@ public class Chapter extends File {
   public float id() {
     try {
       return Float.parseFloat(getName());
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
       return 0.f;
     }
   }

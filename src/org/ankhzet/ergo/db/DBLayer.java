@@ -48,7 +48,7 @@ public class DBLayer {
     try {
       rs.last();
       size = rs.getRow();
-    } catch (Exception ex) {
+    } catch (SQLException ex) {
       ex.printStackTrace();
     }
     return size;
