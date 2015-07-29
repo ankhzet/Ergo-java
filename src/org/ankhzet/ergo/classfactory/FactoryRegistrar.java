@@ -42,4 +42,5 @@ public class FactoryRegistrar {
       return (ClassFactory) identifier;
 
   }
+
 }
