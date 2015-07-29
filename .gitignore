@@ -1,7 +1,9 @@
 *.sqlite
-build/classes
-build/built-jar.properties
+
+build/
+nbbuild/
 dist/
+nbdist/
 nbproject/private/
-nbproject/cfg_hints.xml
-nbproject/project.properties
+nbactions.xml
+.nb-gradle/
