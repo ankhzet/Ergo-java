@@ -13,4 +13,5 @@ package org.ankhzet.ergo.classfactory.builder;
 public interface Builder<Type> {
 
   public Type build(Class<? extends Type> c) throws Exception;
+
 }
