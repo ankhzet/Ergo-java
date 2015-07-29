@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
 
@@ -21,6 +22,10 @@ public class Chapter extends File {
 
   public Chapter(String path) {
     super(path);
+  }
+  
+  public static Chapter chapterFromBookmark(Path root, Bookmark bookmark) {
+    return new Chapter(bookmark.path(root).toString());
   }
 
   public File getMangaFile() {
