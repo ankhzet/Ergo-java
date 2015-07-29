@@ -19,6 +19,10 @@ import org.jdesktop.application.Application;
  */
 public class Launcher extends Application {
 
+  public static void main(String[] args) {
+    launch(Launcher.class, args);
+  }
+
   /**
    * @param args the command line arguments
    */
@@ -48,9 +52,6 @@ public class Launcher extends Application {
     ui.stop();
   }
 
-  public static void main(String[] args) {
-    launch(Launcher.class, args);
-  }
 
   private class LauncherListener extends WindowAdapter {
 

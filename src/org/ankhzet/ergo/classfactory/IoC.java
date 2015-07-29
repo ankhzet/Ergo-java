@@ -12,8 +12,6 @@ import org.ankhzet.ergo.classfactory.exceptions.UnknownFactoryProductException;
  */
 public class IoC {
 
-  private static class Factories extends ClassFactory<ClassFactory> {
-  };
   static Factories factories;
 
   static Factories factories() {
@@ -64,11 +62,14 @@ public class IoC {
       }
     };
 
-    ((Set<Class>) factory.produces()).forEach((identifier) -> {
-      f.register(identifier, builder);
+    factory.produces().forEach((identifier) -> {
+      f.register((Class)identifier, builder);
     });
 
     return factory;
+  }
+
+  private static class Factories extends ClassFactory<ClassFactory> {
   }
 
 }

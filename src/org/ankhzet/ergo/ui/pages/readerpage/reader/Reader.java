@@ -20,6 +20,8 @@ import org.ankhzet.ergo.utils.Utils;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class Reader extends PageNavigator {
+  public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
+  public static final int TAB_BAR_HEIGHT = 8;
 
   @DependencyInjection
   protected PageRenderOptions options;
@@ -35,8 +37,6 @@ public class Reader extends PageNavigator {
   Chapter chapter;
 
   public Strings pageFiles = new Strings();
-  public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
-  public static final int TAB_BAR_HEIGHT = 8;
   private boolean flushCache = false;
   int scrollPosX = 0, scrollPosY = 0;
 

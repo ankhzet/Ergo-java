@@ -44,7 +44,7 @@ class CommonProgressRenderer {
 
   Rectangle2D labelSize(ProgressRenderer r, Graphics2D g) {
     Font f = g.getFont();
-    FontRenderContext frc = ((Graphics2D) g).getFontRenderContext();
+    FontRenderContext frc = g.getFontRenderContext();
     Rectangle2D s = f.getStringBounds(r.label, frc);
     Rectangle rect = new Rectangle(s.getBounds());
     rect.height = f.getSize();

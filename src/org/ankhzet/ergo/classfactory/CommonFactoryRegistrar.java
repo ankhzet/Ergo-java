@@ -4,7 +4,7 @@ import org.ankhzet.ergo.classfactory.builder.Builder;
 
 class CommonClassFactory<Produces> extends ClassFactory<Produces> {
 
-  public CommonClassFactory(final Class<Produces> c, Builder<Produces> builder) {
+  CommonClassFactory(final Class<Produces> c, Builder<Produces> builder) {
     register(c, builder);
   }
 

@@ -197,7 +197,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   public UIPage navigateTo(Class c, Object... params) {
     prevUI = currentUI;
 
-    currentUI = (UIPage) IoC.<UIPage>get(c);
+    currentUI = IoC.<UIPage>get(c);
 
     if (currentUI == null)
       currentUI = prevUI;

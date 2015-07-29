@@ -149,7 +149,7 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
 
   private class FieldsList extends ArrayList<Field> {
 
-    public FieldsList(Collection<? extends Field> c) {
+    FieldsList(Collection<? extends Field> c) {
       super(c);
     }
 

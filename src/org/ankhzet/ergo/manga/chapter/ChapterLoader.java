@@ -42,7 +42,7 @@ public class ChapterLoader {
     loader.start();
   }
 
-  final void layout() {
+  void layout() {
     cacher = new Thread(() -> {
       try {
         while (true) {

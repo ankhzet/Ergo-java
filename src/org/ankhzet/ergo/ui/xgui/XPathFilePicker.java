@@ -133,7 +133,7 @@ public class XPathFilePicker extends CommonControl {
   }
 
   int rowsInView() {
-    return (int) ((h - ITEM_HEIGHT) / ITEM_HEIGHT);
+    return ((h - ITEM_HEIGHT) / ITEM_HEIGHT);
   }
 
   float columnWidth() {

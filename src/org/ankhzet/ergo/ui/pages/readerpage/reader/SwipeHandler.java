@@ -8,22 +8,10 @@ import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class SwipeHandler implements Runnable {
-
-  public boolean inprocess = false;
-  Thread worker = null;
-  boolean vertical = true;
-  int direction;
-  int cw, ch;
-  double progress;
-  long start, end;
   public static final int ANIMATE_FOR = 500;
   public static final double MIN_SPEED = 0.1;
   public static final double MAX_SPEED = 0.8;
-
   static SwipeHandler swiper;
-
-  @DependencyInjection
-  Reader reader;
 
   public static SwipeHandler swipe() {
     if (swiper == null)
@@ -46,33 +34,6 @@ public class SwipeHandler implements Runnable {
     swipe.worker = new Thread(swipe);
     swipe.worker.start();
     return true;
-  }
-
-  @Override
-  public void run() {
-    if (inprocess)
-      return;
-
-    inprocess = true;
-    long t;
-    while ((t = System.currentTimeMillis()) <= end) {
-      long delta = Math.max(end - t, 0);
-      if (delta > 0)
-        try {
-          Thread.sleep(delta);
-        } catch (InterruptedException ex) {
-          ex.printStackTrace();
-        }
-    }
-    inprocess = false;
-    switch (direction()) {
-    case -1:
-      reader.prevPage();
-      break;
-    case 01:
-      reader.nextPage();
-      break;
-    }
   }
 
   public static boolean done() {
@@ -109,5 +70,44 @@ public class SwipeHandler implements Runnable {
 
     return Math.max(Math.min(delta * 2.0, MAX_SPEED), MIN_SPEED);
   }
+
+  public boolean inprocess = false;
+  Thread worker = null;
+  boolean vertical = true;
+  int direction;
+  int cw, ch;
+  double progress;
+  long start, end;
+
+  @DependencyInjection
+  Reader reader;
+
+  @Override
+  public void run() {
+    if (inprocess)
+      return;
+    
+    inprocess = true;
+    long t;
+    while ((t = System.currentTimeMillis()) <= end) {
+      long delta = Math.max(end - t, 0);
+      if (delta > 0)
+        try {
+          Thread.sleep(delta);
+        } catch (InterruptedException ex) {
+          ex.printStackTrace();
+        }
+    }
+    inprocess = false;
+    switch (direction()) {
+    case -1:
+      reader.prevPage();
+      break;
+    case 01:
+      reader.nextPage();
+      break;
+    }
+  }
+
 
 }

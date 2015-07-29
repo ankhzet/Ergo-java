@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-public final class Skin {
+public class Skin {
 
   public final Color//
           BG_COLOR, UI_PANEL, UI_SCROLLBG, UI_SCROLLBORDER;
