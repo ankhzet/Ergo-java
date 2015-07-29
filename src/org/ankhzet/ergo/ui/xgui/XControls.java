@@ -85,6 +85,16 @@ public class XControls extends ArrayList<CommonControl> {
     }
   }
 
+  public CommonControl getControl(XAction action) {
+    synchronized (this) {
+      for (CommonControl c : this)
+        if (c.action == action)
+          return c;
+    }
+    
+    return null;
+  }
+
   public CommonControl putAtLeft(CommonControl c) {
     return putControl(c, AREA_LEFT);
   }
