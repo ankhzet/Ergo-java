@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import org.ankhzet.ergo.classfactory.IoC;
-import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.files.Parser;
+import org.ankhzet.ergo.ui.UILogic;
 
 public class XButton extends CommonControl {
 

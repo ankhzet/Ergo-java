@@ -7,15 +7,16 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.MouseEvent;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.ankhzet.ergo.ui.UILogic;
-import org.ankhzet.ergo.files.Parser;
-import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.files.Parser;
+import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.xgui.filepicker.CollumnedItemVisitor;
 import org.ankhzet.ergo.ui.xgui.filepicker.PickedNode;
+import org.ankhzet.ergo.utils.Strings;
 
 /**
  *

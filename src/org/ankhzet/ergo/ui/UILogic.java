@@ -4,7 +4,6 @@
  */
 package org.ankhzet.ergo.ui;
 
-import org.ankhzet.ergo.ui.pages.UIPage;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -19,14 +18,14 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
-
 import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.db.DB;
+import org.ankhzet.ergo.ui.pages.UIHomePage;
+import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XActionListener;
 import org.ankhzet.ergo.ui.xgui.XControls;
-import org.ankhzet.ergo.ui.pages.UIHomePage;
-import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XMessageBox;
 
 /**

@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
+import org.ankhzet.ergo.manga.chapter.page.PageData;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
-import org.ankhzet.ergo.manga.chapter.page.PageData;
 
 /**
  *

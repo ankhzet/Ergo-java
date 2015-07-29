@@ -5,9 +5,9 @@ import java.awt.event.MouseEvent;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.UILogic;
-import org.ankhzet.ergo.ui.xgui.XActions;
 import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XAction.Action;
+import org.ankhzet.ergo.ui.xgui.XActions;
 import org.ankhzet.ergo.ui.xgui.XControls;
 
 /**

@@ -8,13 +8,13 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.ankhzet.ergo.classfactory.builder.Builder;
-import org.ankhzet.ergo.classfactory.builder.ClassBuilder;
-import org.ankhzet.ergo.classfactory.exceptions.*;
-
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import org.ankhzet.ergo.classfactory.builder.Builder;
+import org.ankhzet.ergo.classfactory.builder.ClassBuilder;
+import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
+import org.ankhzet.ergo.classfactory.exceptions.FailedFactoryProductException;
+import org.ankhzet.ergo.classfactory.exceptions.UnknownFactoryProductException;
 
 abstract class AbstractClassFactory<ProducesType> implements AbstractFactory<Class, ProducesType> {
 
