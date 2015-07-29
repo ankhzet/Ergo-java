@@ -305,7 +305,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
       progress.hide();
       return true;
     }
-    progress.setProgress(LoaderProgressListener.LABELS[state], p, max);
+    progress.setProgress(LABELS[state], p, max);
     return currentUI.onProgress(state, p, max);
   }
 

@@ -104,11 +104,11 @@ public class XControls extends ArrayList<CommonControl> {
   }
 
   public XAction putActionAtLeft(String caption, XAction action) {
-    return putAction(caption, XControls.AREA_LEFT, action);
+    return putAction(caption, AREA_LEFT, action);
   }
 
   public XAction putActionAtRight(String caption, XAction action) {
-    return putAction(caption, XControls.AREA_RIGHT, action);
+    return putAction(caption, AREA_RIGHT, action);
   }
 
   public XAction putAction(String caption, int area, XAction action) {

@@ -49,7 +49,7 @@ public class Launcher extends Application {
   }
 
   public static void main(String[] args) {
-    Application.launch(Launcher.class, args);
+    launch(Launcher.class, args);
   }
 
   private class LauncherListener extends WindowAdapter {

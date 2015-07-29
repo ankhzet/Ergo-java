@@ -45,7 +45,7 @@ public class Chapter extends File {
     String path = getPath();
     String[] files = list((dir, name) -> name.toLowerCase().matches(PAGE_PATTERN));
     for (String fileName : files)
-      pageFiles.add(path + File.separator + fileName);
+      pageFiles.add(path + separator + fileName);
 
     return pageFiles;
   }
