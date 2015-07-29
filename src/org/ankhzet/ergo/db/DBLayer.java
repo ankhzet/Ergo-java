@@ -35,7 +35,7 @@ public class DBLayer {
   }
 
   public PreparedStatement prepareStatement(String sql) throws SQLException {
-    return connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    return connection.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
   }
 
   public int createTable(String sql) throws SQLException {
@@ -43,12 +43,11 @@ public class DBLayer {
     return s.executeUpdate(String.format("create table if not exists %s", sql));
   }
 
-  public static int getFetchRowcount(ResultSet rs) {
+  public static int getFetchRowCount(ResultSet rs) {
     int size = 0;
     try {
       rs.last();
       size = rs.getRow();
-      rs.beforeFirst();
     } catch (Exception ex) {
       ex.printStackTrace();
     }
