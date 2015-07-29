@@ -1,9 +1,9 @@
 package org.ankhzet.ergo.ui.pages;
 
-import org.ankhzet.ergo.ui.pages.readerpage.UIReaderPage;
 import java.awt.Graphics2D;
 import java.io.File;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
+import org.ankhzet.ergo.ui.pages.readerpage.UIReaderPage;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
@@ -11,7 +11,6 @@ import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.ui.xgui.XButton;
 import org.ankhzet.ergo.ui.xgui.XControls;
-import org.ankhzet.ergo.ui.xgui.XPathFilePicker;
 
 /**
  *
@@ -26,7 +25,7 @@ public class UIHomePage extends UIPage {
   static final String kContinueLabel = "Continue";
 
   @DependencyInjection
-  XPathFilePicker picker;
+  MangaChapterPicker picker;
   @DependencyInjection
   Reader reader;
 
