@@ -50,6 +50,10 @@ public class XButton extends CommonControl {
     this.caption = caption;
   }
 
+  public void setCaption(String caption) {
+    this.caption = caption;
+  }
+
   @Override
   public void DoDraw(Graphics2D g) {
     boolean isEnabled = isEnabled();
