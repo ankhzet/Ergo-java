@@ -3,6 +3,7 @@ package org.ankhzet.ergo.factories;
 
 import org.ankhzet.ergo.classfactory.ClassFactory;
 import org.ankhzet.ergo.db.DB;
+import org.ankhzet.ergo.db.tables.BookmarksTable;
 
 /**
  *
@@ -12,6 +13,8 @@ public class DBFactory extends ClassFactory<DB> {
 
   public DBFactory() {
     register(DB.class);
+    
+    register(BookmarksTable.class);
   }
 
 }

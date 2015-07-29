@@ -12,6 +12,7 @@ public class DB extends DBLayer {
 
   public DB() throws ClassNotFoundException, SQLException {
     super();
+    IoC.get(BookmarksTable.class);
   }
 
 }
