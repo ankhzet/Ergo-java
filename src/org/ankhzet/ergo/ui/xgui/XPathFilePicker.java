@@ -9,6 +9,7 @@ import java.awt.Shape;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.files.Parser;
 import org.ankhzet.ergo.utils.Strings;
@@ -22,7 +23,7 @@ import org.ankhzet.ergo.ui.xgui.filepicker.PickedNode;
  */
 public class XPathFilePicker extends CommonControl {
 
-  class FilesList extends ArrayList<File> {
+  public class FilesList extends ArrayList<File> {
   };
 
   protected Image[] ims = new Image[4];
@@ -34,8 +35,7 @@ public class XPathFilePicker extends CommonControl {
 
   String caption = "";
   String root = "/";
-  FilesList dirs = new FilesList();
-  FilesList files = new FilesList();
+  protected FilesList entries = new FilesList();
   int fontHeight = 12;
   public File higlited, selected, aiming;
 
@@ -114,8 +114,7 @@ public class XPathFilePicker extends CommonControl {
     };
 
     CollumnedItemVisitor<File> v = itemVisitor(w, h);
-    v.walkItems(dirs, nodeVisitor);
-    v.walkItems(files, nodeVisitor);
+    v.walkItems(entries, nodeVisitor);
 
     g.setClip(null);
     g.setColor(Color.GRAY);
@@ -127,10 +126,7 @@ public class XPathFilePicker extends CommonControl {
   PickedNode<File> itemUnderXY(int w, int h, int x, int y) {
     CollumnedItemVisitor<File> v = itemVisitor(w, h);
 
-    FilesList l = new FilesList();
-    l.addAll(dirs);
-    l.addAll(files);
-    return v.walkItems(l, (Rectangle r, File f) -> {
+    return v.walkItems(entries, (Rectangle r, File f) -> {
       return r.contains(x, y);
     });
   }
@@ -140,7 +136,7 @@ public class XPathFilePicker extends CommonControl {
   }
 
   float columnWidth() {
-    int total = dirs.size() + files.size();
+    int total = entries.size();
     int r = rowsInView();
     if (r >= total)
       return w;
@@ -161,9 +157,8 @@ public class XPathFilePicker extends CommonControl {
     return new CollumnedItemVisitor<>(columnWidth(), ITEM_HEIGHT, 0, rowsInView());
   }
 
-  void fetchRoot() {
-    dirs.clear();
-    files.clear();
+  protected void fetchRoot() {
+    entries.clear();
 
     File path = new File(root);
     if (!path.isDirectory())
@@ -175,17 +170,13 @@ public class XPathFilePicker extends CommonControl {
     }
 
     File[] filesList = path.listFiles((File dir, String name) -> !name.matches("^\\..*$"));
-    for (File entry : filesList)
-      if (entry.isDirectory())
-        dirs.add(entry);
-      else
-        files.add(entry);
+    entries.addAll(Arrays.asList(filesList));
   }
 
   public void setRoot(String root) {
     this.root = root;
     fetchRoot();
-    dirs.add(0, new File(".."));
+    entries.add(0, new File(".."));
     selected = null;
     higlited = null;
     aiming = null;
@@ -193,9 +184,8 @@ public class XPathFilePicker extends CommonControl {
 
   public void setList(Strings list) {
     this.root = "/";
-    dirs.clear();
-    files.clear();
-    list.forEach((s) -> dirs.add(new File(s)));
+    entries.clear();
+    list.forEach((s) -> entries.add(new File(s)));
     selected = null;
     higlited = null;
     aiming = null;
