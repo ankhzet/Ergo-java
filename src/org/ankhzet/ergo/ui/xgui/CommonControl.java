@@ -19,7 +19,7 @@ public class CommonControl {
     setAction(null);
   }
 
-  final public void move(int x, int y, int w, int h) {
+  public void move(int x, int y, int w, int h) {
     this.x = x;
     this.y = y;
     this.w = w;
@@ -95,7 +95,7 @@ public class CommonControl {
     return action.isEnabled();
   }
 
-  public final void setAction(XAction action) {
+  public void setAction(XAction action) {
     if (action == null)
       action = new XAction("", null);
 

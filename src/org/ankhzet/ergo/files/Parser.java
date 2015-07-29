@@ -21,7 +21,7 @@ public class Parser {
       length = (int) f.skip(Long.MAX_VALUE);
       f.close();
       f = new FileReader(src);
-    } catch (Throwable e) {
+    } catch (IOException e) {
     }
     position = 0;
     readed = 0;

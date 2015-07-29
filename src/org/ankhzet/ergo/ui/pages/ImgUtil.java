@@ -108,7 +108,7 @@ public class ImgUtil {
     if (dst.exists())
       try {
         scaled = ImageIO.read(dst);
-      } catch (Exception e) {
+      } catch (IOException e) {
         dst.delete();
         return thumbnail(fileName, thumbDir, scaler);
       }
@@ -119,7 +119,7 @@ public class ImgUtil {
 
         dst.getParentFile().mkdirs();
         ImageIO.write(scaled, Strings.explode(src.getName(), "\\.").pop(), dst);
-      } catch (Exception e) {
+      } catch (IOException e) {
 
       }
 

@@ -18,20 +18,15 @@ public class XControls extends ArrayList<CommonControl> {
 
   public static final String kBackAction = "back";
   static final String kBackLabel = "Back";
+  public static final int AREA_LEFT = 1; //
+  public static final int AREA_RIGHT = 2;
+  static final int SIDE_MARGIN = 3; //
+  static final int TOP_MARGIN = 2; //
+  static final int BTN_SPACING = 5;
 
   CommonControl focused = null;
   CtlMap left = new CtlMap();
   CtlMap right = new CtlMap();
-  public static final int//
-          AREA_LEFT = 1,//
-          AREA_RIGHT = 2//
-          ;
-
-  static final int//
-          SIDE_MARGIN = 3,//
-          TOP_MARGIN = 2,//
-          BTN_SPACING = 5//
-          ;
 
   public void Draw(Graphics2D g, int x, int y, int cw, int ch) {
     ch--;
@@ -104,11 +99,11 @@ public class XControls extends ArrayList<CommonControl> {
   }
 
   public XAction putActionAtLeft(String caption, XAction action) {
-    return putAction(caption, XControls.AREA_LEFT, action);
+    return putAction(caption, AREA_LEFT, action);
   }
 
   public XAction putActionAtRight(String caption, XAction action) {
-    return putAction(caption, XControls.AREA_RIGHT, action);
+    return putAction(caption, AREA_RIGHT, action);
   }
 
   public XAction putAction(String caption, int area, XAction action) {
@@ -149,11 +144,6 @@ public class XControls extends ArrayList<CommonControl> {
     }
   }
 
-  private interface CtlEnum {
-
-    int withCtl(CommonControl c, int dx);
-
-  }
 
   void packArea(CtlMap controls, int dx, CtlEnum enumerate) {
     ArrayList<Integer> l = new ArrayList<>(controls.keySet());
@@ -187,6 +177,11 @@ public class XControls extends ArrayList<CommonControl> {
 
   public int onRight() {
     return right.size();
+  }
+
+  private interface CtlEnum {
+
+    int withCtl(CommonControl c, int dx);
   }
 
 }

@@ -64,7 +64,7 @@ public class UIDuplicatesPage extends UIPage {
         try {
           Integer avg = Integer.decode(n);
           avgs.put(parts.join("."), avg);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
         }
       }
 
@@ -203,7 +203,7 @@ public class UIDuplicatesPage extends UIPage {
     int sum = 0;
     sum = images.stream().map((image) -> imageWidth(image)).reduce(sum, Integer::sum);
 
-    sum = sum + Math.max(0, images.size() - 1) * thumbSpace;
+    sum += Math.max(0, images.size() - 1) * thumbSpace;
     return sum <= w;
   }
 

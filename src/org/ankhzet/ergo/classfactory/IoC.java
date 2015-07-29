@@ -1,9 +1,9 @@
 package org.ankhzet.ergo.classfactory;
 
-import java.util.Set;
-import org.ankhzet.ergo.classfactory.exceptions.*;
 import org.ankhzet.ergo.classfactory.builder.Builder;
 import org.ankhzet.ergo.classfactory.builder.DependantClassBuilder;
+import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
+import org.ankhzet.ergo.classfactory.exceptions.UnknownFactoryProductException;
 
 /**
  *
@@ -11,8 +11,6 @@ import org.ankhzet.ergo.classfactory.builder.DependantClassBuilder;
  */
 public class IoC {
 
-  private static class Factories extends ClassFactory<ClassFactory> {
-  };
   static Factories factories;
 
   static Factories factories() {
@@ -63,11 +61,14 @@ public class IoC {
       }
     };
 
-    ((Set<Class>) factory.produces()).forEach((identifier) -> {
-      f.register(identifier, builder);
+    factory.produces().forEach((identifier) -> {
+      f.register((Class)identifier, builder);
     });
 
     return factory;
+  }
+
+  private static class Factories extends ClassFactory<ClassFactory> {
   }
 
 }

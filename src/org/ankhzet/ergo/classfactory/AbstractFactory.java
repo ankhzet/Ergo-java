@@ -5,9 +5,9 @@
  */
 package org.ankhzet.ergo.classfactory;
 
-import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
-import org.ankhzet.ergo.classfactory.builder.Builder;
 import java.util.Set;
+import org.ankhzet.ergo.classfactory.builder.Builder;
+import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
 
 /**
  *

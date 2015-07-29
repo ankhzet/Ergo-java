@@ -45,7 +45,7 @@ public class Chapter extends File {
     String path = getPath();
     String[] files = list((dir, name) -> name.toLowerCase().matches(PAGE_PATTERN));
     for (String fileName : files)
-      pageFiles.add(path + File.separator + fileName);
+      pageFiles.add(path + separator + fileName);
 
     return pageFiles;
   }
@@ -92,7 +92,7 @@ public class Chapter extends File {
   public float id() {
     try {
       return Float.parseFloat(getName());
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
       return 0.f;
     }
   }
