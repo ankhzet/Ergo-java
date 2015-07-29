@@ -30,8 +30,8 @@ public class ClassBuilder<Type> implements Builder<Type> {
       return null;
 
     try {
-      if (lock.getHoldCount() > 1)
-        return null;
+//      if (lock.getHoldCount() > 1)
+//        return null;
 
       Constructor<?> constructor;
       try {

@@ -38,7 +38,11 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
   @Override
   public ProducesType get(Class identifier) throws FactoryException {
     synchronized (this) {
-      ProducesType instance = (ProducesType) container.get(identifier);
+      ProducesType instance = null;
+      try {
+        instance = pick(container, identifier);
+      } catch (FactoryException e) {}
+      
       if (instance == null) {
         container.put(identifier, instance = make(identifier));
 
@@ -52,9 +56,7 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
   @Override
   public ProducesType make(Class identifier) throws FactoryException {
     synchronized (this) {
-      Builder<ProducesType> builder = builders.get(identifier);
-      if (builder == null)
-        throw new UnknownFactoryProductException(identifier);
+      Builder<ProducesType> builder = pick(builders, identifier);
 
       try {
         return (ProducesType) builder.build(identifier);
@@ -64,6 +66,19 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
       }
 
     }
+  }
+
+  <T> T pick(HashMap<Class, T> from, Class id) throws UnknownFactoryProductException {
+    T picked = from.get(id);
+
+    if (picked != null)
+      return picked;
+
+    for (Class c : from.keySet())
+      if (id.isAssignableFrom(c))
+        return from.get(c);
+
+    throw new UnknownFactoryProductException(id);
   }
 
   @Override
