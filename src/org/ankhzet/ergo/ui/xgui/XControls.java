@@ -91,7 +91,7 @@ public class XControls extends ArrayList<CommonControl> {
         if (c.action == action)
           return c;
     }
-    
+
     return null;
   }
 
@@ -170,7 +170,7 @@ public class XControls extends ArrayList<CommonControl> {
         if (c.isVisible() && c.keyEvent(e))
           break;
     }
-    }
+  }
 
   @Override
   public void clear() {

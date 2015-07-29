@@ -7,7 +7,7 @@ import java.awt.event.MouseEvent;
 public class CommonControl {
 
   protected boolean overed = false,
-  clicked = false;
+          clicked = false;
   protected int x, y, w, h;
   protected XAction action = null;
   private XActionListener l = null;
@@ -58,7 +58,7 @@ public class CommonControl {
     }
     return clicked;
   }
-  
+
   public void doClick() {
     try {
       if (l != null)

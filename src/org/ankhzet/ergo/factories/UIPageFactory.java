@@ -31,4 +31,5 @@ public class UIPageFactory extends ClassFactory<UIPage> {
     register(SwipeHandler.class);
 
   }
+
 }

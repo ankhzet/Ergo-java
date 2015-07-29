@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.ui.xgui.filepicker;
 
 import java.awt.Rectangle;

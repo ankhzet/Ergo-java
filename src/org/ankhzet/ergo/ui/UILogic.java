@@ -40,10 +40,9 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   @DependencyInjection()
   UIContainerListener container;
-  
-  @DependencyInjection(instantiate=false)
+
+  @DependencyInjection(instantiate = false)
   protected DB db;
-  
 
   public static Toolkit toolkit;
   private Thread thread = null;
@@ -270,7 +269,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
       g.translate(0, UIPANEL_HEIGHT);
       currentUI.draw(g, w, h - UIPANEL_HEIGHT);
       g.translate(0, -UIPANEL_HEIGHT);
-      
+
       drawCenteredString(new Point(w / 2, UIPANEL_HEIGHT / 4), clientArea, 0, g, currentUI.title(), true);
     }
 
@@ -286,7 +285,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
       int inse2 = inset * 2;
       Point toolPos = new Point(tooltipX, tooltipY);
       Rectangle r = drawCenteredString(toolPos, clientArea, inset, g, tooltip, false);
-      
+
       g.setColor(Color.LIGHT_GRAY);
       g.fillRoundRect(r.x, r.y, r.width, r.height, inse2, inse2);
       g.setColor(Color.GRAY);
@@ -336,7 +335,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
     int ty = pos.y + inset;
     int th = (int) r.getHeight() + inset * 2;
-    
+
     if (draw) {
       int ch = (int) r.getY();
       g.setColor(Color.WHITE);

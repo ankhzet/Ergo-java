@@ -33,7 +33,7 @@ public class UIHomePage extends UIPage {
   private void di() {
     fetchMangas();
   }
-  
+
   @Override
   public void navigateIn(Object... params) {
     super.navigateIn(params);
@@ -42,10 +42,10 @@ public class UIHomePage extends UIPage {
     }).enabledAs(action -> {
       if (reader.isBusy())
         return false;
-      
+
       return pickedChapter().valid();
     }));
-    
+
     hud.putActionAtLeft(kContinueLabel, registerAction(kContinueAction, action -> {
       Chapter c = new Chapter(picker.getSelectedPath());
       Manga manga = new Manga(c.getMangaFolder());
@@ -60,26 +60,25 @@ public class UIHomePage extends UIPage {
       Manga manga = new Manga(c.getMangaFolder());
       Bookmark b = manga.lastBookmark();
       XButton cntButton = (XButton) hud.getControl(action);
-      if (cntButton != null) {
+      if (cntButton != null)
         if (b != null)
           cntButton.setCaption("Continue from: " + b.path(null).toString());
         else
           cntButton.setCaption(kContinueLabel);
-      }
       return b != null;
     });
-    
+
     hud.putSpacer(XControls.AREA_LEFT);
-    
+
     hud.putActionAtLeft("Filter duplicates", registerAction("dups", action -> {
       ui.navigateTo(UIDuplicatesPage.class, picker.getSelectedPath());
     })).enabledAs(action -> {
       return picker.hasSelected();
     });
-    
+
     hud.add(picker);
   }
-  
+
   Chapter pickedChapter() {
     return new Chapter(picker.getSelectedPath());
   }

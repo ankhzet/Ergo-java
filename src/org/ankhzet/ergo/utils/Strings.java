@@ -43,10 +43,11 @@ public class Strings extends ArrayList<String> {
     for (char c : input.toCharArray()) {
       if (Character.isSpaceChar(c))
         nextTitleCase = true;
-      else if (nextTitleCase) {
-        c = Character.toTitleCase(c);
-        nextTitleCase = false;
-      }
+      else
+        if (nextTitleCase) {
+          c = Character.toTitleCase(c);
+          nextTitleCase = false;
+        }
 
       titleCase.append(c);
     }

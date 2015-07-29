@@ -22,7 +22,7 @@ public class XMessageBox {
     this.message = message;
     shownTill = System.currentTimeMillis() + MSGBOX_TIMEOUT;
   }
-  
+
   public boolean isShown() {
     return System.currentTimeMillis() < shownTill;
   }
@@ -30,7 +30,7 @@ public class XMessageBox {
   public void draw(Graphics2D g, Rectangle clientArea) {
     if (!isShown())
       return;
-    
+
     Font f = g.getFont();
     FontRenderContext frc = g.getFontRenderContext();
     Rectangle2D r;

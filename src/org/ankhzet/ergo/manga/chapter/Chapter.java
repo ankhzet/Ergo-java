@@ -23,7 +23,7 @@ public class Chapter extends File {
   public Chapter(String path) {
     super(path);
   }
-  
+
   public static Chapter chapterFromBookmark(Path root, Bookmark bookmark) {
     return new Chapter(bookmark.path(root).toString());
   }
@@ -69,9 +69,9 @@ public class Chapter extends File {
       for (File chapter : chapterNames)
         chapters.add(new Chapter(chapter.getPath()));
 
-    return chapters.toArray(new Chapter[] {});
+    return chapters.toArray(new Chapter[]{});
   }
-  
+
   public Chapter seekChapter(boolean forward) {
     List<Chapter> list = Arrays.<Chapter>asList(allChapters());
 
@@ -80,7 +80,7 @@ public class Chapter extends File {
     int index = Utils.constraint(i + (forward ? 1 : -1), 0, list.size() - 1);
     return list.get(index);
   }
-  
+
   public String idShort() {
     return isBonus() ? String.format("%.1f", idx() / 10.f) : String.format("%d", idx() / 10);
   }
@@ -100,11 +100,11 @@ public class Chapter extends File {
   public int idx() {
     return (int) (id() * 10);
   }
-  
+
   public boolean isBonus() {
     return (idx() % 10) > 0;
   }
-  
+
   public boolean valid() {
     return idx() > 0;
   }
@@ -112,13 +112,13 @@ public class Chapter extends File {
   public int compare(Chapter chapter) {
     return Integer.signum(idx() - chapter.idx());
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof Chapter))
       return false;
-    
-    return idx() == ((Chapter)o).idx();
+
+    return idx() == ((Chapter) o).idx();
   }
 
   @Override

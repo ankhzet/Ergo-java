@@ -41,7 +41,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
   boolean swipeDirVertical = false;
   Point pressPos = new Point();
-  
+
   @Override
   public void navigateIn(Object... params) {
     super.navigateIn(params);
@@ -143,31 +143,31 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     int dx = pressPos.x - mx;
     int dy = pressPos.y - my;
     switch (e.getID()) {
-      case MouseEvent.MOUSE_PRESSED:
-        pressPos.setLocation(mx, my);
-        mouseDown = true;
-        hud.unfocus();
+    case MouseEvent.MOUSE_PRESSED:
+      pressPos.setLocation(mx, my);
+      mouseDown = true;
+      hud.unfocus();
+      break;
+    case MouseEvent.MOUSE_DRAGGED:
+      if (!options.showOriginalSize())
         break;
-      case MouseEvent.MOUSE_DRAGGED:
-        if (!options.showOriginalSize())
-          break;
-        reader.scroll(dx, dy);
-        pressPos.setLocation(mx, my);
+      reader.scroll(dx, dy);
+      pressPos.setLocation(mx, my);
+      break;
+    case MouseEvent.MOUSE_RELEASED:
+      if (!mouseDown)
         break;
-      case MouseEvent.MOUSE_RELEASED:
-        if (!mouseDown)
-          break;
 
-        if (!options.showOriginalSize()) {
-          boolean vertSwipe = Math.abs(dy) > Math.abs(dx);
-          if (vertSwipe == swipeDirVertical) {
-            int dir = swipeDirVertical ? dy : dx;
-            if (Math.abs(dir) > 5)//(swipeDirVertical ? clientArea.height : clientArea.width) * 0.1)
-              swipePage(dir);
-          }
+      if (!options.showOriginalSize()) {
+        boolean vertSwipe = Math.abs(dy) > Math.abs(dx);
+        if (vertSwipe == swipeDirVertical) {
+          int dir = swipeDirVertical ? dy : dx;
+          if (Math.abs(dir) > 5)//(swipeDirVertical ? clientArea.height : clientArea.width) * 0.1)
+            swipePage(dir);
         }
-        mouseDown = false;
-        break;
+      }
+      mouseDown = false;
+      break;
     }
 
     return mouseDown;
@@ -207,7 +207,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
         ui.message(String.format("This is %s available chapter (%s >> %s)", dir, current.getMangaFolder(), current.idShort()));
       }
 
-    } else 
+    } else
       if (requested > 1)
         bookmark(current);
   }
@@ -221,7 +221,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     String manga = Strings.toTitleCase(current.getMangaFolder());
     String chapter = current.idShort();
     String last = current.lastChapter().idShort();
-    
+
     return String.format("%s [%s/%s]", manga, chapter, last);
   }
 

@@ -19,4 +19,5 @@ public class CommonFactoryRegistrar<Produces> extends FactoryRegistrar {
   public CommonFactoryRegistrar(Class<Produces> c, Builder<Produces> builder) {
     super(new CommonClassFactory(c, builder));
   }
+
 }

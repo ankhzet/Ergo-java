@@ -219,20 +219,20 @@ public class XPathFilePicker extends CommonControl {
     }
 
     switch (e.getID()) {
-      case MouseEvent.MOUSE_RELEASED:
-        if (clicked && overed)
-          aim(clickedBtn);
+    case MouseEvent.MOUSE_RELEASED:
+      if (clicked && overed)
+        aim(clickedBtn);
 
-        clicked = false;
-        break;
-      case MouseEvent.MOUSE_PRESSED:
-        clicked = overed;
-        if (clicked) {
-          if (selected != higlited)
-            aiming = null;
-          selected = higlited;
-        }
-        break;
+      clicked = false;
+      break;
+    case MouseEvent.MOUSE_PRESSED:
+      clicked = overed;
+      if (clicked) {
+        if (selected != higlited)
+          aiming = null;
+        selected = higlited;
+      }
+      break;
     }
     return clicked;
   }

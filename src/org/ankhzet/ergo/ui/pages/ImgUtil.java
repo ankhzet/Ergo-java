@@ -66,12 +66,12 @@ public class ImgUtil {
 
     BufferedImage resized = null;
     float tenth = ow / 10.f;
-    int steps = Math.max(1, (int)(Math.abs(ow - ow * scale) / tenth));
+    int steps = Math.max(1, (int) (Math.abs(ow - ow * scale) / tenth));
 
     int w = ow;
     int h = oh;
-    for (int i = 1; i <= steps; i ++) {
-      float d = i / (float)steps;
+    for (int i = 1; i <= steps; i++) {
+      float d = i / (float) steps;
       float scaleFactor = scale * d + 1 * (1 - d);
 
       int nw = (int) (ow * scaleFactor);
@@ -83,12 +83,12 @@ public class ImgUtil {
       g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
       g.drawImage(image, 0, 0, nw, nh, 0, 0, w, h, null);
       g.dispose();
-      
+
       image = resized;
       w = nw;
       h = nh;
     }
-    
+
     return resized;
 
 //    AffineTransform at = new AffineTransform();

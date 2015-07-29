@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.db;
 
 import java.sql.PreparedStatement;
@@ -13,9 +12,9 @@ import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
  */
 public abstract class Table {
 
-  @DependencyInjection(instantiate=false)
+  @DependencyInjection(instantiate = false)
   protected DBLayer db;
-  
+
   @DependenciesInjected(suppressInherited = false, beforeInherited = false)
   private void diInjected() throws Exception {
     if (!assumeExists())
@@ -27,7 +26,7 @@ public abstract class Table {
   public abstract String tableName();
 
   protected abstract String schema();
-  
+
   public boolean assumeExists() {
     try {
       db.createTable(schema());
@@ -35,7 +34,7 @@ public abstract class Table {
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
-    
+
     return false;
   }
 
@@ -47,24 +46,24 @@ public abstract class Table {
     } catch (SQLException ex) {
       ex.printStackTrace();
     }
-    
+
     return false;
   }
-  
+
   public static String select(String table, String collumns) {
     return String.format(Locale.US, "select %s from %s", collumns, table);
   }
-  
+
   public static String insert(String table, String collumns, String values) {
     return String.format(Locale.US, "insert into %s (%s) values (%s)", table, collumns, values);
   }
-  
+
   public static String truncate(String table) {
     return String.format(Locale.US, "truncate table %s", table);
   }
-  
+
   public static String delete(String table) {
     return String.format(Locale.US, "delete from %s", table);
   }
-  
+
 }

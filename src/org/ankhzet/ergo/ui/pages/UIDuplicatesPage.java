@@ -37,19 +37,19 @@ public class UIDuplicatesPage extends UIPage {
   ArrayList<BufferedImage> duplicates = new ArrayList<>();
 
   Chapter duplicatesIn;
-  
+
   Chapter searchPath() {
     return duplicatesIn;
   }
-  
+
   @Override
   public void navigateIn(Object... params) {
     if (params.length < 1)
       throw new RuntimeException("Path not specified");
-    
+
     ui.intensiveRepaint(true);
 
-    duplicatesIn = new Chapter((String)params[0]);
+    duplicatesIn = new Chapter((String) params[0]);
 
     File cols = duplicatesIn.toPath().resolve(".col").toFile();
     File[] avMaches = cols.listFiles((File file) -> {
@@ -304,18 +304,18 @@ public class UIDuplicatesPage extends UIPage {
       return true;
 
     switch (e.getID()) {
-      case MouseEvent.MOUSE_MOVED:
-        mx = e.getX();
-        my = e.getY();
-        return true;
+    case MouseEvent.MOUSE_MOVED:
+      mx = e.getX();
+      my = e.getY();
+      return true;
 
-      case MouseEvent.MOUSE_PRESSED:
-        if (overI != null)
-          if (!duplicates.contains(overI))
-            duplicates.add(overI);
-          else
-            duplicates.remove(overI);
-        return true;
+    case MouseEvent.MOUSE_PRESSED:
+      if (overI != null)
+        if (!duplicates.contains(overI))
+          duplicates.add(overI);
+        else
+          duplicates.remove(overI);
+      return true;
     }
 
     return false;

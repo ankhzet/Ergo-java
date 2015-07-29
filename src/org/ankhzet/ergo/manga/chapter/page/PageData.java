@@ -92,21 +92,22 @@ public class PageData {
       } catch (Exception e) {
         UILogic.log("Image rotation failed!", 0);
       }
-    } else if (options.originalSize)
-      cache = image;
-    else {
-      float scale = layout.newPageW / (float) pageW;
-      scale = 0.1f * (int) (scale * 10);
-      if ((int) scale != 1)
-        cache = ImgUtil.scaled(image, layout.newPageW / (float) pageW);
-      else
+    } else
+      if (options.originalSize)
         cache = image;
+      else {
+        float scale = layout.newPageW / (float) pageW;
+        scale = 0.1f * (int) (scale * 10);
+        if ((int) scale != 1)
+          cache = ImgUtil.scaled(image, layout.newPageW / (float) pageW);
+        else
+          cache = image;
 //      cache = new BufferedImage(nw, nh, BufferedImage.TYPE_INT_RGB);
 //      Graphics2D g = cache.createGraphics();
 //      g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 //      g.drawImage(image, 0, 0, layout.newPageW, layout.newPageH, 0, 0, pageW, pageH, null);
 //      g.dispose();
-    }
+      }
   }
 
   public void draw(Graphics g, int dx, int dy) {

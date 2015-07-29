@@ -9,16 +9,16 @@ import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
 public class PageLayout {
 
   public int//
-  clientW = 0,
-  clientH = 0,
-  renderX = 0,
-  renderY = 0,
-  oldPageW = -1,
-  oldPageH = -1,
-  newPageW = 0,
-  newPageH = 0,
-  scrollX = 0,
-  scrollY = 0;
+          clientW = 0,
+          clientH = 0,
+          renderX = 0,
+          renderY = 0,
+          oldPageW = -1,
+          oldPageH = -1,
+          newPageW = 0,
+          newPageH = 0,
+          scrollX = 0,
+          scrollY = 0;
 
   public PageLayout(int cw, int ch) {
     clientH = ch;
@@ -76,14 +76,13 @@ public class PageLayout {
         newPageH = clientH;
         newPageW = (int) (newPageH * ratio);
       }
-      
+
       float scale = newPageW / (float) pageW;
       scale = 0.1f * (int) (scale * 10);
-      if ((int)scale == 1) {
+      if ((int) scale == 1) {
         newPageW = pageW;
         newPageH = pageH;
       }
-
 
       // now, center page in view, if not scrolling
       posX = (clientW - newPageW) / 2;
@@ -112,4 +111,5 @@ public class PageLayout {
   public boolean wasResized() {
     return (oldPageW != newPageW) || (oldPageH != newPageH);
   }
+
 }

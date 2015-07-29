@@ -58,5 +58,7 @@ public class Launcher extends Application {
     public void windowClosing(WindowEvent e) {
       exit();
     }
+
   }
+
 }

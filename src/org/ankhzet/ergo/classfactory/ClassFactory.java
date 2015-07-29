@@ -41,8 +41,9 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
       ProducesType instance = null;
       try {
         instance = pick(container, identifier);
-      } catch (FactoryException e) {}
-      
+      } catch (FactoryException e) {
+      }
+
       if (instance == null) {
         container.put(identifier, instance = make(identifier));
 
@@ -173,7 +174,7 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
       else
         this.next.append(node);
     }
-    
+
     boolean empty() {
       return (finisher == null) && (fields.size() == 0);
     }
@@ -183,7 +184,7 @@ public class ClassFactory<ProducesType> extends AbstractClassFactory<ProducesTyp
       try {
         if (!fields.isEmpty())
           makeDependencies(instance);
-        
+
         if (finisher != null)
           invokeFinisher(instance);
       } catch (Exception ex) {

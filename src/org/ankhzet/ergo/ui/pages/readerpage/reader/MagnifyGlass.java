@@ -64,7 +64,7 @@ public class MagnifyGlass {
     g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     g.drawImage(data.getImage(), 0, 0, mw, mh, imgX - width / 2, imgY - height / 2, imgX + width / 2, imgY + height / 2, null);
     g.dispose();
-    
+
     return true;
   }
 

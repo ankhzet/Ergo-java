@@ -14,4 +14,5 @@ public interface LoaderProgressListener {
   public boolean onProgress(int state, int progress, int max);
 
   public void progressDone();
+
 }

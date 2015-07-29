@@ -11,11 +11,13 @@ public class XAction {
   public interface Action {
 
     public void perform(XAction action);
+
   }
 
   public interface XActionStateListener {
 
     public boolean isStated(XAction action);
+
   }
 
   protected String name;
@@ -37,11 +39,10 @@ public class XAction {
     return name.equalsIgnoreCase(actionName);
   }
 
-
   public boolean keyEvent(KeyEvent e) {
     return (shortcut != null) && shortcut.isKeyEvent(e) && perform();
   }
-  
+
   public void processed(boolean processed) {
     isProcessed = processed;
   }

@@ -34,7 +34,7 @@ public class Reader extends PageNavigator {
   protected Strings mangaRoots = new Strings();
   protected ChapterCacher pages = new ChapterCacher();
   Chapter chapter;
-  
+
   public Strings pageFiles = new Strings();
   public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
   public static final int TAB_BAR_HEIGHT = 8;
@@ -42,10 +42,9 @@ public class Reader extends PageNavigator {
   int scrollPosX = 0, scrollPosY = 0;
 
   public Reader() {
-    mangaRoots.add("F:/myprogs/engines/ErgoProxy/client v. 1.0/bin/manga");
     mangaRoots.add("H:/manga/manga");
   }
-  
+
   public Chapter chapter() {
     return chapter;
   }
@@ -290,7 +289,7 @@ public class Reader extends PageNavigator {
   public boolean mouseEvent(MouseEvent e) {
     if (magnifierShown())
       return magnifier.mouseEvent(e);
-    
+
     return false;
   }
 

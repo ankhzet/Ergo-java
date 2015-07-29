@@ -55,5 +55,5 @@ public class UIContainerListener extends JFrame {
   protected void processKeyEvent(KeyEvent e) {
     ui.keyEvent(e);
   }
-  
+
 }
