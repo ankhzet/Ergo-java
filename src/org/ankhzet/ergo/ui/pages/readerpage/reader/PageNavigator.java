@@ -8,7 +8,18 @@ import org.ankhzet.ergo.utils.Utils;
  */
 public abstract class PageNavigator {
 
+  public interface NavigationListener {
+
+    void pageSet(int requested, int set);
+
+  }
+
   private int currentPage = -1;
+  private NavigationListener listener;
+
+  public void setNavListener(NavigationListener l) {
+    listener = l;
+  }
 
   public abstract int totalPages();
 
@@ -42,7 +53,12 @@ public abstract class PageNavigator {
   }
 
   public int setPage(int page) {
-    return currentPage = Utils.constraint(page, 0, lastPage());
+    currentPage = Utils.constraint(page, 0, lastPage());
+
+    if (listener != null)
+      listener.pageSet(page, currentPage);
+
+    return currentPage;
   }
 
 }

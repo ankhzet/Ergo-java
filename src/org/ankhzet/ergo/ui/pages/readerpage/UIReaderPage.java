@@ -7,20 +7,24 @@ import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.SwipeHandler;
-import org.ankhzet.ergo.chapter.Chapter;
+import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import org.ankhzet.ergo.manga.Bookmark;
+import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.pages.readerpage.reader.PageNavigator;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.CommonControl;
 import org.ankhzet.ergo.ui.xgui.XAction;
-import org.ankhzet.ergo.ui.xgui.XControls;
+import org.ankhzet.ergo.ui.xgui.XKeyShortcut;
+import org.ankhzet.ergo.utils.Strings;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-public class UIReaderPage extends UIPage {
+public class UIReaderPage extends UIPage implements PageNavigator.NavigationListener {
 
   static String kPrev = "prevpage";
   static String kNext = "nextpage";
@@ -37,31 +41,31 @@ public class UIReaderPage extends UIPage {
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
   boolean swipeDirVertical = false;
   Point pressPos = new Point();
-  
+
   @Override
   public void navigateIn(Object... params) {
     super.navigateIn(params);
     loadHUD();
     if (params.length > 0 && params[0] != null) {
       Chapter chapter = (Chapter) params[0];
-      UILogic.log("loading [%s]:%.1f", chapter.getMangaFolder(), chapter.id());
-      reader.loadChapter(chapter);
+      UILogic.log("loading [%s: %s]:%.1f", chapter.getMangaFolder(), chapter.toString(), chapter.id());
+      loadChapter(chapter);
     }
   }
 
   void loadHUD() {
     XAction.Action swipeAction = action -> swipePage(action.isA(kPrev) ? -1 : 1);
     XAction.XActionStateListener canSwipeSelector = action -> canSwipe();
-    hud.putActionAtLeft("Предыдущая страница", registerAction(kPrev, swipeAction).enabledAs(canSwipeSelector));
-    hud.putActionAtLeft("Следующая страница", registerAction(kNext, swipeAction).enabledAs(canSwipeSelector));
-
-    hud.putBackAction(XControls.AREA_LEFT, null);
+    hud.putActionAtLeft("Предыдущая страница", registerAction(kPrev, swipeAction).enabledAs(canSwipeSelector))
+            .shortcut(XKeyShortcut.press("Left"));
+    hud.putActionAtLeft("Следующая страница", registerAction(kNext, swipeAction).enabledAs(canSwipeSelector))
+            .shortcut(XKeyShortcut.press("Right"));
 
     hud.putActionAtRight("Увелечительное стекло", registerAction(kMagnify, action -> {
       reader.showMagnifier(!reader.magnifierShown());
     }).togglable((XAction action) -> {
       return reader.magnifierShown();
-    }));
+    })).shortcut(XKeyShortcut.press("Shift"));
 
     hud.putActionAtRight("Листать вертикально", registerAction(kSwipedir, action -> {
       swipeDirVertical = !swipeDirVertical;
@@ -84,17 +88,27 @@ public class UIReaderPage extends UIPage {
     }));
   }
 
+  void bookmark(Chapter c) {
+    Manga m = new Manga(c.getMangaFolder());
+    Bookmark bookmark = m.lastBookmark();
+    if (bookmark != null)
+      bookmark.delete();
+
+    m.putBookmark(c);
+  }
+
+  void loadChapter(Chapter c) {
+    reader.loadChapter(c);
+  }
+
   boolean swipePage(int dir) {
-    if (reader == null || reader.totalPages() == 0 || reader.isLoading())
+    if (!canSwipe())
       return false;
 
     if (!options.showOriginalSize())
       return SwipeHandler.makeSwipe(swipeDirVertical, dir, ui.clientArea.width, ui.clientArea.height);
     else
-      if (dir > 0)
-        reader.nextPage();
-      else
-        reader.prevPage();
+      reader.changePage(dir < 0);
 
     return true;
   }
@@ -104,7 +118,7 @@ public class UIReaderPage extends UIPage {
   }
 
   boolean canSwipe() {
-    return !(swiping() || reader.totalPages() == 0 || reader.isLoading());
+    return !(swiping() || reader == null || reader.totalPages() == 0 || reader.isLoading());
   }
 
   @Override
@@ -120,36 +134,42 @@ public class UIReaderPage extends UIPage {
 
   @Override
   public boolean mouseEvent(MouseEvent e) {
+    if (reader.mouseEvent(e))
+      return true;
+
     int mx = e.getX();
     int my = e.getY();
 
-    if (reader.magnifierShown()) {
-      reader.mouseEvent(e);
-      return true;
-    }
-
-    if (e.getID() == MouseEvent.MOUSE_PRESSED) {
+    int dx = pressPos.x - mx;
+    int dy = pressPos.y - my;
+    switch (e.getID()) {
+    case MouseEvent.MOUSE_PRESSED:
       pressPos.setLocation(mx, my);
       mouseDown = true;
-      ui.getHUD().unfocus();
-    }
-    if (options.showOriginalSize() && e.getID() == MouseEvent.MOUSE_DRAGGED) {
-      int dx = pressPos.x - mx;
-      int dy = pressPos.y - my;
+      hud.unfocus();
+      break;
+    case MouseEvent.MOUSE_DRAGGED:
+      if (!options.showOriginalSize())
+        break;
       reader.scroll(dx, dy);
       pressPos.setLocation(mx, my);
-    }
-    if (mouseDown && e.getID() == MouseEvent.MOUSE_RELEASED) {
-      int dx = pressPos.x - mx;
-      int dy = pressPos.y - my;
-      if (options.showOriginalSize()) {
-      } else {
-        int dir = swipeDirVertical ? dy : dx;
-        if (Math.abs(dir) > 5)//(swipeDirVertical ? clientArea.height : clientArea.width) * 0.1)
-          swipePage(dir);
+      break;
+    case MouseEvent.MOUSE_RELEASED:
+      if (!mouseDown)
+        break;
+
+      if (!options.showOriginalSize()) {
+        boolean vertSwipe = Math.abs(dy) > Math.abs(dx);
+        if (vertSwipe == swipeDirVertical) {
+          int dir = swipeDirVertical ? dy : dx;
+          if (Math.abs(dir) > 5)//(swipeDirVertical ? clientArea.height : clientArea.width) * 0.1)
+            swipePage(dir);
+        }
       }
       mouseDown = false;
+      break;
     }
+
     return mouseDown;
   }
 
@@ -168,6 +188,41 @@ public class UIReaderPage extends UIPage {
       break;
     }
     return true;
+  }
+
+  @DependenciesInjected(suppressInherited = false, beforeInherited = false)
+  private void diInjected() {
+    reader.setNavListener(this);
+  }
+
+  @Override
+  public void pageSet(int requested, int set) {
+    Chapter current = reader.chapter();
+    if (requested != set) {
+      Chapter load = current.seekChapter(requested > set);
+      if (!load.equals(current))
+        loadChapter(load);
+      else {
+        String dir = (requested > set) ? "last" : "first";
+        ui.message(String.format("This is %s available chapter (%s >> %s)", dir, current.getMangaFolder(), current.idShort()));
+      }
+
+    } else
+      if (requested > 1)
+        bookmark(current);
+  }
+
+  @Override
+  public String title() {
+    Chapter current = reader.chapter();
+    if (current == null)
+      return "Read chapter";
+
+    String manga = Strings.toTitleCase(current.getMangaFolder());
+    String chapter = current.idShort();
+    String last = current.lastChapter().idShort();
+
+    return String.format("%s [%s/%s]", manga, chapter, last);
   }
 
 }

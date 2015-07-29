@@ -10,9 +10,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
@@ -20,10 +22,12 @@ import java.awt.image.BufferedImage;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 
 import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.db.DB;
 import org.ankhzet.ergo.ui.xgui.XActionListener;
 import org.ankhzet.ergo.ui.xgui.XControls;
 import org.ankhzet.ergo.ui.pages.UIHomePage;
 import org.ankhzet.ergo.ui.xgui.XAction;
+import org.ankhzet.ergo.ui.xgui.XMessageBox;
 
 /**
  *
@@ -37,6 +41,9 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   @DependencyInjection()
   UIContainerListener container;
 
+  @DependencyInjection(instantiate = false)
+  protected DB db;
+
   public static Toolkit toolkit;
   private Thread thread = null;
   private Image backbuffer = null;
@@ -44,21 +51,20 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 //  private Vector<Cursor> cursors = new Vector<Cursor>();
 //  private Cursor defCursor = null;
   public static String LocalDir = "";
-  public static final int MSGBOX_TIMEOUT = 2000;
   private long threaddelay = 15;
   public Rectangle clientArea = new Rectangle();
   XControls hud = null;
 //  Point cursor = new Point(0, 0);
   boolean initiated = false;
-  long msgboxTimeout = 0;
   public static final int UIPANEL_HEIGHT = 30;
-  static final int THREAD_DELAY_IDDLE = 60;
+  static final int THREAD_DELAY_IDDLE = 90;
   static final int THREAD_DELAY_ANIMATE = 5;
   ProgressRenderer progress = new ProgressRenderer();
   String tooltip = null;
   int tooltipX, tooltipY;
   UIPage currentUI, prevUI = null;
   XAction actionToPerform = null;
+  XMessageBox msgBox;
 
   public UILogic() {
     toolkit = Toolkit.getDefaultToolkit();
@@ -152,93 +158,38 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     hud.pack(clientArea.width, clientArea.height);
   }
 
-  void msgBox(Graphics2D g, String s) {
-    Font f = g.getFont();
-    FontRenderContext frc = g.getFontRenderContext();
-    Rectangle2D r;
-    String c, t;
-    int ch = f.getSize();
-    int th = 0, tp = 0, rw = 0, rh = 0, tw = 0;
-    c = s.replaceAll("(^[\10\40\09]+)|([\10\09\40]+$)", "");
-    while (!c.isEmpty()) {
-      th += ch;
-      int cp = c.indexOf('\n');
-      if (cp < 0)
-        cp = c.length() - 1;
-
-      r = f.getStringBounds(c, 0, cp, frc);
-      int cw = (int) r.getWidth();
-      if (cw > tw)
-        tw = cw;
-
-      if (c.length() - cp > 1)
-        c = c.substring(cp + 1);
-      else
-        break;
-    }
-
-    rw = tw + 100;
-    if (rw < 200)
-      rw = 200;
-
-    int x = clientArea.x;
-    int y = clientArea.y;
-    int w = clientArea.width;
-    int h = clientArea.height;
-
-    rh = th + 100;
-    g.setColor(Color.LIGHT_GRAY);
-    g.fillRect(x + (w - rw) / 2, y + (h - rh) / 2, rw, rh);
-    g.setColor(Color.BLACK);
-    g.drawRect(x + (w - rw) / 2, y + (h - rh) / 2, rw, rh);
-
-    while (!s.isEmpty()) {
-      tp += ch;
-      int len = s.length(), cp = s.indexOf('\n');
-      if (cp < 0)
-        cp = len;
-
-      t = s.substring(0, cp);
-      r = f.getStringBounds(t, frc);
-      int cw = (int) r.getWidth();
-      g.drawString(t, x + (w - cw) / 2, y + (h - th) / 2 + tp);
-
-      if (len - cp > 1)
-        s = s.substring(cp + 1);
-      else
-        break;
-    }
-  }
-
   public boolean mouseEvent(MouseEvent e) {
     if (!initiated)
       return false;
 
     e.translatePoint(-clientArea.x, -clientArea.y);
+
+    if (msgBox.isShown())
+      return false;
+
     if (hud.mouseEvent(e))
       return true;
-
-    if (System.currentTimeMillis() - msgboxTimeout < MSGBOX_TIMEOUT)
-      return false;
 
     int mx = e.getX();
     int my = e.getY();
 
     Rectangle r = new Rectangle(0, 0, clientArea.width, UIPANEL_HEIGHT);
 
-    if (r.contains(mx, my)) {// || (mx >= clientArea.width) || (my >= clientArea.height)) {
+    if (r.contains(mx, my)) {
       currentUI.setFocused(false);
       return false;
     }
 
     e.translatePoint(0, -UIPANEL_HEIGHT);
-    currentUI.mouseEvent(e);
-    process();
-    return true;
+    return currentUI.mouseEvent(e);
+  }
+
+  public void keyEvent(KeyEvent e) {
+    hud.keyEvent(e);
   }
 
   void init() {
-    msgboxTimeout = 0;
+    msgBox = new XMessageBox();
     hud = new XControls();
     navigateTo(UIHomePage.class);
     initiated = true;
@@ -259,6 +210,9 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
       prevUI.navigateOut();
 
     hud.clear();
+    if (prevUI != null)
+      hud.putBackAction(XControls.AREA_LEFT, null);
+
     currentUI.navigateIn(params);
     int l = hud.onLeft();
     while (l++ < 2)
@@ -311,9 +265,13 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     int w = clientArea.width;
     int h = clientArea.height;
 
-    g.translate(0, UIPANEL_HEIGHT);
-    currentUI.draw(g, w, h - UIPANEL_HEIGHT);
-    g.translate(0, -UIPANEL_HEIGHT);
+    if (currentUI != null) {
+      g.translate(0, UIPANEL_HEIGHT);
+      currentUI.draw(g, w, h - UIPANEL_HEIGHT);
+      g.translate(0, -UIPANEL_HEIGHT);
+
+      drawCenteredString(new Point(w / 2, UIPANEL_HEIGHT / 4), clientArea, 0, g, currentUI.title(), true);
+    }
 
     try {
       hud.Draw(g, 0, 0, w, UIPANEL_HEIGHT);
@@ -323,29 +281,23 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     progress.draw(g, w, h);
 
     if (tooltip != null) {
-      Font f = g.getFont();
-      FontRenderContext frc = g.getFontRenderContext();
-      Rectangle2D r = f.getStringBounds(tooltip, frc);
-      int tw = (int) r.getWidth() + 6;
-      int tx = tooltipX - tw / 2;
-      tx = tx < 0 ? 0 : (tx + tw - 1 >= w ? w - tw - 1 : tx);
-      int ty = tooltipY + 3;
-      int th = (int) r.getHeight() + 6;
-      int ch = (int) r.getY();
+      int inset = 3;
+      int inse2 = inset * 2;
+      Point toolPos = new Point(tooltipX, tooltipY);
+      Rectangle r = drawCenteredString(toolPos, clientArea, inset, g, tooltip, false);
+
       g.setColor(Color.LIGHT_GRAY);
-      g.fillRoundRect(tx, ty, tw, th, 6, 6);
+      g.fillRoundRect(r.x, r.y, r.width, r.height, inse2, inse2);
       g.setColor(Color.GRAY);
-      g.drawRoundRect(tx + 1, ty + 1, tw - 2, th, 6, 6);
+      g.drawRoundRect(r.x + 1, r.y + 1, r.width - 2, r.height, inse2, inse2);
       g.setColor(Color.BLACK);
-      g.drawRoundRect(tx, ty, tw, th, 6, 6);
+      g.drawRoundRect(r.x, r.y, r.width, r.height, inse2, inse2);
       g.setColor(Color.WHITE);
-      g.drawRoundRect(tx + 1, ty + 1, tw - 2, th - 2, 6, 6);
-      g.setColor(Color.WHITE);
-      g.drawString(tooltip, tx + 4, ty - ch + 4);
-      g.setColor(Color.DARK_GRAY);
-      g.drawString(tooltip, tx + 4, ty - ch + 3);
+      g.drawRoundRect(r.x + 1, r.y + 1, r.width - 2, r.height - 2, inse2, inse2);
+      drawCenteredString(toolPos, clientArea, inset, g, tooltip, true);
     }
-// todo: msgbox render
+
+    msgBox.draw(g, clientArea);
   }
 
   @Override
@@ -367,6 +319,32 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     tooltip = text;
     tooltipX = x;
     tooltipY = y;
+  }
+
+  public void message(String text) {
+    msgBox.show(text);
+  }
+
+  Rectangle drawCenteredString(Point pos, Rectangle clip, int inset, Graphics2D g, String string, boolean draw) {
+    Font f = g.getFont();
+    FontRenderContext frc = g.getFontRenderContext();
+    Rectangle2D r = f.getStringBounds(string, frc);
+    int tw = (int) r.getWidth() + inset * 2;
+    int tx = pos.x - tw / 2;
+    tx = tx < clip.x ? clip.x : (tx + tw - 1 >= clip.width ? clip.width - tw - 1 : tx);
+
+    int ty = pos.y + inset;
+    int th = (int) r.getHeight() + inset * 2;
+
+    if (draw) {
+      int ch = (int) r.getY();
+      g.setColor(Color.WHITE);
+      g.drawString(string, tx + inset + 1, ty - ch + inset + 1);
+      g.setColor(Color.DARK_GRAY);
+      g.drawString(string, tx + inset + 1, ty - ch + inset);
+    }
+
+    return new Rectangle(tx, ty, tw, th);
   }
 
 }

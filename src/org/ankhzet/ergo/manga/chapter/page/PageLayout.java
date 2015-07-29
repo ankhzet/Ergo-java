@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.chapter.page;
+package org.ankhzet.ergo.manga.chapter.page;
 
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
 
@@ -9,16 +9,16 @@ import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
 public class PageLayout {
 
   public int//
-  clientW = 0,
-  clientH = 0,
-  renderX = 0,
-  renderY = 0,
-  oldPageW = 0,
-  oldPageH = 0,
-  newPageW = 0,
-  newPageH = 0,
-  scrollX = 0,
-  scrollY = 0;
+          clientW = 0,
+          clientH = 0,
+          renderX = 0,
+          renderY = 0,
+          oldPageW = -1,
+          oldPageH = -1,
+          newPageW = 0,
+          newPageH = 0,
+          scrollX = 0,
+          scrollY = 0;
 
   public PageLayout(int cw, int ch) {
     clientH = ch;
@@ -32,18 +32,21 @@ public class PageLayout {
     if (pageW * pageH == 0)
       return false;
 
-    if (ro.manhwaMode) // page under page
+    if (ro.manhwaMode) {// page under page
+      if (ro.stretchToFit)
+        ;
       //stretchToFit - fit in view the width of pages
 //      if (totalX < pageW)
 //        totalX = pageW;
       return true;
+    }
 
     // first, we need to scale page, if needed
-    boolean clientPortret = clientW < clientH;
-    boolean pagePortret = pageW < pageH;
+    boolean clientPortrait = clientW < clientH;
+    boolean pagePortrait = pageW < pageH;
     newPageW = pageW;
     newPageH = pageH;
-    if (ro.rotateToFit && (clientPortret ^ pagePortret)) {
+    if (ro.rotateToFit && (clientPortrait ^ pagePortrait)) {
       newPageW = pageH;
       newPageH = pageW;
     }
@@ -74,6 +77,13 @@ public class PageLayout {
         newPageW = (int) (newPageH * ratio);
       }
 
+      float scale = newPageW / (float) pageW;
+      scale = 0.1f * (int) (scale * 10);
+      if ((int) scale == 1) {
+        newPageW = pageW;
+        newPageH = pageH;
+      }
+
       // now, center page in view, if not scrolling
       posX = (clientW - newPageW) / 2;
       posY = (clientH - newPageH) / 2;
@@ -101,4 +111,5 @@ public class PageLayout {
   public boolean wasResized() {
     return (oldPageW != newPageW) || (oldPageH != newPageH);
   }
+
 }

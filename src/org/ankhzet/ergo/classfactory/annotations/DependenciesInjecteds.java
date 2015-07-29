@@ -11,9 +11,11 @@ import java.lang.annotation.*;
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-@Target(value=ElementType.METHOD)
-@Retention(value=RetentionPolicy.RUNTIME)
+@Target(value = ElementType.METHOD)
+@Retention(value = RetentionPolicy.RUNTIME)
 @Inherited
 public @interface DependenciesInjecteds {
+
   DependenciesInjected[] value();
+
 }

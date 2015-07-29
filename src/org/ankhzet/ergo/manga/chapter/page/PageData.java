@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.chapter.page;
+package org.ankhzet.ergo.manga.chapter.page;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -10,6 +10,7 @@ import java.awt.image.BufferedImageOp;
 import java.io.File;
 import javax.imageio.ImageIO;
 import org.ankhzet.ergo.ui.UILogic;
+import org.ankhzet.ergo.ui.pages.ImgUtil;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
 
 /**
@@ -24,32 +25,15 @@ public class PageData {
   public int pageH;
   PageLayout layout = new PageLayout(0, 0);
 
-  private PageData(String imageFile) {
+  public PageData(String imageFile) {
     file = imageFile;
-    image = loadPage(imageFile);
-    pageW = image != null ? image.getWidth() : 32;
-    pageH = image != null ? image.getHeight() : 32;
-  }
-
-  public static PageData load(String imageFile) {
-    return new PageData(imageFile);
-  }
-
-  final BufferedImage loadPage(String src) {
     try {
-
-      /*Image i = Toolkit.getDefaultToolkit().createImage(src);
-       int w = i.getWidth(null);
-       int h = i.getHeight(null);
-       BufferedImage b = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-       Graphics g = b.getGraphics();
-       g.drawImage(i, w, h, null);
-       return b;*/
-      return ImageIO.read(new File(src));
+      image = ImageIO.read(new File(file));
     } catch (Exception ex) {
       ex.printStackTrace();
-      return null;
     }
+    pageW = image != null ? image.getWidth() : 32;
+    pageH = image != null ? image.getHeight() : 32;
   }
 
   public PageLayout getLayout() {
@@ -112,19 +96,26 @@ public class PageData {
       if (options.originalSize)
         cache = image;
       else {
-        cache = new BufferedImage(nw, nh, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = cache.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.drawImage(image, 0, 0, layout.newPageW, layout.newPageH, 0, 0, pageW, pageH, null);
-        g.dispose();
+        float scale = layout.newPageW / (float) pageW;
+        scale = 0.1f * (int) (scale * 10);
+        if ((int) scale != 1)
+          cache = ImgUtil.scaled(image, layout.newPageW / (float) pageW);
+        else
+          cache = image;
+//      cache = new BufferedImage(nw, nh, BufferedImage.TYPE_INT_RGB);
+//      Graphics2D g = cache.createGraphics();
+//      g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//      g.drawImage(image, 0, 0, layout.newPageW, layout.newPageH, 0, 0, pageW, pageH, null);
+//      g.dispose();
       }
   }
 
-  public void drawPage(Graphics g, int dx, int dy, int scrollX, int scrollY) {
+  public void draw(Graphics g, int dx, int dy) {
     g.drawImage(
-    cache//
-    , dx + layout.renderX - scrollX//
-    , dy + layout.renderY - scrollY//
-    , null);
+            cache//
+            , dx + layout.renderX//
+            , dy + layout.renderY//
+            , null);
   }
+
 }

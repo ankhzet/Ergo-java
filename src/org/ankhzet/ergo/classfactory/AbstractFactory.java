@@ -26,4 +26,5 @@ public interface AbstractFactory<IdentifierType, ProducesType> {
   Builder register(IdentifierType identifier, Builder<ProducesType> maker);
 
   Builder register(IdentifierType identifier);
+
 }

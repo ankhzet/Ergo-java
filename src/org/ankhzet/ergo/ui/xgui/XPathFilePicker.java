@@ -4,12 +4,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.MouseEvent;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.files.Parser;
 import org.ankhzet.ergo.utils.Strings;
-import java.io.*;
 import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.ui.xgui.filepicker.CollumnedItemVisitor;
+import org.ankhzet.ergo.ui.xgui.filepicker.PickedNode;
 
 /**
  *
@@ -17,22 +23,21 @@ import org.ankhzet.ergo.classfactory.IoC;
  */
 public class XPathFilePicker extends CommonControl {
 
+  public class FilesList extends ArrayList<File> {
+  };
+
   protected Image[] ims = new Image[4];
   final int STATE_NORMAL = 0,
-  STATE_OVERED = 1,
-  STATE_PRESSED = 2,
-  STATE_DISABLED = 3,
-  ITEM_HEIGHT = 19;
-//                            			!overed  						overed
-//                            		!clk 			clk 			!clk 		clk
-  private int[][] states = {{STATE_NORMAL, STATE_PRESSED}, {STATE_OVERED, STATE_PRESSED}};
+          STATE_OVERED = 1,
+          STATE_PRESSED = 2,
+          STATE_DISABLED = 3,
+          ITEM_HEIGHT = 19;
+
   String caption = "";
   String root = "/";
-  Strings dirs = new Strings();
-  Strings files = new Strings();
+  protected FilesList entries = new FilesList();
   int fontHeight = 12;
-  public int higlited = -1, selected = -1, aim = -1;
-  boolean aiming = false;
+  public File higlited, selected, aiming;
 
   public XPathFilePicker(String caption) {
     super(-1000, 0, 0, 0);
@@ -58,66 +63,102 @@ public class XPathFilePicker extends CommonControl {
     this.caption = caption;
   }
 
+  String itemCaption(File item) {
+    return root.equals("/") ? item.getPath() : item.getName();
+  }
+
   @Override
   public void DoDraw(Graphics2D g) {
-    g.clipRect(x, y, w, h - ITEM_HEIGHT);
+    g.translate(x, y);
+    g.clipRect(0, 0, w, h - ITEM_HEIGHT);
+    Shape clip = g.getClip();
 
     Font f = g.getFont();
     fontHeight = f.getSize();
 
-    int dy = 0;// 3;
     g.setColor(Color.LIGHT_GRAY);
-    g.fillRect(x, y, w, h);
-    int idx = 0;
-    for (String dir : dirs) {
-      drawItem(g, dir, y + dy, true, higlited == idx, selected == idx);
-      dy += ITEM_HEIGHT;
-      idx++;
-    }
-    for (String file : files) {
-      drawItem(g, file, y + dy, false, higlited == idx, selected == idx);
-      dy += ITEM_HEIGHT;
-      idx++;
-    }
+    g.fillRect(0, 0, w, h);
+
+    CollumnedItemVisitor.NodeVisitor<File> nodeVisitor = (Rectangle r, File item) -> {
+      boolean isHilited = item.equals(higlited);
+      boolean isSelected = item.equals(selected);
+      boolean isAiming = item.equals(aiming);
+      boolean showBtn = isAiming && item.isDirectory();
+      int c = 6;
+
+      g.setClip(clip);
+      g.clipRect(r.x, r.y, r.width, r.height + 1);
+      int tw = r.width - (showBtn ? r.height : 0) - 1;
+
+      if (isHilited) {
+        g.setColor(Color.GRAY);
+        g.fillRoundRect(r.x, r.y, tw, r.height, c, c);
+      }
+      g.setColor(Color.BLACK);
+      g.drawRoundRect(r.x, r.y, tw, r.height, c, c);
+      g.setColor(Color.WHITE);
+      g.drawRoundRect(r.x + 1, r.y + 1, tw - 2, r.height - 2, c, c);
+      g.setColor(isSelected ? Color.WHITE : Color.BLACK);
+      g.drawString(itemCaption(item), r.x + 5, r.y + fontHeight + (r.height - fontHeight) / 2 - 1);
+
+      if (showBtn) {
+        g.setColor(!(isAiming && isHilited) ? Color.LIGHT_GRAY : Color.GRAY);
+        g.fillRoundRect(r.x + tw, r.y, r.height, r.height, c, c);
+        g.setColor(Color.BLACK);
+        g.drawRoundRect(r.x + tw, r.y, r.height, r.height, c, c);
+        g.setColor(Color.WHITE);
+        g.drawRoundRect(r.x + tw + 1, r.y + 1, r.height - 2, r.height - 2, c, c);
+      }
+
+      return false;
+    };
+
+    CollumnedItemVisitor<File> v = itemVisitor(w, h);
+    v.walkItems(entries, nodeVisitor);
 
     g.setClip(null);
     g.setColor(Color.GRAY);
-    g.drawString(root, x, y + h - ITEM_HEIGHT + fontHeight + (ITEM_HEIGHT - fontHeight) / 2 - 1);
+    g.drawString(root, 0, h - ITEM_HEIGHT + fontHeight + (ITEM_HEIGHT - fontHeight) / 2 - 1);
+
+    g.translate(-x, -y);
   }
 
-  private void drawItem(Graphics2D g, String caption, int ty, boolean dir, boolean higlited, boolean selected) {
-    int tw = w - (selected ? ITEM_HEIGHT : 0) - 1;
+  PickedNode<File> itemUnderXY(int w, int h, int x, int y) {
+    CollumnedItemVisitor<File> v = itemVisitor(w, h);
 
-    if (higlited) {
-      g.setColor(!higlited ? Color.LIGHT_GRAY : Color.GRAY);
-      g.fillRoundRect(x, ty, tw, ITEM_HEIGHT, 6, 6);
-    }
-//    g.setColor(Color.GRAY);
-//    g.drawRoundRect(x + 1, ty + 1, tw - 2, ITEM_HEIGHT, 6, 6);
-    g.setColor(Color.BLACK);
-    g.drawRoundRect(x, ty, tw, ITEM_HEIGHT, 6, 6);
-    g.setColor(Color.WHITE);
-    g.drawRoundRect(x + 1, ty + 1, tw - 2, ITEM_HEIGHT - 2, 6, 6);
-//      g.setColor(Color.WHITE);
-//      g.drawString(dir, tx + 5, ty + ch + (th - ch) / 2);
-    g.setColor(selected ? Color.WHITE : Color.BLACK);
-    g.drawString(caption, x + 5, ty + fontHeight + (ITEM_HEIGHT - fontHeight) / 2 - 1);
-
-    if (selected) {
-      g.setColor(!(aiming && higlited) ? Color.LIGHT_GRAY : Color.GRAY);
-      g.fillRoundRect(x + tw, ty, ITEM_HEIGHT, ITEM_HEIGHT, 6, 6);
-//      g.setColor(Color.GRAY);
-//      g.drawRoundRect(x + tw + 1, ty + 1, ITEM_HEIGHT - 2, ITEM_HEIGHT, 6, 6);
-      g.setColor(Color.BLACK);
-      g.drawRoundRect(x + tw, ty, ITEM_HEIGHT, ITEM_HEIGHT, 6, 6);
-      g.setColor(Color.WHITE);
-      g.drawRoundRect(x + tw + 1, ty + 1, ITEM_HEIGHT - 2, ITEM_HEIGHT - 2, 6, 6);
-    }
+    return v.walkItems(entries, (Rectangle r, File f) -> {
+      return r.contains(x, y);
+    });
   }
 
-  void fetchRoot() {
-    dirs.clear();
-    files.clear();
+  int rowsInView() {
+    return (int) ((h - ITEM_HEIGHT) / ITEM_HEIGHT);
+  }
+
+  float columnWidth() {
+    int total = entries.size();
+    int r = rowsInView();
+    if (r >= total)
+      return w;
+
+    int fitts = Math.max(1, w / 140);
+    int columns = fitts;
+    while (true) {
+      int holds = r * fitts;
+      if (holds < total)
+        break;
+
+      columns = fitts--;
+    }
+    return w / (float) columns;
+  }
+
+  CollumnedItemVisitor<File> itemVisitor(int w, int h) {
+    return new CollumnedItemVisitor<>(columnWidth(), ITEM_HEIGHT, 0, rowsInView());
+  }
+
+  protected void fetchRoot() {
+    entries.clear();
 
     File path = new File(root);
     if (!path.isDirectory())
@@ -129,32 +170,25 @@ public class XPathFilePicker extends CommonControl {
     }
 
     File[] filesList = path.listFiles((File dir, String name) -> !name.matches("^\\..*$"));
-    for (File entry : filesList)
-      if (entry.isDirectory())
-        dirs.add(entry.getName());
-      else
-        files.add(entry.getName());
+    entries.addAll(Arrays.asList(filesList));
   }
 
   public void setRoot(String root) {
     this.root = root;
     fetchRoot();
-    dirs.add(0, "..");
-    selected = -1;
-    higlited = -1;
-    aim = -1;
+    entries.add(0, new File(".."));
+    selected = null;
+    higlited = null;
+    aiming = null;
   }
 
   public void setList(Strings list) {
     this.root = "/";
-    dirs.clear();
-    files.clear();
-    list.stream().forEach((s) -> {
-      dirs.add(s);
-    });
-    selected = -1;
-    higlited = -1;
-    aim = -1;
+    entries.clear();
+    list.forEach((s) -> entries.add(new File(s)));
+    selected = null;
+    higlited = null;
+    aiming = null;
   }
 
   @Override
@@ -174,58 +208,84 @@ public class XPathFilePicker extends CommonControl {
     int mx = e.getX() - x;
     int my = e.getY() - y - 3;
 
-    higlited = (my < 0) || (my / ITEM_HEIGHT >= dirs.size() + files.size()) ? -1 : my / ITEM_HEIGHT;
-    aiming = mx > (w - 3 - ITEM_HEIGHT) && mx < w - 3;
+    higlited = null;
+    boolean clickedBtn = false;
+    PickedNode<File> p = itemUnderXY(w, h, mx, my);
+    if (p != null) {
+      higlited = p.node;
+      if (higlited.isDirectory())
+        if (mx - p.r.x > (p.r.width - 3 - ITEM_HEIGHT) && mx - p.r.x < p.r.width - 3)
+          clickedBtn = true;
+    }
 
     switch (e.getID()) {
     case MouseEvent.MOUSE_RELEASED:
       if (clicked && overed)
-        doClick();
+        aim(clickedBtn);
+
       clicked = false;
-      aim = selected;
       break;
     case MouseEvent.MOUSE_PRESSED:
       clicked = overed;
       if (clicked) {
+        if (selected != higlited)
+          aiming = null;
         selected = higlited;
-        aiming = false;
       }
       break;
     }
     return clicked;
   }
 
+  void aim(boolean btn) {
+    if (btn && aiming != null)
+      doClick();
+    else
+      aiming = (selected == higlited) ? selected : null;
+  }
+
   @Override
   public void doClick() {
-    String entry = getSelected();
-    if (aim >= 0 && aiming && entry != null && !selectedFile())
-      setRoot(root + File.separator + entry);
+    String path = getFilePath(aiming);
+    if (aiming.isDirectory())
+      setRoot(path);
   }
 
   public String getSelected() {
-    int ds = dirs.size();
-    return aim < 0 ? null
-    : aim >= ds ? files.get(aim - ds) : dirs.get(aim);
+    return (selected != null) ? selected.getName() : null;
+  }
+
+  File expandFile(File f) {
+    if (f != null)
+      if (!f.getName().equals(".."))
+        return f;
+      else
+        return (new File(root)).getParentFile();
+
+    return f;
+  }
+
+  public File getSelectedFile() {
+    return expandFile(selected);
+  }
+
+  public String getFilePath(File f) {
+    f = expandFile(f);
+    if (f == null)
+      f = new File(root);
+    return f.getPath();
   }
 
   public String getSelectedPath() {
-    String child = getSelected();
-    String path = root;
-    if (child.equals("..")) {
-      Strings parts = Strings.explode(path, File.separator);
-      if (parts.pop() != null)
-        return parts.join(File.separator);
-      else
-        return root;
-    } else
-      return root + File.separator + child;
+    return getFilePath(getSelectedFile());
   }
 
   public boolean hasSelected() {
-    return aim >= 0;
+    return selected != null;
   }
 
   public boolean selectedFile() {
-    return aim >= dirs.size();
+    return hasSelected() && selected.isFile();
   }
+
 }

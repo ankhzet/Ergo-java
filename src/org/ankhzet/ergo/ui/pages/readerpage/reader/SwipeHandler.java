@@ -21,7 +21,7 @@ public class SwipeHandler implements Runnable {
   public static final double MAX_SPEED = 0.8;
 
   static SwipeHandler swiper;
-  
+
   @DependencyInjection
   Reader reader;
 
@@ -109,4 +109,5 @@ public class SwipeHandler implements Runnable {
 
     return Math.max(Math.min(delta * 2.0, MAX_SPEED), MIN_SPEED);
   }
+
 }

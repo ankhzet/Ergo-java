@@ -11,9 +11,9 @@ public class XButton extends CommonControl {
 
   protected Image[] ims = new Image[4];
   final int STATE_NORMAL = 0,
-  STATE_OVERED = 1,
-  STATE_PRESSED = 2,
-  STATE_DISABLED = 3;
+          STATE_OVERED = 1,
+          STATE_PRESSED = 2,
+          STATE_DISABLED = 3;
 //                            			!overed  						overed
 //                            		!clk 			clk 			!clk 		clk
   private int[][] states = {{STATE_NORMAL, STATE_PRESSED}, {STATE_OVERED, STATE_PRESSED}};
@@ -47,6 +47,10 @@ public class XButton extends CommonControl {
       p.close();
     } catch (Throwable e) {
     }
+    this.caption = caption;
+  }
+
+  public void setCaption(String caption) {
     this.caption = caption;
   }
 
@@ -86,4 +90,5 @@ public class XButton extends CommonControl {
     if (overed)
       IoC.<UILogic>get(UILogic.class).tooltip(caption, x + dx + w / 2, y + dy + h);
   }
+
 }

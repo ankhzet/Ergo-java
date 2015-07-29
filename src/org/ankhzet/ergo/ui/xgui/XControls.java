@@ -2,6 +2,7 @@ package org.ankhzet.ergo.ui.xgui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,38 +23,48 @@ public class XControls extends ArrayList<CommonControl> {
   CtlMap left = new CtlMap();
   CtlMap right = new CtlMap();
   public static final int//
-  AREA_LEFT = 1,//
-  AREA_RIGHT = 2//
-  ;
+          AREA_LEFT = 1,//
+          AREA_RIGHT = 2//
+          ;
+
+  static final int//
+          SIDE_MARGIN = 3,//
+          TOP_MARGIN = 2,//
+          BTN_SPACING = 5//
+          ;
 
   public void Draw(Graphics2D g, int x, int y, int cw, int ch) {
     ch--;
     g.setColor(Skin.get().UI_PANEL);
     g.fillRect(0, 0, cw, ch - 1);
 
-    this.stream().filter((c)
-    -> (c.isVisible())
-    ).forEach((c) -> {
-      c.Draw(g);
-    });
+    synchronized (this) {
+      for (CommonControl c : this)
+        if (c.isVisible())
+          c.Draw(g);
+    }
 
     g.setColor(Color.GRAY);
     g.drawRoundRect(x, y - 3, cw - 1, ch + 2, 6, 6);
   }
 
   public void Process() {
-    this.stream().forEach((c) -> {
-      c.Process();
-    });
+    synchronized (this) {
+      for (CommonControl c : this)
+        if (c.isVisible())
+          c.Process();
+    }
   }
 
   public boolean mouseEvent(MouseEvent e) {
     focused = null;
-    this.stream().filter(c
-    -> (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
-    ).forEach((c) -> {
-      focused = c;
-    });
+    synchronized (this) {
+      this.stream().filter(c
+              -> (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
+      ).forEach((c) -> {
+        focused = c;
+      });
+    }
 
     Process();
     if (focused == null)
@@ -66,16 +77,22 @@ public class XControls extends ArrayList<CommonControl> {
   }
 
   public CommonControl putControl(CommonControl c, int area) {
-    add(c);
-    switch (area) {
-    case AREA_LEFT:
-      left.put(left.size(), c);
-      break;
-    case AREA_RIGHT:
-      right.put(right.size(), c);
-      break;
+    synchronized (this) {
+      add(c);
+      CtlMap map = (area == AREA_LEFT) ? left : right;
+      map.put(map.size(), c);
+      return c;
     }
-    return c;
+  }
+
+  public CommonControl getControl(XAction action) {
+    synchronized (this) {
+      for (CommonControl c : this)
+        if (c.action == action)
+          return c;
+    }
+
+    return null;
   }
 
   public CommonControl putAtLeft(CommonControl c) {
@@ -118,36 +135,50 @@ public class XControls extends ArrayList<CommonControl> {
   }
 
   public void pack(int cw, int ch) {
-    ArrayList<Integer> l;
-    int dx;
-
-    l = new ArrayList<>(left.keySet());
-    Collections.sort(l);
-    dx = 3;
-    for (Integer idx : l) {
-      CommonControl control = left.get(idx);
-      control.x = dx;
-      control.y = 2;
-      dx += control.w + 5;
+    synchronized (this) {
+      packArea(left, SIDE_MARGIN, (c, dx) -> {
+        c.x = dx;
+        c.y = TOP_MARGIN;
+        return dx + (c.w + BTN_SPACING);
+      });
+      packArea(right, cw - SIDE_MARGIN, (c, dx) -> {
+        c.x = dx - c.w;
+        c.y = TOP_MARGIN;
+        return dx - (c.w + BTN_SPACING);
+      });
     }
+  }
 
-    l = new ArrayList<>(right.keySet());
+  private interface CtlEnum {
+
+    int withCtl(CommonControl c, int dx);
+
+  }
+
+  void packArea(CtlMap controls, int dx, CtlEnum enumerate) {
+    ArrayList<Integer> l = new ArrayList<>(controls.keySet());
     Collections.sort(l);
-    dx = cw - 3;
     for (Integer idx : l) {
-      CommonControl control = right.get(idx);
-      control.x = dx - control.w;
-      control.y = 2;
-      dx -= control.w + 5;
+      CommonControl control = controls.get(idx);
+      dx = enumerate.withCtl(control, dx);
     }
+  }
 
+  public void keyEvent(KeyEvent e) {
+    synchronized (this) {
+      for (CommonControl c : this)
+        if (c.isVisible() && c.keyEvent(e))
+          break;
+    }
   }
 
   @Override
   public void clear() {
-    super.clear();
-    left.clear();
-    right.clear();
+    synchronized (this) {
+      super.clear();
+      left.clear();
+      right.clear();
+    }
   }
 
   public int onLeft() {
@@ -157,4 +188,5 @@ public class XControls extends ArrayList<CommonControl> {
   public int onRight() {
     return right.size();
   }
+
 }

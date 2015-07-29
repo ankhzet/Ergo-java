@@ -10,7 +10,7 @@ import java.awt.Graphics2D;
 public final class Skin {
 
   public final Color//
-  BG_COLOR, UI_PANEL, UI_SCROLLBG, UI_SCROLLBORDER;
+          BG_COLOR, UI_PANEL, UI_SCROLLBG, UI_SCROLLBORDER;
   static Skin i = null;
 
   private Skin() {
@@ -43,4 +43,5 @@ public final class Skin {
     g.setColor(skin.UI_SCROLLBORDER);
     g.drawRoundRect(x, y, w, h, 6, 6);
   }
+
 }

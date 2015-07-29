@@ -18,14 +18,15 @@ public class UIPage {
 
   @DependencyInjection
   protected UILogic ui;
+
   protected XControls hud;
-  
+
   protected boolean mouseDown = false;
 
   XActions actions = new XActions();
 
   boolean active = false;
-  
+
   @DependenciesInjected
   private void di() {
     hud = ui.getHUD();
@@ -53,7 +54,7 @@ public class UIPage {
     if (!focused)
       mouseDown = false;
   }
-  
+
   public boolean mouseEvent(MouseEvent e) {
     return false;
   }
@@ -71,6 +72,10 @@ public class UIPage {
 
   public void navigateOut() {
     active = false;
+  }
+
+  public String title() {
+    return this.toString();
   }
 
 }
