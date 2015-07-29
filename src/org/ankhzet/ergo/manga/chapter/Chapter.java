@@ -23,9 +23,13 @@ public class Chapter extends File {
     super(path);
   }
 
+  public File getMangaFile() {
+    File parent = valid() ? getParentFile() : this;
+    return parent;
+  }
+
   public String getMangaFolder() {
-    File parent = getParentFile();
-    return parent.getName();
+    return getMangaFile().getName();
   }
 
   public Strings fetchPages() {
@@ -43,22 +47,22 @@ public class Chapter extends File {
 
   public Chapter firstChapter() {
     List<Chapter> list = Arrays.<Chapter>asList(allChapters());
-    return list.get(0);
+    return (list.size() > 0) ? list.get(0) : null;
   }
 
   public Chapter lastChapter() {
     List<Chapter> list = Arrays.<Chapter>asList(allChapters());
-    return list.get(list.size() - 1);
+    return (list.size() > 0) ? list.get(list.size() - 1) : null;
   }
 
   public Chapter[] allChapters() {
-    File manga = getParentFile();
-    Path mangaPath = manga.toPath();
+    File manga = getMangaFile();
 
     ArrayList<Chapter> chapters = new ArrayList<>();
-    String[] chapterNames = manga.list((dir, name) -> name.matches(CHAP_PATTERN));
-    for (String chapterName : chapterNames)
-      chapters.add(new Chapter(mangaPath.resolve(chapterName).toString()));
+    File[] chapterNames = manga.listFiles((dir, name) -> name.matches(CHAP_PATTERN));
+    if (chapterNames != null)
+      for (File chapter : chapterNames)
+        chapters.add(new Chapter(chapter.getPath()));
 
     return chapters.toArray(new Chapter[] {});
   }
