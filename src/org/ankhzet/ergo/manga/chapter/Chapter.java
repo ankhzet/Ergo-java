@@ -85,6 +85,10 @@ public class Chapter extends File {
     return isBonus() ? String.format("%.1f", idx() / 10.f) : String.format("%d", idx() / 10);
   }
 
+  public String idLong() {
+    return isBonus() ? String.format("%7.1f", idx() / 10.f) : String.format("%04d", idx() / 10);
+  }
+
   public float id() {
     try {
       return Float.parseFloat(getName());
