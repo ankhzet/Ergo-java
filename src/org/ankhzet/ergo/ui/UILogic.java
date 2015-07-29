@@ -22,6 +22,7 @@ import java.awt.image.BufferedImage;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 
 import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.db.DB;
 import org.ankhzet.ergo.ui.xgui.XActionListener;
 import org.ankhzet.ergo.ui.xgui.XControls;
 import org.ankhzet.ergo.ui.pages.UIHomePage;
@@ -39,6 +40,10 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   @DependencyInjection()
   UIContainerListener container;
+  
+  @DependencyInjection(instantiate=false)
+  protected DB db;
+  
 
   public static Toolkit toolkit;
   private Thread thread = null;

@@ -2,17 +2,19 @@
 package org.ankhzet.ergo.factories;
 
 import org.ankhzet.ergo.classfactory.ClassFactory;
-import org.ankhzet.ergo.db.DBLayer;
-import org.ankhzet.ergo.ui.UILogic;
+import org.ankhzet.ergo.db.DB;
+import org.ankhzet.ergo.db.tables.BookmarksTable;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-public class DBFactory extends ClassFactory<UILogic> {
+public class DBFactory extends ClassFactory<DB> {
 
   public DBFactory() {
-    register(DBLayer.class);
+    register(DB.class);
+    
+    register(BookmarksTable.class);
   }
 
 }

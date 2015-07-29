@@ -10,6 +10,8 @@ import org.ankhzet.ergo.ui.pages.readerpage.reader.SwipeHandler;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import org.ankhzet.ergo.manga.Bookmark;
+import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.ui.pages.UIPage;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageNavigator;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
@@ -46,8 +48,8 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     loadHUD();
     if (params.length > 0 && params[0] != null) {
       Chapter chapter = (Chapter) params[0];
-      UILogic.log("loading [%s]:%.1f", chapter.getMangaFolder(), chapter.id());
-      reader.loadChapter(chapter);
+      UILogic.log("loading [%s: %s]:%.1f", chapter.getMangaFolder(), chapter.toString(), chapter.id());
+      loadChapter(chapter);
     }
   }
 
@@ -84,6 +86,19 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     }).togglable((XAction action) -> {
       return options.showOriginalSize();
     }));
+  }
+
+  void bookmark(Chapter c) {
+    Manga m = new Manga(c.getMangaFolder());
+    Bookmark bookmark = m.lastBookmark();
+    if (bookmark != null)
+      bookmark.delete();
+
+    m.putBookmark(c);
+  }
+
+  void loadChapter(Chapter c) {
+    reader.loadChapter(c);
   }
 
   boolean swipePage(int dir) {
@@ -182,16 +197,19 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
 
   @Override
   public void pageSet(int requested, int set) {
+    Chapter current = reader.chapter();
     if (requested != set) {
-      Chapter current = reader.chapter();
       Chapter load = current.seekChapter(requested > set);
       if (!load.equals(current))
-        reader.loadChapter(load);
+        loadChapter(load);
       else {
         String dir = (requested > set) ? "last" : "first";
         ui.message(String.format("This is %s available chapter (%s >> %s)", dir, current.getMangaFolder(), current.idShort()));
       }
-    }
+
+    } else 
+      if (requested > 1)
+        bookmark(current);
   }
 
   @Override
