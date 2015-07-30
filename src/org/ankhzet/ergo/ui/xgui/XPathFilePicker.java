@@ -1,11 +1,6 @@
 package org.ankhzet.ergo.ui.xgui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.files.Parser;
+import org.ankhzet.ergo.ui.Skin;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.xgui.filepicker.CollumnedItemVisitor;
 import org.ankhzet.ergo.ui.xgui.filepicker.PickedNode;
@@ -37,7 +33,6 @@ public class XPathFilePicker extends CommonControl {
   String caption = "";
   String root = "/";
   protected FilesList entries = new FilesList();
-  int fontHeight = 12;
   public File higlited, selected, aiming;
 
   public XPathFilePicker(String caption) {
@@ -72,56 +67,53 @@ public class XPathFilePicker extends CommonControl {
   public void DoDraw(Graphics2D g) {
     g.translate(x, y);
     g.clipRect(0, 0, w, h - ITEM_HEIGHT);
-    Shape clip = g.getClip();
 
-    Font f = g.getFont();
-    fontHeight = f.getSize();
+//    g.setColor(Skin.get().BG_COLOR);
+//    g.fillRect(0, 0, w, h);
+    drawItems(g);
 
-    g.setColor(Color.LIGHT_GRAY);
-    g.fillRect(0, 0, w, h);
-
-    CollumnedItemVisitor.NodeVisitor<File> nodeVisitor = (Rectangle r, File item) -> {
-      boolean isHilited = item.equals(higlited);
-      boolean isSelected = item.equals(selected);
-      boolean isAiming = item.equals(aiming);
-      boolean showBtn = isAiming && item.isDirectory();
-      int c = 6;
-
-      g.setClip(clip);
-      g.clipRect(r.x, r.y, r.width, r.height + 1);
-      int tw = r.width - (showBtn ? r.height : 0) - 1;
-
-      if (isHilited) {
-        g.setColor(Color.GRAY);
-        g.fillRoundRect(r.x, r.y, tw, r.height, c, c);
-      }
-      g.setColor(Color.BLACK);
-      g.drawRoundRect(r.x, r.y, tw, r.height, c, c);
-      g.setColor(Color.WHITE);
-      g.drawRoundRect(r.x + 1, r.y + 1, tw - 2, r.height - 2, c, c);
-      g.setColor(isSelected ? Color.WHITE : Color.BLACK);
-      g.drawString(itemCaption(item), r.x + 5, r.y + fontHeight + (r.height - fontHeight) / 2 - 1);
-
-      if (showBtn) {
-        g.setColor(!(isAiming && isHilited) ? Color.LIGHT_GRAY : Color.GRAY);
-        g.fillRoundRect(r.x + tw, r.y, r.height, r.height, c, c);
-        g.setColor(Color.BLACK);
-        g.drawRoundRect(r.x + tw, r.y, r.height, r.height, c, c);
-        g.setColor(Color.WHITE);
-        g.drawRoundRect(r.x + tw + 1, r.y + 1, r.height - 2, r.height - 2, c, c);
-      }
-
-      return false;
-    };
-
-    CollumnedItemVisitor<File> v = itemVisitor(w, h);
-    v.walkItems(entries, nodeVisitor);
-
+    int fontHeight = g.getFont().getSize();
     g.setClip(null);
     g.setColor(Color.GRAY);
     g.drawString(root, 0, h - ITEM_HEIGHT + fontHeight + (ITEM_HEIGHT - fontHeight) / 2 - 1);
 
     g.translate(-x, -y);
+  }
+
+  public void drawItems(Graphics2D g) {
+    Shape clip = g.getClip();
+    int fontHeight = g.getFont().getSize();
+    CollumnedItemVisitor.NodeVisitor<File> nodeVisitor = (Rectangle r, File item) -> {
+      boolean isHilited = item.equals(higlited);
+      boolean isSelected = item.equals(selected);
+      boolean isAiming = item.equals(aiming);
+      boolean showBtn = isAiming && item.isDirectory();
+      g.setClip(clip);
+      g.clipRect(r.x, r.y, r.width, r.height + 1);
+      r = (Rectangle) r.clone();
+      r.grow(-1, -1);
+      int btnWidth = r.height;
+      int tw = r.width - (showBtn ? btnWidth : 0) - 1;
+      if (isHilited) {
+        g.setColor(Color.GRAY);
+        Skin.fillBevel(g, r.x, r.y, r.width, r.height);
+      }
+      Skin.drawBevel(g, r.x, r.y, tw, r.height);
+      if (showBtn) {
+        Skin.drawBevel(g, r.x + tw, r.y, btnWidth, r.height);
+        r.grow(-btnWidth / 2, 0);
+        r.translate(-btnWidth / 2, 0);
+      }
+      r.grow(-8, 0);
+      g.clipRect(r.x, r.y, r.width, r.height + 1);
+      g.setColor(Color.LIGHT_GRAY);
+      g.drawString(itemCaption(item), r.x, 1 + r.y + fontHeight + (r.height - fontHeight) / 2 - 1);
+      g.setColor(isSelected ? Color.BLUE : Color.BLACK);
+      g.drawString(itemCaption(item), r.x, r.y + fontHeight + (r.height - fontHeight) / 2 - 1);
+      return false;
+    };
+    CollumnedItemVisitor<File> v = itemVisitor(w, h);
+    v.walkItems(entries, nodeVisitor);
   }
 
   PickedNode<File> itemUnderXY(int w, int h, int x, int y) {
