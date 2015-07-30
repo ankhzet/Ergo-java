@@ -19,7 +19,6 @@ public class ClassFactory<P> extends Factory<Class<? extends P>, P> {
     throw new UnknownFactoryProductException(id);
   }
 
-  @SuppressWarnings("ResultOfObjectAllocationIgnored")
   public static <P> FactoryRegistrar<ClassFactory<P>> registerClass(Class<P> c) {
     return new SingleClassFactoryRegistrar<>(c);
   }

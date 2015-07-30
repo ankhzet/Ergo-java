@@ -1,7 +1,6 @@
 package org.ankhzet.ergo.classfactory;
 
 import java.util.HashMap;
-import org.ankhzet.ergo.classfactory.builder.DependantClassBuilder;
 import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
 import org.ankhzet.ergo.classfactory.exceptions.UnknownFactoryProductException;
 
@@ -55,14 +54,6 @@ public class IoC {
         return (ClassFactory<P>) mapping.get(c);
 
     throw new UnknownFactoryProductException(identifier);
-  }
-
-}
-
-class DependantFactoryBuilder extends DependantClassBuilder<ClassFactory<?>, Factory<?, ?>> {
-
-  public DependantFactoryBuilder(Factory<?, ?> dependency) {
-    super(dependency);
   }
 
 }

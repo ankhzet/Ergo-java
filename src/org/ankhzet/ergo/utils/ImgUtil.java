@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
-import org.ankhzet.ergo.utils.Strings;
 
 /**
  *
