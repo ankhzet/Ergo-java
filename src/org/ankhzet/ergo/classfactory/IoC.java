@@ -1,6 +1,6 @@
 package org.ankhzet.ergo.classfactory;
 
-import org.ankhzet.ergo.classfactory.builder.Builder;
+import java.util.HashMap;
 import org.ankhzet.ergo.classfactory.builder.DependantClassBuilder;
 import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
 import org.ankhzet.ergo.classfactory.exceptions.UnknownFactoryProductException;
@@ -11,31 +11,16 @@ import org.ankhzet.ergo.classfactory.exceptions.UnknownFactoryProductException;
  */
 public class IoC {
 
-  static Factories factories;
+  static IoC ioc = new IoC();
 
-  static Factories factories() {
-    if (factories == null)
-      factories = new Factories();
-    return factories;
-  }
-
-  public static <C> ClassFactory<C> factory(Class<C> c) {
+  public static <P> P get(Class<? extends P> identifier) {
     try {
-      return factories().get(c);
-    } catch (FactoryException ex) {
-      ex.printStackTrace();
-      return null;
-    }
-  }
+      ClassFactory<P> factory = ioc.factory(identifier);
 
-  public static <C> C get(Class<C> c) {
-    ClassFactory<C> factory = factory(c);
+      if (factory == null)
+        return null;
 
-    if (factory == null)
-      return null;
-
-    try {
-      return factory.get(c);
+      return factory.get(identifier);
     } catch (FactoryException ex) {
       ex.printStackTrace();
     }
@@ -43,32 +28,41 @@ public class IoC {
     return null;
   }
 
-  public static <C> C make(Class<C> c) throws FactoryException {
-    ClassFactory<C> factory = factory(c);
-    if (factory == null)
-      throw new UnknownFactoryProductException(c.getName());
+  public static <P> P make(Class<? extends P> identifier) throws FactoryException {
+    ClassFactory<P> factory = ioc.factory(identifier);
 
-    return factory.make(c);
+    return factory.make(identifier);
   }
 
-  public static ClassFactory register(ClassFactory factory) {
-    Factories f = factories();
-
-    Builder<ClassFactory> builder = new DependantClassBuilder(factory) {
-      @Override
-      public Object build(Class c) throws Exception {
-        return getDependency();
-      }
-    };
-
-    factory.produces().forEach((identifier) -> {
-      f.register((Class)identifier, builder);
-    });
+  @SuppressWarnings("unchecked")
+  public static <P> ClassFactory<P> registerFactory(ClassFactory<P> factory) {
+    for (Class<? extends P> identifier : factory.produces())
+      ioc.mapping.put(identifier, factory);
 
     return factory;
   }
 
-  private static class Factories extends ClassFactory<ClassFactory> {
+  HashMap<Class<?>, ClassFactory<?>> mapping = new HashMap<>();
+
+  @SuppressWarnings("unchecked")
+  <P> ClassFactory<P> factory(Class<? extends P> identifier) throws UnknownFactoryProductException {
+    ClassFactory<P> f = (ClassFactory<P>) mapping.get(identifier);
+    if (f != null)
+      return f;
+
+    for (Class<?> c : mapping.keySet())
+      if (identifier.isAssignableFrom(c))
+        return (ClassFactory<P>) mapping.get(c);
+
+    throw new UnknownFactoryProductException(identifier);
+  }
+
+}
+
+class DependantFactoryBuilder extends DependantClassBuilder<ClassFactory<?>, Factory<?, ?>> {
+
+  public DependantFactoryBuilder(Factory<?, ?> dependency) {
+    super(dependency);
   }
 
 }

@@ -39,11 +39,16 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   @DependencyInjection()
   UIContainerListener container;
+  @DependencyInjection()
+  protected Toolkit toolkit;
+  @DependencyInjection()
+  XMessageBox msgBox;
+  @DependencyInjection()
+  protected XControls hud;
 
   @DependencyInjection(instantiate = false)
   protected DB db;
 
-  public static Toolkit toolkit;
   private Thread thread = null;
   private Image backbuffer = null;
   private Graphics2D backgraphics = null;
@@ -52,7 +57,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   public static String LocalDir = "";
   private long threaddelay = 15;
   public Rectangle clientArea = new Rectangle();
-  XControls hud = null;
 //  Point cursor = new Point(0, 0);
   boolean initiated = false;
   public static final int UIPANEL_HEIGHT = 30;
@@ -63,11 +67,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   int tooltipX, tooltipY;
   UIPage currentUI, prevUI = null;
   XAction actionToPerform = null;
-  XMessageBox msgBox;
-
-  public UILogic() {
-    toolkit = Toolkit.getDefaultToolkit();
-  }
 
   public void paint(Graphics g) {
     int w = clientArea.width;
@@ -188,16 +187,14 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   }
 
   void init() {
-    msgBox = new XMessageBox();
-    hud = new XControls();
     navigateTo(UIHomePage.class);
     initiated = true;
   }
 
-  public UIPage navigateTo(Class c, Object... params) {
+  public UIPage navigateTo(Class<? extends UIPage> c, Object... params) {
     prevUI = currentUI;
 
-    currentUI = IoC.<UIPage>get(c);
+    currentUI = IoC.get(c);
 
     if (currentUI == null)
       currentUI = prevUI;

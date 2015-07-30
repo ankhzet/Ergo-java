@@ -13,7 +13,7 @@ public class DBFactory extends ClassFactory<DB> {
   public DBFactory() {
     register(DB.class);
 
-    register(BookmarksTable.class);
+    registerClass(BookmarksTable.class);
   }
 
 }
