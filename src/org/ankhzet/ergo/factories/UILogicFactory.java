@@ -13,7 +13,7 @@ public class UILogicFactory extends ClassFactory<UILogic> {
   public UILogicFactory() {
     register(UILogic.class);
 
-    register(UIContainerListener.class);
+    registerClass(UIContainerListener.class);
   }
 
 }

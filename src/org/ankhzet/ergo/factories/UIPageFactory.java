@@ -3,8 +3,8 @@ package org.ankhzet.ergo.factories;
 import org.ankhzet.ergo.classfactory.ClassFactory;
 import org.ankhzet.ergo.manga.chapter.ChapterLoader;
 import org.ankhzet.ergo.ui.pages.UIDuplicatesPage;
-import org.ankhzet.ergo.ui.pages.UIHomePage;
 import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.pages.UIHomePage;
 import org.ankhzet.ergo.ui.pages.readerpage.UIReaderPage;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.MagnifyGlass;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
@@ -23,12 +23,12 @@ public class UIPageFactory extends ClassFactory<UIPage> {
     register(UIReaderPage.class);
     register(UIDuplicatesPage.class);
 
-    register(Reader.class);
-    register(PageRenderOptions.class);
-//    register(ChapterData.class);
-    register(ChapterLoader.class);
-    register(MagnifyGlass.class);
-    register(SwipeHandler.class);
+    registerClass(Reader.class);
+    registerClass(PageRenderOptions.class);
+//    registerClass(ChapterData.class);
+    registerClass(ChapterLoader.class);
+    registerClass(MagnifyGlass.class);
+    registerClass(SwipeHandler.class);
 
   }
 

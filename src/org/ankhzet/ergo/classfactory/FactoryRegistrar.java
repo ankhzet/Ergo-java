@@ -2,7 +2,6 @@ package org.ankhzet.ergo.classfactory;
 
 import java.util.HashMap;
 import java.util.Objects;
-import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
 
 /**
  *
