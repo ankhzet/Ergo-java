@@ -59,8 +59,12 @@ public class XPathFilePicker extends CommonControl {
     this.caption = caption;
   }
 
-  String itemCaption(File item) {
+  public String itemCaption(File item) {
     return root.equals("/") ? item.getPath() : item.getName();
+  }
+
+  public File getRootFile() {
+    return new File(root);
   }
 
   @Override
@@ -84,9 +88,9 @@ public class XPathFilePicker extends CommonControl {
     Shape clip = g.getClip();
     int fontHeight = g.getFont().getSize();
     CollumnedItemVisitor.NodeVisitor<File> nodeVisitor = (Rectangle r, File item) -> {
-      boolean isHilited = item.equals(higlited);
-      boolean isSelected = item.equals(selected);
-      boolean isAiming = item.equals(aiming);
+      boolean isHilited = (higlited == item);// && item.equals(higlited);
+      boolean isSelected = (selected == item);// && item.equals(selected);
+      boolean isAiming = (aiming == item);// && item.equals(aiming);
       boolean showBtn = isAiming && item.isDirectory();
       g.setClip(clip);
       g.clipRect(r.x, r.y, r.width, r.height + 1);
@@ -146,14 +150,14 @@ public class XPathFilePicker extends CommonControl {
     return w / (float) columns;
   }
 
-  CollumnedItemVisitor<File> itemVisitor(int w, int h) {
+  protected CollumnedItemVisitor<File> itemVisitor(int w, int h) {
     return new CollumnedItemVisitor<>(columnWidth(), ITEM_HEIGHT, 0, rowsInView());
   }
 
   protected void fetchRoot() {
     entries.clear();
 
-    File path = new File(root);
+    File path = getRootFile();
     if (!path.isDirectory())
       return;
 
@@ -253,7 +257,7 @@ public class XPathFilePicker extends CommonControl {
       if (!f.getName().equals(".."))
         return f;
       else
-        return (new File(root)).getParentFile();
+        return getRootFile().getParentFile();
 
     return f;
   }
@@ -265,7 +269,7 @@ public class XPathFilePicker extends CommonControl {
   public String getFilePath(File f) {
     f = expandFile(f);
     if (f == null)
-      f = new File(root);
+      f = getRootFile();
     return f.getPath();
   }
 

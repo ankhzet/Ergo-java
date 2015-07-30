@@ -1,10 +1,17 @@
 package org.ankhzet.ergo.ui.pages;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
 import java.io.File;
+import java.util.HashMap;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
+import org.ankhzet.ergo.ui.Skin;
 import org.ankhzet.ergo.ui.xgui.XPathFilePicker;
 import org.ankhzet.ergo.ui.xgui.XPathFilePicker.FilesList;
+import org.ankhzet.ergo.ui.xgui.filepicker.CollumnedItemVisitor;
 
 /**
  *
@@ -59,6 +66,74 @@ public class MangaChapterPicker extends XPathFilePicker {
     entries.addAll(unread);
     entries.addAll(read);
     entries.addAll(files);
+  }
+
+  @Override
+  public void drawItems(Graphics2D g) {
+    Shape clip = g.getClip();
+    int fontHeight = g.getFont().getSize();
+
+    CollumnedItemVisitor.NodeVisitor<File> nodeVisitor = (Rectangle r, File item) -> {
+      boolean isHilited = (higlited == item);// && item.equals(higlited);
+      boolean isSelected = (selected == item);// && item.equals(selected);
+      boolean isAiming = (aiming == item);// && item.equals(aiming);
+      boolean showBtn = isAiming && item.isDirectory();
+
+      g.setClip(clip);
+      g.clipRect(r.x, r.y, r.width, r.height + 1);
+
+      r = (Rectangle) r.clone();
+      r.grow(-1, -1);
+
+      int btnWidth = r.height;
+      int tw = r.width - (showBtn ? btnWidth : 0) - 1;
+
+      if (isHilited) {
+        g.setColor(Color.GRAY);
+        Skin.fillBevel(g, r.x, r.y, r.width, r.height);
+      }
+
+      Skin.drawBevel(g, r.x, r.y, tw, r.height);
+
+      if (showBtn) {
+        Skin.drawBevel(g, r.x + tw, r.y, btnWidth, r.height);
+        r.grow(-btnWidth / 2, 0);
+        r.translate(-btnWidth / 2, 0);
+      }
+
+      r.grow(-8, 0);
+      g.clipRect(r.x, r.y, r.width, r.height + 1);
+      g.setColor(Color.LIGHT_GRAY);
+      g.drawString(itemCaption(item), r.x, 1 + r.y + fontHeight + (r.height - fontHeight) / 2 - 1);
+
+      Color c;
+      if (isSelected)
+        c = Color.BLUE;
+      else
+        c = cachedColor(item);
+
+      g.setColor(c);
+      g.drawString(itemCaption(item), r.x, r.y + fontHeight + (r.height - fontHeight) / 2 - 1);
+
+      return false;
+    };
+
+    CollumnedItemVisitor<File> v = itemVisitor(w, h);
+    v.walkItems(entries, nodeVisitor);
+  }
+
+  HashMap<File, Color> cachedColors = new HashMap<>();
+
+  Color cachedColor(File item) {
+    Color c = cachedColors.get(item);
+    if (c == null) {
+      if (item instanceof Manga)
+        c = Color.MAGENTA;
+      else
+        c = Color.BLACK;
+      cachedColors.put(item, c);
+    }
+    return c;
   }
 
 }
