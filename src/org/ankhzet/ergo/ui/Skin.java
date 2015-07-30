@@ -10,16 +10,27 @@ import java.awt.Graphics2D;
 public class Skin {
 
   public final Color//
-          BG_COLOR, UI_PANEL, UI_SCROLLBG, UI_SCROLLBORDER;
+    BG_COLOR,
+    UI_PANEL,
+    UI_OUTLINEO,
+    UI_OUTLINEI,
+    UI_SCROLLBG,
+    UI_SCROLLBORDER;
+
   public final int UI_C;
 
   {
     UI_C = 6;
 
     BG_COLOR = Color.WHITE;
+
     UI_PANEL = getColor("#DDDDDD");
+
     UI_SCROLLBG = getColor("#AA000000");
     UI_SCROLLBORDER = getColor("#AAFFFFFF");
+
+    UI_OUTLINEO = Color.BLACK;
+    UI_OUTLINEI = Color.WHITE;
   }
 
   static Skin i = null;
@@ -46,6 +57,21 @@ public class Skin {
     g.fillRoundRect(x, y, w, h, skin.UI_C, skin.UI_C);
     g.setColor(skin.UI_SCROLLBORDER);
     g.drawRoundRect(x, y, w, h, skin.UI_C, skin.UI_C);
+  }
+
+  public static void drawBevel(Graphics2D g, int x, int y, int w, int h) {
+    Skin skin = get();
+
+    g.setColor(skin.UI_OUTLINEO);
+    g.drawRoundRect(x, y, w, h, skin.UI_C, skin.UI_C);
+//    g.setColor(skin.UI_OUTLINEI);
+//    g.drawRoundRect(x + 1, y + 1, w - 2, h - 2, skin.UI_C, skin.UI_C);
+  }
+
+  public static void fillBevel(Graphics2D g, int x, int y, int w, int h) {
+    Skin skin = get();
+
+    g.fillRoundRect(x, y, w, h, skin.UI_C, skin.UI_C);
   }
 
 }
