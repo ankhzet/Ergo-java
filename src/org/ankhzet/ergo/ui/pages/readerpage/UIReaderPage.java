@@ -89,7 +89,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   }
 
   void bookmark(Chapter c) {
-    Manga m = new Manga(c.getMangaFolder());
+    Manga m = new Manga(c.getMangaFile().getPath());
     Bookmark bookmark = m.lastBookmark();
     if (bookmark != null)
       bookmark.delete();

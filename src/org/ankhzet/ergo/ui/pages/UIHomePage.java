@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.io.File;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
-import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.ui.pages.readerpage.UIReaderPage;
@@ -47,25 +46,29 @@ public class UIHomePage extends UIPage {
     }));
 
     hud.putActionAtLeft(kContinueLabel, registerAction(kContinueAction, action -> {
-      Chapter c = new Chapter(picker.getSelectedPath());
-      Manga manga = new Manga(c.getMangaFolder());
-      Bookmark bookmark = manga.lastBookmark();
-      Chapter chapter = Chapter.chapterFromBookmark(c.toPath().getParent(), bookmark);
+      Manga manga = selectedManga();
+      if (manga == null)
+        return;
+
+      Chapter chapter = manga.lastBookmarkedChapter();
       Chapter next = chapter.seekChapter(true);
       if (next == null)
         next = chapter;
       ui.navigateTo(UIReaderPage.class, next);
     })).enabledAs(action -> {
-      Chapter c = pickedChapter();
-      Manga manga = new Manga(c.getMangaFolder());
-      Bookmark b = manga.lastBookmark();
+      Manga manga = selectedManga();
+      if (manga == null)
+        return false;
+
+      Chapter c = manga.lastBookmarkedChapter();
+
       XButton cntButton = (XButton) hud.getControl(action);
-      if (cntButton != null)
-        if (b != null)
-          cntButton.setCaption("Continue from: " + b.path(null).toString());
-        else
-          cntButton.setCaption(kContinueLabel);
-      return b != null;
+      if (c != null)
+        cntButton.setCaption(String.format("Continue from: %s [%s]", manga.title(), c.idShort()));
+      else
+        cntButton.setCaption(kContinueLabel);
+
+      return c != null;
     });
 
     hud.putSpacer(XControls.AREA_LEFT);
@@ -81,6 +84,14 @@ public class UIHomePage extends UIPage {
 
   Chapter pickedChapter() {
     return new Chapter(picker.getSelectedPath());
+  }
+
+  Manga selectedManga() {
+    Chapter c = pickedChapter();
+    if (c.allChapters().length == 0)
+      return null;
+
+    return new Manga(c.getMangaFile().getPath());
   }
 
   public boolean loadChapter() {

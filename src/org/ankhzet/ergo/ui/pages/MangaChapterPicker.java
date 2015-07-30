@@ -1,7 +1,6 @@
 package org.ankhzet.ergo.ui.pages;
 
 import java.io.File;
-import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.ui.xgui.XPathFilePicker;
@@ -40,17 +39,15 @@ public class MangaChapterPicker extends XPathFilePicker {
 
     for (File entry : entries)
       if (entry.isDirectory()) {
-        Manga m = new Manga(entry.getName());
-        Bookmark b = m.lastBookmark();
+        Manga m = new Manga(entry.getPath());
+        Chapter b = m.lastBookmarkedChapter();
         if (b != null) {
-          if (skipReaded) {
-            Chapter c = new Chapter(entry.getPath());
-            c = c.lastChapter();
-            if (Chapter.chapterFromBookmark(null, b).compare(c) >= 0)
-              continue;
-          }
-
-          bookmarked.add(entry);
+          Chapter c = m.lastChapter();
+          if (b.compare(c) >= 0) {
+            if (!skipReaded)
+              bookmarked.add(m);
+          } else
+            bookmarked.add(m);
         } else
           unread.add(entry);
       } else
