@@ -2,45 +2,44 @@ package org.ankhzet.ergo.classfactory;
 
 import java.util.HashMap;
 import java.util.Objects;
+import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
+ * @param <P> Type, produced by factory
  */
-public class FactoryRegistrar {
+public class FactoryRegistrar<P> {
 
-  static final HashMap<Class, Boolean> counters = new HashMap<>();
+  static final HashMap<Object, Boolean> counters = new HashMap<>();
 
   public FactoryRegistrar(Object identifier) {
+    registerIfNeeded(identifier);
+  }
 
-    Class factoryClass = getFactoryClass(identifier);
+  final void registerIfNeeded(Object identifier) {
+    Object factoryIdentifier = getFactoryIdentifier(identifier);
     synchronized (counters) {
-      Boolean registered = counters.get(factoryClass);
+      Boolean registered = counters.get(factoryIdentifier);
       if (!Objects.equals(registered, Boolean.TRUE)) {
-        counters.put(factoryClass, Boolean.TRUE);
-
-        System.out.printf("Registering %s..\n", factoryClass.getName());
-
-        try {
-          IoC.register(getInstance(identifier));
-        } catch (Exception ex) {
-          ex.printStackTrace();
-        }
+        counters.put(factoryIdentifier, Boolean.TRUE);
+        register(factoryIdentifier, getInstance(factoryIdentifier));
       }
     }
 
   }
 
-  static Class getFactoryClass(Object identifier) {
-    return (identifier instanceof Class) ? (Class) identifier : identifier.getClass();
+  public void register(Object factoryIdentifier, P factory) {
+    throw new RuntimeException(String.format("Don't know how to register %s", factoryIdentifier));
   }
 
-  static ClassFactory getInstance(Object identifier) throws Exception {
-    if (identifier instanceof Class)
-      return (ClassFactory) ((Class) identifier).newInstance();
-    else
-      return (ClassFactory) identifier;
+  public Object getFactoryIdentifier(Object identifier) {
+    return identifier;
+  }
 
+  @SuppressWarnings("unchecked")
+  public P getInstance(Object identifier) {
+    return (P) identifier;
   }
 
 }

@@ -13,7 +13,7 @@ import org.ankhzet.ergo.classfactory.exceptions.FailedFactoryProductException;
  * @author Ankh Zet (ankhzet@gmail.com)
  * @param <Type> Class, builded by builder
  */
-public class ClassBuilder<Type> implements Builder<Type> {
+public class ClassBuilder<Type> implements Builder<Class<? extends Type>, Type> {
 
   ReentrantLock lock = new ReentrantLock();
 
@@ -33,23 +33,19 @@ public class ClassBuilder<Type> implements Builder<Type> {
 //      if (lock.getHoldCount() > 1)
 //        return null;
 
-      Constructor<?> constructor;
+      Constructor<? extends Type> constructor;
       try {
         constructor = c.getConstructor();
       } catch (NoSuchMethodException | SecurityException ex) {
         throw new FailedFactoryProductException(c, new Exception("Must have default constructor"));
       }
 
-      Type instance = (Type) constructor.newInstance();
+      Type instance = constructor.newInstance();
 
       return instance;
     } finally {
       lock.unlock();
     }
-  }
-
-  public boolean isBuilding() {
-    return lock.isLocked();
   }
 
 }
