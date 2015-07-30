@@ -10,6 +10,7 @@ import org.ankhzet.ergo.ui.pages.readerpage.UIReaderPage;
 import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.XButton;
 import org.ankhzet.ergo.ui.xgui.XControls;
+import org.ankhzet.ergo.ui.xgui.XKeyShortcut;
 
 /**
  *
@@ -79,6 +80,24 @@ public class UIHomePage extends UIPage {
       return picker.hasSelected();
     });
 
+    XButton btn = (XButton) hud.getControl(
+      hud.putActionAtLeft("Mark as readed", registerAction("readed", action -> {
+        Manga manga = selectedManga();
+        if (manga == null)
+          return;
+
+        Chapter c = manga.lastChapter();
+        if (c != null)
+          if (manga.putBookmark(c) != null)
+            ui.message(String.format("Manga marked as readed: %s\n", manga.title()));
+          else
+            ui.message(String.format("Failed to put bookmark for \"%s\" [%s]!", manga.title(), c.idShort()));
+      })).enabledAs(action -> {
+        return hasMangaSelected();
+      }).shortcut(XKeyShortcut.press("Shift+R"))
+    );
+    btn.setVisible(false);
+
     hud.add(picker);
   }
 
@@ -92,6 +111,10 @@ public class UIHomePage extends UIPage {
       return null;
 
     return new Manga(c.getMangaFile().getPath());
+  }
+
+  boolean hasMangaSelected() {
+    return pickedChapter().allChapters().length > 0;
   }
 
   public boolean loadChapter() {

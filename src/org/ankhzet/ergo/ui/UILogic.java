@@ -322,6 +322,10 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     msgBox.show(text);
   }
 
+  public void message(String text, int forTime) {
+    msgBox.show(text, forTime);
+  }
+
   Rectangle drawCenteredString(Point pos, Rectangle clip, int inset, Graphics2D g, String string, boolean draw) {
     Font f = g.getFont();
     FontRenderContext frc = g.getFontRenderContext();
