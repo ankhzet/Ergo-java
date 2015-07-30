@@ -12,7 +12,7 @@ import org.ankhzet.ergo.ui.xgui.XPathFilePicker.FilesList;
  */
 public class MangaChapterPicker extends XPathFilePicker {
 
-  boolean skipReaded = true;
+  boolean skipReaded = false;
 
   public MangaChapterPicker(String caption) {
     super(caption);
@@ -34,6 +34,7 @@ public class MangaChapterPicker extends XPathFilePicker {
     super.fetchRoot();
 
     FilesList bookmarked = new FilesList();
+    FilesList read = new FilesList();
     FilesList unread = new FilesList();
     FilesList files = new FilesList();
 
@@ -45,7 +46,7 @@ public class MangaChapterPicker extends XPathFilePicker {
           Chapter c = m.lastChapter();
           if (b.compare(c) >= 0) {
             if (!skipReaded)
-              bookmarked.add(m);
+              read.add(m);
           } else
             bookmarked.add(m);
         } else
@@ -56,6 +57,7 @@ public class MangaChapterPicker extends XPathFilePicker {
     entries.clear();
     entries.addAll(bookmarked);
     entries.addAll(unread);
+    entries.addAll(read);
     entries.addAll(files);
   }
 
