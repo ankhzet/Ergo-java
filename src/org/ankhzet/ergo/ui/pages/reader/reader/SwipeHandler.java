@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.ui.pages.readerpage.reader;
+package org.ankhzet.ergo.ui.pages.reader.reader;
 
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;

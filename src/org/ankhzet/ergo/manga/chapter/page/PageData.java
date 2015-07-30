@@ -9,8 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.ankhzet.ergo.ui.UILogic;
-import org.ankhzet.ergo.ui.pages.ImgUtil;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
+import org.ankhzet.ergo.utils.ImgUtil;
+import org.ankhzet.ergo.ui.pages.reader.reader.PageRenderOptions;
 
 /**
  *

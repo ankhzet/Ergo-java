@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.ui.pages;
+package org.ankhzet.ergo.ui.pages.home;
 
 import java.awt.Graphics2D;
 import java.io.File;
@@ -6,8 +6,10 @@ import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
-import org.ankhzet.ergo.ui.pages.readerpage.UIReaderPage;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
+import org.ankhzet.ergo.ui.pages.duplicates.UIDuplicatesPage;
+import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.pages.reader.UIReaderPage;
+import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.XButton;
 import org.ankhzet.ergo.ui.xgui.XControls;
 import org.ankhzet.ergo.ui.xgui.XKeyShortcut;

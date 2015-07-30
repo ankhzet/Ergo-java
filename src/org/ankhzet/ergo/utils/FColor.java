@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.ui.pages;
+package org.ankhzet.ergo.utils;
 
 import java.awt.Color;
 

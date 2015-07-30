@@ -4,7 +4,7 @@ import java.awt.Toolkit;
 import org.ankhzet.ergo.classfactory.ClassFactoryRegistrar;
 import org.ankhzet.ergo.classfactory.FactoryRegistrar;
 import org.ankhzet.ergo.classfactory.SingleClassFactoryRegistrar;
-import org.ankhzet.ergo.ui.pages.MangaChapterPicker;
+import org.ankhzet.ergo.ui.pages.home.MangaChapterPicker;
 import org.ankhzet.ergo.ui.xgui.XControls;
 import org.ankhzet.ergo.ui.xgui.XMessageBox;
 

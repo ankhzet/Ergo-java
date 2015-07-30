@@ -1,5 +1,7 @@
-package org.ankhzet.ergo.ui.pages;
+package org.ankhzet.ergo.ui.pages.duplicates;
 
+import org.ankhzet.ergo.utils.FColor;
+import org.ankhzet.ergo.utils.ImgUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -14,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.ui.UILogic;
+import org.ankhzet.ergo.ui.pages.UIPage;
 import org.ankhzet.ergo.utils.Strings;
 
 /**

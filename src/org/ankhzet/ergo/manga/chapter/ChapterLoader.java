@@ -3,7 +3,7 @@ package org.ankhzet.ergo.manga.chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.UILogic;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
+import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
 
 /**
  *

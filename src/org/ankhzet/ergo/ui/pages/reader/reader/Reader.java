@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.ui.pages.readerpage.reader;
+package org.ankhzet.ergo.ui.pages.reader.reader;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

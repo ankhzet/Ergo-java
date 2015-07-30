@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.ui.pages.readerpage;
+package org.ankhzet.ergo.ui.pages.reader;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -11,10 +11,10 @@ import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.UIPage;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.PageNavigator;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.SwipeHandler;
+import org.ankhzet.ergo.ui.pages.reader.reader.PageNavigator;
+import org.ankhzet.ergo.ui.pages.reader.reader.PageRenderOptions;
+import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
+import org.ankhzet.ergo.ui.pages.reader.reader.SwipeHandler;
 import org.ankhzet.ergo.ui.xgui.CommonControl;
 import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XKeyShortcut;

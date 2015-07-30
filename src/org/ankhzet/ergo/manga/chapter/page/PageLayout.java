@@ -1,6 +1,6 @@
 package org.ankhzet.ergo.manga.chapter.page;
 
-import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
+import org.ankhzet.ergo.ui.pages.reader.reader.PageRenderOptions;
 
 /**
  *

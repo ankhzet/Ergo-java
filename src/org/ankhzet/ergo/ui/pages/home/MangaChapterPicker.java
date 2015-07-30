@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.ui.pages;
+package org.ankhzet.ergo.ui.pages.home;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
