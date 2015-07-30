@@ -19,10 +19,17 @@ public class IoCFactoriesRegistrar {
   static FactoryRegistrar<?> db = new ClassFactoryRegistrar<>(new DBFactory());
 
   static FactoryRegistrar<?> filePicker;
+  static FactoryRegistrar<?> toolkit;
+  static FactoryRegistrar<?> msgBox;
+  static FactoryRegistrar<?> hud;
 
   public static void register() {
 
+    toolkit = new SingleClassFactoryRegistrar<>(Toolkit.class, c -> Toolkit.getDefaultToolkit());
+
     filePicker = new SingleClassFactoryRegistrar<>(MangaChapterPicker.class, c -> new MangaChapterPicker("File pick"));
+    msgBox = new SingleClassFactoryRegistrar<>(XMessageBox.class, c -> new XMessageBox());
+    hud = new SingleClassFactoryRegistrar<>(XControls.class, c -> new XControls());
 
   }
 
