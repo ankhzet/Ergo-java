@@ -48,7 +48,7 @@ public class DBLayer {
     try {
       rs.last();
       size = rs.getRow();
-    } catch (Exception ex) {
+    } catch (SQLException ex) {
       ex.printStackTrace();
     }
     return size;
@@ -67,7 +67,7 @@ public class DBLayer {
 
   public static ResultSet getSingleRow(String query) {
     try {
-      ResultSet rs = IoC.<DBLayer>get(DBLayer.class).fetchQuery(query);
+      ResultSet rs = IoC.get(DBLayer.class).fetchQuery(query);
       if (rs.next())
         return rs;
     } catch (SQLException ex) {

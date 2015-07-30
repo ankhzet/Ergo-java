@@ -7,3 +7,4 @@ nbdist/
 nbproject/private/
 nbactions.xml
 .nb-gradle/
+nbproject/cfg_hints.xml

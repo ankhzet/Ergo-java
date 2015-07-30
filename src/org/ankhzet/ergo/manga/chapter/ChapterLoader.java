@@ -3,7 +3,7 @@ package org.ankhzet.ergo.manga.chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.UILogic;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
+import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
 
 /**
  *
@@ -42,7 +42,7 @@ public class ChapterLoader {
     loader.start();
   }
 
-  final void layout() {
+  void layout() {
     cacher = new Thread(() -> {
       try {
         while (true) {
@@ -54,7 +54,7 @@ public class ChapterLoader {
             ui.progressDone();
           }
 
-          Thread.sleep(10);
+          Thread.sleep(50);
         }
       } catch (InterruptedException ex) {
       }
@@ -65,7 +65,7 @@ public class ChapterLoader {
 
   void synkReader() throws InterruptedException {
     while (reader.isBusy())
-      Thread.sleep(10);
+      Thread.sleep(50);
   }
 
 }

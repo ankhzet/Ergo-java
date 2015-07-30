@@ -1,5 +1,7 @@
-package org.ankhzet.ergo.ui.pages;
+package org.ankhzet.ergo.ui.pages.duplicates;
 
+import org.ankhzet.ergo.utils.FColor;
+import org.ankhzet.ergo.utils.ImgUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -14,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.ui.UILogic;
+import org.ankhzet.ergo.ui.pages.UIPage;
 import org.ankhzet.ergo.utils.Strings;
 
 /**
@@ -23,8 +26,8 @@ import org.ankhzet.ergo.utils.Strings;
 public class UIDuplicatesPage extends UIPage {
 
   static final int cacheHeight = 100,
-          thumbHeight = 50,
-          thumbSpace = 5;
+    thumbHeight = 50,
+    thumbSpace = 5;
 
   int mx, my;
   BufferedImage overI = null;
@@ -64,7 +67,7 @@ public class UIDuplicatesPage extends UIPage {
         try {
           Integer avg = Integer.decode(n);
           avgs.put(parts.join("."), avg);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
         }
       }
 
@@ -203,7 +206,7 @@ public class UIDuplicatesPage extends UIPage {
     int sum = 0;
     sum = images.stream().map((image) -> imageWidth(image)).reduce(sum, Integer::sum);
 
-    sum = sum + Math.max(0, images.size() - 1) * thumbSpace;
+    sum += Math.max(0, images.size() - 1) * thumbSpace;
     return sum <= w;
   }
 

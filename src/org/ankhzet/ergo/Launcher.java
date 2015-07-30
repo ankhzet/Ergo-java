@@ -4,20 +4,24 @@
  */
 package org.ankhzet.ergo;
 
-import org.ankhzet.ergo.ui.UILogic;
-import javax.swing.JFrame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import org.jdesktop.application.Application;
+import javax.swing.JFrame;
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.factories.IoCFactoriesRegistrar;
 import org.ankhzet.ergo.ui.UIContainerListener;
+import org.ankhzet.ergo.ui.UILogic;
+import org.jdesktop.application.Application;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class Launcher extends Application {
+
+  public static void main(String[] args) {
+    launch(Launcher.class, args);
+  }
 
   /**
    * @param args the command line arguments
@@ -46,10 +50,6 @@ public class Launcher extends Application {
   protected void shutdown() {
     mainFrame.setVisible(false);
     ui.stop();
-  }
-
-  public static void main(String[] args) {
-    Application.launch(Launcher.class, args);
   }
 
   private class LauncherListener extends WindowAdapter {

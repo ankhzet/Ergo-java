@@ -1,20 +1,20 @@
-package org.ankhzet.ergo.ui.pages.readerpage;
+package org.ankhzet.ergo.ui.pages.reader;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import org.ankhzet.ergo.ui.LoaderProgressListener;
-import org.ankhzet.ergo.ui.UILogic;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.SwipeHandler;
-import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.manga.Manga;
+import org.ankhzet.ergo.manga.chapter.Chapter;
+import org.ankhzet.ergo.ui.LoaderProgressListener;
+import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.UIPage;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.PageNavigator;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
+import org.ankhzet.ergo.ui.pages.reader.reader.PageNavigator;
+import org.ankhzet.ergo.ui.pages.reader.reader.PageRenderOptions;
+import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
+import org.ankhzet.ergo.ui.pages.reader.reader.SwipeHandler;
 import org.ankhzet.ergo.ui.xgui.CommonControl;
 import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XKeyShortcut;
@@ -57,9 +57,9 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     XAction.Action swipeAction = action -> swipePage(action.isA(kPrev) ? -1 : 1);
     XAction.XActionStateListener canSwipeSelector = action -> canSwipe();
     hud.putActionAtLeft("Предыдущая страница", registerAction(kPrev, swipeAction).enabledAs(canSwipeSelector))
-            .shortcut(XKeyShortcut.press("Left"));
+      .shortcut(XKeyShortcut.press("Left"));
     hud.putActionAtLeft("Следующая страница", registerAction(kNext, swipeAction).enabledAs(canSwipeSelector))
-            .shortcut(XKeyShortcut.press("Right"));
+      .shortcut(XKeyShortcut.press("Right"));
 
     hud.putActionAtRight("Увелечительное стекло", registerAction(kMagnify, action -> {
       reader.showMagnifier(!reader.magnifierShown());
@@ -89,7 +89,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   }
 
   void bookmark(Chapter c) {
-    Manga m = new Manga(c.getMangaFolder());
+    Manga m = new Manga(c.getMangaFile().getPath());
     Bookmark bookmark = m.lastBookmark();
     if (bookmark != null)
       bookmark.delete();
@@ -208,7 +208,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
       }
 
     } else
-      if (requested > 1)
+      if (requested > 0)
         bookmark(current);
   }
 

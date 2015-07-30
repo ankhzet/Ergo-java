@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
@@ -45,7 +46,7 @@ public class Chapter extends File {
     String path = getPath();
     String[] files = list((dir, name) -> name.toLowerCase().matches(PAGE_PATTERN));
     for (String fileName : files)
-      pageFiles.add(path + File.separator + fileName);
+      pageFiles.add(path + separator + fileName);
 
     return pageFiles;
   }
@@ -82,17 +83,17 @@ public class Chapter extends File {
   }
 
   public String idShort() {
-    return isBonus() ? String.format("%.1f", idx() / 10.f) : String.format("%d", idx() / 10);
+    return isBonus() ? String.format(Locale.US, "%.1f", idx() / 10.f) : String.format("%d", idx() / 10);
   }
 
   public String idLong() {
-    return isBonus() ? String.format("%7.1f", idx() / 10.f) : String.format("%04d", idx() / 10);
+    return isBonus() ? String.format(Locale.US, "%06.1f", idx() / 10.f) : String.format("%04d", idx() / 10);
   }
 
   public float id() {
     try {
       return Float.parseFloat(getName());
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
       return 0.f;
     }
   }
@@ -115,10 +116,13 @@ public class Chapter extends File {
 
   @Override
   public boolean equals(Object o) {
+    if (o == null)
+      return false;
+
     if (!(o instanceof Chapter))
       return false;
 
-    return idx() == ((Chapter) o).idx();
+    return hashCode() == o.hashCode();
   }
 
   @Override

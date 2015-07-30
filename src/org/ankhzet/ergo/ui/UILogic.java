@@ -4,7 +4,6 @@
  */
 package org.ankhzet.ergo.ui;
 
-import org.ankhzet.ergo.ui.pages.UIPage;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -19,14 +18,14 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
-
 import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.db.DB;
+import org.ankhzet.ergo.ui.pages.home.UIHomePage;
+import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XActionListener;
 import org.ankhzet.ergo.ui.xgui.XControls;
-import org.ankhzet.ergo.ui.pages.UIHomePage;
-import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XMessageBox;
 
 /**
@@ -40,11 +39,16 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   @DependencyInjection()
   UIContainerListener container;
+  @DependencyInjection()
+  protected Toolkit toolkit;
+  @DependencyInjection()
+  XMessageBox msgBox;
+  @DependencyInjection()
+  protected XControls hud;
 
   @DependencyInjection(instantiate = false)
   protected DB db;
 
-  public static Toolkit toolkit;
   private Thread thread = null;
   private Image backbuffer = null;
   private Graphics2D backgraphics = null;
@@ -53,7 +57,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   public static String LocalDir = "";
   private long threaddelay = 15;
   public Rectangle clientArea = new Rectangle();
-  XControls hud = null;
 //  Point cursor = new Point(0, 0);
   boolean initiated = false;
   public static final int UIPANEL_HEIGHT = 30;
@@ -64,11 +67,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   int tooltipX, tooltipY;
   UIPage currentUI, prevUI = null;
   XAction actionToPerform = null;
-  XMessageBox msgBox;
-
-  public UILogic() {
-    toolkit = Toolkit.getDefaultToolkit();
-  }
 
   public void paint(Graphics g) {
     int w = clientArea.width;
@@ -189,16 +187,15 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   }
 
   void init() {
-    msgBox = new XMessageBox();
-    hud = new XControls();
+    intensiveRepaint(false);
     navigateTo(UIHomePage.class);
     initiated = true;
   }
 
-  public UIPage navigateTo(Class c, Object... params) {
+  public UIPage navigateTo(Class<? extends UIPage> c, Object... params) {
     prevUI = currentUI;
 
-    currentUI = (UIPage) IoC.<UIPage>get(c);
+    currentUI = IoC.get(c);
 
     if (currentUI == null)
       currentUI = prevUI;
@@ -306,7 +303,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
       progress.hide();
       return true;
     }
-    progress.setProgress(LoaderProgressListener.LABELS[state], p, max);
+    progress.setProgress(LABELS[state], p, max);
     return currentUI.onProgress(state, p, max);
   }
 
@@ -323,6 +320,10 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   public void message(String text) {
     msgBox.show(text);
+  }
+
+  public void message(String text, int forTime) {
+    msgBox.show(text, forTime);
   }
 
   Rectangle drawCenteredString(Point pos, Rectangle clip, int inset, Graphics2D g, String string, boolean draw) {

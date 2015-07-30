@@ -1,17 +1,16 @@
 package org.ankhzet.ergo.manga.chapter.page;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import org.ankhzet.ergo.ui.UILogic;
-import org.ankhzet.ergo.ui.pages.ImgUtil;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.PageRenderOptions;
+import org.ankhzet.ergo.utils.ImgUtil;
+import org.ankhzet.ergo.ui.pages.reader.reader.PageRenderOptions;
 
 /**
  *
@@ -29,7 +28,7 @@ public class PageData {
     file = imageFile;
     try {
       image = ImageIO.read(new File(file));
-    } catch (Exception ex) {
+    } catch (IOException ex) {
       ex.printStackTrace();
     }
     pageW = image != null ? image.getWidth() : 32;
@@ -112,10 +111,10 @@ public class PageData {
 
   public void draw(Graphics g, int dx, int dy) {
     g.drawImage(
-            cache//
-            , dx + layout.renderX//
-            , dy + layout.renderY//
-            , null);
+      cache//
+      , dx + layout.renderX//
+      , dy + layout.renderY//
+      , null);
   }
 
 }

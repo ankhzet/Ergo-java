@@ -1,16 +1,18 @@
-package org.ankhzet.ergo.ui.pages;
+package org.ankhzet.ergo.ui.pages.home;
 
 import java.awt.Graphics2D;
 import java.io.File;
-import org.ankhzet.ergo.ui.pages.readerpage.reader.Reader;
-import org.ankhzet.ergo.ui.pages.readerpage.UIReaderPage;
-import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
-import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.manga.Manga;
+import org.ankhzet.ergo.manga.chapter.Chapter;
+import org.ankhzet.ergo.ui.pages.duplicates.UIDuplicatesPage;
+import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.pages.reader.UIReaderPage;
+import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.XButton;
 import org.ankhzet.ergo.ui.xgui.XControls;
+import org.ankhzet.ergo.ui.xgui.XKeyShortcut;
 
 /**
  *
@@ -47,25 +49,29 @@ public class UIHomePage extends UIPage {
     }));
 
     hud.putActionAtLeft(kContinueLabel, registerAction(kContinueAction, action -> {
-      Chapter c = new Chapter(picker.getSelectedPath());
-      Manga manga = new Manga(c.getMangaFolder());
-      Bookmark bookmark = manga.lastBookmark();
-      Chapter chapter = Chapter.chapterFromBookmark(c.toPath().getParent(), bookmark);
+      Manga manga = selectedManga();
+      if (manga == null)
+        return;
+
+      Chapter chapter = manga.lastBookmarkedChapter();
       Chapter next = chapter.seekChapter(true);
       if (next == null)
         next = chapter;
       ui.navigateTo(UIReaderPage.class, next);
     })).enabledAs(action -> {
-      Chapter c = pickedChapter();
-      Manga manga = new Manga(c.getMangaFolder());
-      Bookmark b = manga.lastBookmark();
+      Manga manga = selectedManga();
+      if (manga == null)
+        return false;
+
+      Chapter c = manga.lastBookmarkedChapter();
+
       XButton cntButton = (XButton) hud.getControl(action);
-      if (cntButton != null)
-        if (b != null)
-          cntButton.setCaption("Continue from: " + b.path(null).toString());
-        else
-          cntButton.setCaption(kContinueLabel);
-      return b != null;
+      if (c != null)
+        cntButton.setCaption(String.format("Continue from: %s [%s]", manga.title(), c.idShort()));
+      else
+        cntButton.setCaption(kContinueLabel);
+
+      return c != null;
     });
 
     hud.putSpacer(XControls.AREA_LEFT);
@@ -76,11 +82,41 @@ public class UIHomePage extends UIPage {
       return picker.hasSelected();
     });
 
+    XButton btn = (XButton) hud.getControl(
+      hud.putActionAtLeft("Mark as readed", registerAction("readed", action -> {
+        Manga manga = selectedManga();
+        if (manga == null)
+          return;
+
+        Chapter c = manga.lastChapter();
+        if (c != null)
+          if (manga.putBookmark(c) != null)
+            ui.message(String.format("Manga marked as readed: %s\n", manga.title()));
+          else
+            ui.message(String.format("Failed to put bookmark for \"%s\" [%s]!", manga.title(), c.idShort()));
+      })).enabledAs(action -> {
+        return hasMangaSelected();
+      }).shortcut(XKeyShortcut.press("Shift+R"))
+    );
+    btn.setVisible(false);
+
     hud.add(picker);
   }
 
   Chapter pickedChapter() {
     return new Chapter(picker.getSelectedPath());
+  }
+
+  Manga selectedManga() {
+    Chapter c = pickedChapter();
+    if (c.allChapters().length == 0)
+      return null;
+
+    return new Manga(c.getMangaFile().getPath());
+  }
+
+  boolean hasMangaSelected() {
+    return pickedChapter().allChapters().length > 0;
   }
 
   public boolean loadChapter() {

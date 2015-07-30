@@ -1,26 +1,28 @@
-package org.ankhzet.ergo.ui.pages.readerpage.reader;
+package org.ankhzet.ergo.ui.pages.reader.reader;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.ankhzet.ergo.ui.LoaderProgressListener;
-import org.ankhzet.ergo.ui.Skin;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.chapter.Chapter;
-import org.ankhzet.ergo.utils.Strings;
-import org.ankhzet.ergo.utils.Utils;
 import org.ankhzet.ergo.manga.chapter.ChapterCacher;
 import org.ankhzet.ergo.manga.chapter.ChapterLoader;
 import org.ankhzet.ergo.manga.chapter.page.PageData;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import org.ankhzet.ergo.ui.LoaderProgressListener;
+import org.ankhzet.ergo.ui.Skin;
+import org.ankhzet.ergo.utils.Strings;
+import org.ankhzet.ergo.utils.Utils;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class Reader extends PageNavigator {
+
+  public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
+  public static final int TAB_BAR_HEIGHT = 8;
 
   @DependencyInjection
   protected PageRenderOptions options;
@@ -36,8 +38,6 @@ public class Reader extends PageNavigator {
   Chapter chapter;
 
   public Strings pageFiles = new Strings();
-  public static final String PAGE_PATTERN = "^.*?\\.(png|jpe?g|gif|bmp)";
-  public static final int TAB_BAR_HEIGHT = 8;
   private boolean flushCache = false;
   int scrollPosX = 0, scrollPosY = 0;
 

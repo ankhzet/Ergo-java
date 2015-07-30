@@ -1,8 +1,12 @@
 package org.ankhzet.ergo.factories;
 
-import org.ankhzet.ergo.classfactory.CommonFactoryRegistrar;
+import java.awt.Toolkit;
+import org.ankhzet.ergo.classfactory.ClassFactoryRegistrar;
 import org.ankhzet.ergo.classfactory.FactoryRegistrar;
-import org.ankhzet.ergo.ui.pages.MangaChapterPicker;
+import org.ankhzet.ergo.classfactory.SingleClassFactoryRegistrar;
+import org.ankhzet.ergo.ui.pages.home.MangaChapterPicker;
+import org.ankhzet.ergo.ui.xgui.XControls;
+import org.ankhzet.ergo.ui.xgui.XMessageBox;
 
 /**
  *
@@ -10,14 +14,23 @@ import org.ankhzet.ergo.ui.pages.MangaChapterPicker;
  */
 public class IoCFactoriesRegistrar {
 
-  static FactoryRegistrar uiPages = new FactoryRegistrar(UIPageFactory.class);
-  static FactoryRegistrar logics = new FactoryRegistrar(UILogicFactory.class);
-  static FactoryRegistrar db = new FactoryRegistrar(DBFactory.class);
+  static FactoryRegistrar<?> uiPages = new ClassFactoryRegistrar<>(new UIPageFactory());
+  static FactoryRegistrar<?> logics = new ClassFactoryRegistrar<>(new UILogicFactory());
+  static FactoryRegistrar<?> db = new ClassFactoryRegistrar<>(new DBFactory());
 
-  static FactoryRegistrar filePicker = new CommonFactoryRegistrar(MangaChapterPicker.class, (Class c) -> new MangaChapterPicker("File pick"));
+  static FactoryRegistrar<?> filePicker;
+  static FactoryRegistrar<?> toolkit;
+  static FactoryRegistrar<?> msgBox;
+  static FactoryRegistrar<?> hud;
 
   public static void register() {
-    // do nothing
+
+    toolkit = new SingleClassFactoryRegistrar<>(Toolkit.class, c -> Toolkit.getDefaultToolkit());
+
+    filePicker = new SingleClassFactoryRegistrar<>(MangaChapterPicker.class, c -> new MangaChapterPicker("File pick"));
+    msgBox = new SingleClassFactoryRegistrar<>(XMessageBox.class, c -> new XMessageBox());
+    hud = new SingleClassFactoryRegistrar<>(XControls.class, c -> new XControls());
+
   }
 
 }

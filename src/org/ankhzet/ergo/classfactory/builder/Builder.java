@@ -8,10 +8,11 @@ package org.ankhzet.ergo.classfactory.builder;
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
- * @param <Type> Class of produced objects
+ * @param <I> Class selector identifier
+ * @param <P> Class of produced objects
  */
-public interface Builder<Type> {
+public interface Builder<I, P> {
 
-  public Type build(Class<? extends Type> c) throws Exception;
+  public P build(I identifier) throws Exception;
 
 }

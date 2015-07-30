@@ -5,26 +5,26 @@
  */
 package org.ankhzet.ergo.classfactory;
 
-import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
-import org.ankhzet.ergo.classfactory.builder.Builder;
 import java.util.Set;
+import org.ankhzet.ergo.classfactory.builder.Builder;
+import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
- * @param <IdentifierType> Identifier to select builder with
- * @param <ProducesType> Class, produced by factory
+ * @param <I> Identifier to select builder with
+ * @param <P>
  */
-public interface AbstractFactory<IdentifierType, ProducesType> {
+public interface AbstractFactory<I, P> {
 
-  Set<Class> produces();
+  Set<I> produces();
 
-  ProducesType get(IdentifierType identifier) throws FactoryException;
+  P get(I identifier) throws FactoryException;
 
-  ProducesType make(IdentifierType identifier) throws FactoryException;
+  P make(I identifier) throws FactoryException;
 
-  Builder register(IdentifierType identifier, Builder<ProducesType> maker);
+  Builder<I, P> register(I identifier, Builder<I, P> maker);
 
-  Builder register(IdentifierType identifier);
+  Builder<I, P> register(I identifier);
 
 }

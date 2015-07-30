@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.ui.pages.readerpage.reader;
+package org.ankhzet.ergo.ui.pages.reader.reader;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -6,10 +6,9 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.chapter.page.PageData;
 import org.ankhzet.ergo.manga.chapter.page.PageLayout;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.utils.Utils;
 
 /**

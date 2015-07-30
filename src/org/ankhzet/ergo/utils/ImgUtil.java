@@ -1,4 +1,4 @@
-package org.ankhzet.ergo.ui.pages;
+package org.ankhzet.ergo.utils;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import javax.imageio.ImageIO;
-import org.ankhzet.ergo.utils.Strings;
 
 /**
  *
@@ -37,9 +36,9 @@ public class ImgUtil {
       }
 
     return new FColor(
-            redBucket / pixelCount,
-            greenBucket / pixelCount,
-            blueBucket / pixelCount);
+      redBucket / pixelCount,
+      greenBucket / pixelCount,
+      blueBucket / pixelCount);
 
   }
 
@@ -108,7 +107,7 @@ public class ImgUtil {
     if (dst.exists())
       try {
         scaled = ImageIO.read(dst);
-      } catch (Exception e) {
+      } catch (IOException e) {
         dst.delete();
         return thumbnail(fileName, thumbDir, scaler);
       }
@@ -119,7 +118,7 @@ public class ImgUtil {
 
         dst.getParentFile().mkdirs();
         ImageIO.write(scaled, Strings.explode(src.getName(), "\\.").pop(), dst);
-      } catch (Exception e) {
+      } catch (IOException e) {
 
       }
 

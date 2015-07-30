@@ -19,8 +19,12 @@ public class XMessageBox {
   protected String message;
 
   public void show(String message) {
+    show(message, MSGBOX_TIMEOUT);
+  }
+
+  public void show(String message, int forTime) {
     this.message = message;
-    shownTill = System.currentTimeMillis() + MSGBOX_TIMEOUT;
+    shownTill = System.currentTimeMillis() + forTime;
   }
 
   public boolean isShown() {
