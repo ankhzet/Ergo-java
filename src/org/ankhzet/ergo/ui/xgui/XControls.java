@@ -157,7 +157,7 @@ public class XControls extends ArrayList<CommonControl> {
   public void keyEvent(KeyEvent e) {
     synchronized (this) {
       for (CommonControl c : this)
-        if (c.isVisible() && c.keyEvent(e))
+        if (c.isEnabled() && c.keyEvent(e))
           break;
     }
   }

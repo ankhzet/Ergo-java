@@ -54,7 +54,7 @@ public class ChapterLoader {
             ui.progressDone();
           }
 
-          Thread.sleep(10);
+          Thread.sleep(50);
         }
       } catch (InterruptedException ex) {
       }
@@ -65,7 +65,7 @@ public class ChapterLoader {
 
   void synkReader() throws InterruptedException {
     while (reader.isBusy())
-      Thread.sleep(10);
+      Thread.sleep(50);
   }
 
 }

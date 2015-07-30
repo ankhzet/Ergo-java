@@ -187,6 +187,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   }
 
   void init() {
+    intensiveRepaint(false);
     navigateTo(UIHomePage.class);
     initiated = true;
   }

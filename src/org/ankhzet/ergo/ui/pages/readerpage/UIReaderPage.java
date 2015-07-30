@@ -208,7 +208,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
       }
 
     } else
-      if (requested > 1)
+      if (requested > 0)
         bookmark(current);
   }
 

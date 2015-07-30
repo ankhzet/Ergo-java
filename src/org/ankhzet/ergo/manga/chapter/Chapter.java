@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
@@ -82,11 +83,11 @@ public class Chapter extends File {
   }
 
   public String idShort() {
-    return isBonus() ? String.format("%.1f", idx() / 10.f) : String.format("%d", idx() / 10);
+    return isBonus() ? String.format(Locale.US, "%.1f", idx() / 10.f) : String.format("%d", idx() / 10);
   }
 
   public String idLong() {
-    return isBonus() ? String.format("%7.1f", idx() / 10.f) : String.format("%04d", idx() / 10);
+    return isBonus() ? String.format(Locale.US, "%06.1f", idx() / 10.f) : String.format("%04d", idx() / 10);
   }
 
   public float id() {
@@ -115,10 +116,13 @@ public class Chapter extends File {
 
   @Override
   public boolean equals(Object o) {
+    if (o == null)
+      return false;
+
     if (!(o instanceof Chapter))
       return false;
 
-    return idx() == ((Chapter) o).idx();
+    return hashCode() == o.hashCode();
   }
 
   @Override
