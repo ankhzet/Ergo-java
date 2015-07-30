@@ -57,9 +57,9 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     XAction.Action swipeAction = action -> swipePage(action.isA(kPrev) ? -1 : 1);
     XAction.XActionStateListener canSwipeSelector = action -> canSwipe();
     hud.putActionAtLeft("Предыдущая страница", registerAction(kPrev, swipeAction).enabledAs(canSwipeSelector))
-            .shortcut(XKeyShortcut.press("Left"));
+      .shortcut(XKeyShortcut.press("Left"));
     hud.putActionAtLeft("Следующая страница", registerAction(kNext, swipeAction).enabledAs(canSwipeSelector))
-            .shortcut(XKeyShortcut.press("Right"));
+      .shortcut(XKeyShortcut.press("Right"));
 
     hud.putActionAtRight("Увелечительное стекло", registerAction(kMagnify, action -> {
       reader.showMagnifier(!reader.magnifierShown());

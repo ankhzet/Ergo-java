@@ -52,7 +52,6 @@ public class Launcher extends Application {
     ui.stop();
   }
 
-
   private class LauncherListener extends WindowAdapter {
 
     @Override

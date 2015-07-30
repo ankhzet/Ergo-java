@@ -21,10 +21,10 @@ public class BookmarksTable extends Table {
   @Override
   protected String schema() {
     return tableName() + " ("
-            + "  manga text not null"
-            + ", chapter float not null"
-            + ", unique (manga, chapter)"
-            + ")";
+      + "  manga text not null"
+      + ", chapter float not null"
+      + ", unique (manga, chapter)"
+      + ")";
   }
 
   public ResultSet fetch(String manga) throws SQLException {

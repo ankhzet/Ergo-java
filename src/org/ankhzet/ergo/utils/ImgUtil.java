@@ -37,9 +37,9 @@ public class ImgUtil {
       }
 
     return new FColor(
-            redBucket / pixelCount,
-            greenBucket / pixelCount,
-            blueBucket / pixelCount);
+      redBucket / pixelCount,
+      greenBucket / pixelCount,
+      blueBucket / pixelCount);
 
   }
 

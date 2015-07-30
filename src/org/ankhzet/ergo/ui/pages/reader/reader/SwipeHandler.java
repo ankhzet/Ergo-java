@@ -8,6 +8,7 @@ import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class SwipeHandler implements Runnable {
+
   public static final int ANIMATE_FOR = 500;
   public static final double MIN_SPEED = 0.1;
   public static final double MAX_SPEED = 0.8;
@@ -86,7 +87,7 @@ public class SwipeHandler implements Runnable {
   public void run() {
     if (inprocess)
       return;
-    
+
     inprocess = true;
     long t;
     while ((t = System.currentTimeMillis()) <= end) {
@@ -108,6 +109,5 @@ public class SwipeHandler implements Runnable {
       break;
     }
   }
-
 
 }

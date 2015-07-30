@@ -11,9 +11,9 @@ public class XButton extends CommonControl {
 
   protected Image[] ims = new Image[4];
   final int STATE_NORMAL = 0,
-          STATE_OVERED = 1,
-          STATE_PRESSED = 2,
-          STATE_DISABLED = 3;
+    STATE_OVERED = 1,
+    STATE_PRESSED = 2,
+    STATE_DISABLED = 3;
 //                            			!overed  						overed
 //                            		!clk 			clk 			!clk 		clk
   private int[][] states = {{STATE_NORMAL, STATE_PRESSED}, {STATE_OVERED, STATE_PRESSED}};

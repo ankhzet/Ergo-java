@@ -1,4 +1,3 @@
-
 package org.ankhzet.ergo.classfactory;
 
 import org.ankhzet.ergo.classfactory.builder.Builder;

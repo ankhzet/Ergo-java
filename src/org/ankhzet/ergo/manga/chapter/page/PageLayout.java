@@ -9,16 +9,16 @@ import org.ankhzet.ergo.ui.pages.reader.reader.PageRenderOptions;
 public class PageLayout {
 
   public int//
-          clientW = 0,
-          clientH = 0,
-          renderX = 0,
-          renderY = 0,
-          oldPageW = -1,
-          oldPageH = -1,
-          newPageW = 0,
-          newPageH = 0,
-          scrollX = 0,
-          scrollY = 0;
+    clientW = 0,
+    clientH = 0,
+    renderX = 0,
+    renderY = 0,
+    oldPageW = -1,
+    oldPageH = -1,
+    newPageW = 0,
+    newPageH = 0,
+    scrollX = 0,
+    scrollY = 0;
 
   public PageLayout(int cw, int ch) {
     clientH = ch;

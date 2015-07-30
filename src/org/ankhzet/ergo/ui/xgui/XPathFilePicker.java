@@ -25,10 +25,10 @@ public class XPathFilePicker extends CommonControl {
 
   protected Image[] ims = new Image[4];
   final int STATE_NORMAL = 0,
-          STATE_OVERED = 1,
-          STATE_PRESSED = 2,
-          STATE_DISABLED = 3,
-          ITEM_HEIGHT = 19;
+    STATE_OVERED = 1,
+    STATE_PRESSED = 2,
+    STATE_DISABLED = 3,
+    ITEM_HEIGHT = 19;
 
   String caption = "";
   String root = "/";

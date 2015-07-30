@@ -55,7 +55,7 @@ public class XControls extends ArrayList<CommonControl> {
     focused = null;
     synchronized (this) {
       this.stream().filter(c
-              -> (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
+        -> (c.isVisible() && c.mouseEvent(e, focused == null) && focused == null)
       ).forEach((c) -> {
         focused = c;
       });
@@ -144,7 +144,6 @@ public class XControls extends ArrayList<CommonControl> {
     }
   }
 
-
   void packArea(CtlMap controls, int dx, CtlEnum enumerate) {
     ArrayList<Integer> l = new ArrayList<>(controls.keySet());
     Collections.sort(l);
@@ -182,6 +181,7 @@ public class XControls extends ArrayList<CommonControl> {
   private interface CtlEnum {
 
     int withCtl(CommonControl c, int dx);
+
   }
 
 }

@@ -26,8 +26,8 @@ import org.ankhzet.ergo.utils.Strings;
 public class UIDuplicatesPage extends UIPage {
 
   static final int cacheHeight = 100,
-          thumbHeight = 50,
-          thumbSpace = 5;
+    thumbHeight = 50,
+    thumbSpace = 5;
 
   int mx, my;
   BufferedImage overI = null;

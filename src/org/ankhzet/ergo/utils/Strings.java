@@ -42,7 +42,7 @@ public class Strings extends ArrayList<String> {
         result += e ? s : glue + s;
         e = false;
       }
-    
+
     return result;
   }
 
