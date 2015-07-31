@@ -18,11 +18,12 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import org.ankhzet.ergo.Config;
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.db.DB;
-import org.ankhzet.ergo.ui.pages.home.UIHomePage;
 import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.pages.home.UIHomePage;
 import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XActionListener;
 import org.ankhzet.ergo.ui.xgui.XControls;
@@ -44,6 +45,9 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   protected Toolkit toolkit;
 
   @DependencyInjection()
+  protected Config config;
+
+  @DependencyInjection()
   XMessageBox msgBox;
 
   @DependencyInjection()
@@ -57,7 +61,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   private Graphics2D backgraphics = null;
 //  private Vector<Cursor> cursors = new Vector<Cursor>();
 //  private Cursor defCursor = null;
-  public static String LocalDir = "";
   private long threaddelay = 15;
   public Rectangle clientArea = new Rectangle();
 //  Point cursor = new Point(0, 0);
@@ -129,7 +132,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   }
 
   public void start() {
-    LocalDir = System.getProperty("user.home") + "/.ergo";
     container.requestFocus();
 //    defCursor = setCursor("default");
     thread = new Thread(this);
@@ -141,7 +143,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   }
 
   public Image loadImage(String src) {
-    return toolkit.getImage(LocalDir + src);
+    return toolkit.getImage(config.appDir(src));
   }
 
   public static void log(String format, Object... args) {

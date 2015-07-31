@@ -1,12 +1,11 @@
 package org.ankhzet.ergo.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.File;
+import java.sql.*;
+import org.ankhzet.ergo.Config;
 import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.utils.Strings;
 
 /**
@@ -17,21 +16,27 @@ public class DBLayer {
 
   public static final String dbFileExt = "sqlite";
 
+  @DependencyInjection()
+  protected Config config;
+
   public Connection connection;
   public Statement statmt;
   public ResultSet resSet;
-
-  public DBLayer() throws ClassNotFoundException, SQLException {
-    connection = null;
-    Class.forName("org.sqlite.JDBC");
-
+  
+  @DependenciesInjected()
+  private void di() throws SQLException {
     try {
-      connection = dbConnection("ergo");
+      connection = dbConnection(config.appDir(config.appName()));
       System.out.println("--connected.");
     } catch (SQLException e) {
       System.out.println("--connection failed!");
       throw e;
     }
+  }
+
+  public DBLayer() throws ClassNotFoundException {
+    connection = null;
+    Class.forName("org.sqlite.JDBC");
   }
 
   public PreparedStatement prepareStatement(String sql) throws SQLException {

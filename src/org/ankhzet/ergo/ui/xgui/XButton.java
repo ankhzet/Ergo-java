@@ -3,6 +3,8 @@ package org.ankhzet.ergo.ui.xgui;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import org.ankhzet.ergo.Config;
+import org.ankhzet.ergo.ConfigParser;
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.files.Parser;
 import org.ankhzet.ergo.ui.UILogic;
@@ -18,20 +20,22 @@ public class XButton extends CommonControl {
 //                            		!clk 			clk 			!clk 		clk
   private int[][] states = {{STATE_NORMAL, STATE_PRESSED}, {STATE_OVERED, STATE_PRESSED}};
   String caption = "";
+  UILogic uil;
 
   public XButton(XAction action, String caption, String src) {
     super(-1000, 0, 0, 0);
+    uil = IoC.get(UILogic.class);
     setAction(action);
-    setActionListener(IoC.<UILogic>get(UILogic.class));
+    setActionListener(uil);
     try {
-      Parser p = new Parser(UILogic.LocalDir + "/config/" + src + ".cfg");
+      Parser p = IoC.make(ConfigParser.class, src);
 
       int i = 0;
       p.checkNext("button");
       p.checkNext("{");
       do {
         if (p.isToken("img"))
-          ims[i++] = IoC.<UILogic>get(UILogic.class).loadImage("/" + p.getValue("=", ";"));
+          ims[i++] = uil.loadImage(p.getValue("=", ";"));
         else
           if (p.isToken("w"))
             w = Integer.parseInt(p.getValue("=", ";"));
@@ -85,10 +89,10 @@ public class XButton extends CommonControl {
 
     if (!g.drawImage(i, x + dx, y + dy, w, h, null))
 //      System.out.println("img not ready")
-    ;
+      ;
 
     if (overed)
-      IoC.<UILogic>get(UILogic.class).tooltip(caption, x + dx + w / 2, y + dy + h);
+      uil.tooltip(caption, x + dx + w / 2, y + dy + h);
   }
 
 }

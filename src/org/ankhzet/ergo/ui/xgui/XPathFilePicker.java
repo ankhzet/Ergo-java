@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.ankhzet.ergo.ConfigParser;
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.files.Parser;
 import org.ankhzet.ergo.ui.Skin;
@@ -34,19 +35,22 @@ public class XPathFilePicker extends CommonControl {
   String root = "/";
   protected FilesList entries = new FilesList();
   public File higlited, selected, aiming;
+  
+  UILogic uil;
 
   public XPathFilePicker(String caption) {
     super(-1000, 0, 0, 0);
-    setActionListener(IoC.<UILogic>get(UILogic.class));
+    uil = IoC.get(UILogic.class);
+    setActionListener(uil);
     try {
-      Parser p = new Parser(UILogic.LocalDir + "/config/filepicker.cfg");
+      Parser p = IoC.make(ConfigParser.class, "filepicker");
 
       int i = 0;
       p.checkNext("filepicker");
       p.checkNext("{");
       do {
         if (p.isToken("img"))
-          ims[i++] = IoC.<UILogic>get(UILogic.class).loadImage("/" + p.getValue("=", ";"));
+          ims[i++] = uil.loadImage("/" + p.getValue("=", ";"));
 
         if (!p.Token.equalsIgnoreCase("}"))
           p.checkNext(";");

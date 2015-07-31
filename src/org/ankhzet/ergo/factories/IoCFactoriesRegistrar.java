@@ -1,6 +1,7 @@
 package org.ankhzet.ergo.factories;
 
 import java.awt.Toolkit;
+import org.ankhzet.ergo.ConfigParser;
 import org.ankhzet.ergo.classfactory.*;
 import org.ankhzet.ergo.ui.pages.home.MangaChapterPicker;
 import org.ankhzet.ergo.ui.xgui.XControls;
@@ -26,6 +27,7 @@ public class IoCFactoriesRegistrar extends ClassFactory<Object> {
     registerClass(XMessageBox.class);
     registerClass(XControls.class);
 
+    registerClass(ConfigParser.class, (c, args) -> new ConfigParser((String) args[0]));
   }
 
   
