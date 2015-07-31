@@ -1,6 +1,7 @@
 package org.ankhzet.ergo.classfactory;
 
 import java.util.HashMap;
+import org.ankhzet.ergo.classfactory.builder.Builder;
 import org.ankhzet.ergo.classfactory.exceptions.UnknownFactoryProductException;
 
 public class ClassFactory<P> extends Factory<Class<? extends P>, P> {
@@ -21,6 +22,10 @@ public class ClassFactory<P> extends Factory<Class<? extends P>, P> {
 
   public static <P> FactoryRegistrar<ClassFactory<P>> registerClass(Class<P> c) {
     return new SingleClassFactoryRegistrar<>(c);
+  }
+
+  public static <P> FactoryRegistrar<ClassFactory<P>> registerClass(Class<P> c, Builder<Class<? extends P>, P> builder) {
+    return new SingleClassFactoryRegistrar<>(c, builder);
   }
 
 }

@@ -52,12 +52,12 @@ public class Factory<T, P> implements AbstractFactory<T, P> {
   }
 
   @Override
-  public P make(T identifier) throws FactoryException {
+  public P make(T identifier, Object... args) throws FactoryException {
     synchronized (this) {
       Builder<T, P> builder = pick(builders, identifier);
 
       try {
-        return builder.build(identifier);
+        return builder.build(identifier, args);
       } catch (Exception ex) {
         boolean wrap = (!(ex instanceof FactoryException));
         throw wrap ? new FailedFactoryProductException(identifier, ex) : (FactoryException) ex;

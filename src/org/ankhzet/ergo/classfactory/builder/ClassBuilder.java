@@ -20,12 +20,13 @@ public class ClassBuilder<Type> implements Builder<Class<? extends Type>, Type> 
   /**
    *
    * @param c Class to be instantiated
+   * @param args Arguments to pass to constructor
    * @return instantiated object
    * @throws Exception if has no accesible constructors, has more than 1
    * constructor or can't resolve it's dependencies.
    */
   @Override
-  synchronized public Type build(Class<? extends Type> c) throws Exception {
+  synchronized public Type build(Class<? extends Type> c, Object... args) throws Exception {
     if (!lock.tryLock())
       return null;
 
@@ -40,7 +41,7 @@ public class ClassBuilder<Type> implements Builder<Class<? extends Type>, Type> 
         throw new FailedFactoryProductException(c, new Exception("Must have default constructor"));
       }
 
-      Type instance = constructor.newInstance();
+      Type instance = constructor.newInstance(args);
 
       return instance;
     } finally {

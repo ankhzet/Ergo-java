@@ -21,7 +21,7 @@ public interface AbstractFactory<I, P> {
 
   P get(I identifier) throws FactoryException;
 
-  P make(I identifier) throws FactoryException;
+  P make(I identifier, Object... args) throws FactoryException;
 
   Builder<I, P> register(I identifier, Builder<I, P> maker);
 

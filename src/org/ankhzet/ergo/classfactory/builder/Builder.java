@@ -13,6 +13,6 @@ package org.ankhzet.ergo.classfactory.builder;
  */
 public interface Builder<I, P> {
 
-  public P build(I identifier) throws Exception;
+  public P build(I identifier, Object... args) throws Exception;
 
 }

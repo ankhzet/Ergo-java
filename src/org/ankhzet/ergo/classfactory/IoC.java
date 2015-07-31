@@ -27,10 +27,10 @@ public class IoC {
     return null;
   }
 
-  public static <P> P make(Class<? extends P> identifier) throws FactoryException {
+  public static <P> P make(Class<? extends P> identifier, Object... args) throws FactoryException {
     ClassFactory<P> factory = ioc.factory(identifier);
 
-    return factory.make(identifier);
+    return factory.make(identifier, args);
   }
 
   @SuppressWarnings("unchecked")
