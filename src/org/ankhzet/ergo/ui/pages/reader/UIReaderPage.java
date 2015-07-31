@@ -241,14 +241,15 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
       boolean b = requested > 0;
       if (!b) {
         File m = current.getMangaFile();
-        b = new Manga(m.getPath()).hasBookmarks();
+        b = (new Manga(m.getPath())).hasBookmarks();
         if (!b) {
           Path chPath = m.toPath().resolve(new Chapter("0").idLong());
           current = new Chapter(chPath.toString());
           b = true;
-        }
+        } else
+          b = false;
       }
-      
+
       if (b)
         bookmark(current);
     }
