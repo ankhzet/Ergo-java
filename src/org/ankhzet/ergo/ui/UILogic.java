@@ -4,15 +4,7 @@
  */
 package org.ankhzet.ergo.ui;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
@@ -59,14 +51,11 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   private Thread thread = null;
   private Image backbuffer = null;
   private Graphics2D backgraphics = null;
-//  private Vector<Cursor> cursors = new Vector<Cursor>();
-//  private Cursor defCursor = null;
   private long threaddelay = 15;
   public Rectangle clientArea = new Rectangle();
-//  Point cursor = new Point(0, 0);
   boolean initiated = false;
   public static final int UIPANEL_HEIGHT = 30;
-  static final int THREAD_DELAY_IDDLE = 90;
+  static final int THREAD_DELAY_IDDLE = 30;
   static final int THREAD_DELAY_ANIMATE = 5;
   ProgressRenderer progress = new ProgressRenderer();
   String tooltip = null;
@@ -74,41 +63,53 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   UIPage currentUI, prevUI = null;
   XAction actionToPerform = null;
 
-  public void paint(Graphics g) {
-    int w = clientArea.width;
-    int h = clientArea.height;
+  int RENDER_INSET = 5;
+  int RENDER_INSET2 = RENDER_INSET * 2;
+
+  boolean checkBackBuffer() {
     try {
       if (backbuffer == null) {
-        backbuffer = new BufferedImage(w + 4, h + 4, BufferedImage.TYPE_INT_RGB);
+        backbuffer = new BufferedImage(clientArea.width + RENDER_INSET2, clientArea.height + RENDER_INSET2, BufferedImage.TYPE_INT_RGB);
         backgraphics = (Graphics2D) (backbuffer.getGraphics());
         Font f = new Font("default", Font.PLAIN, 11);
         backgraphics.setFont(f);
         backgraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        backgraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//        backgraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       }
+      return backgraphics != null;
     } catch (Throwable e) {
       backbuffer = null;
       backgraphics = null;
-      return;
+      return false;
     }
-    if (!initiated || backgraphics == null)
+  }
+
+  public void paint(Graphics g) {
+    if (!(initiated && checkBackBuffer()))
       return;
+
+    Rectangle r = new Rectangle(clientArea.getSize());
+    r.grow(RENDER_INSET - 2, RENDER_INSET - 2);
+    r.translate(RENDER_INSET, RENDER_INSET);
 
     backgraphics.setColor(Skin.get().BG_COLOR);
-    backgraphics.fillRect(2, 2, w, h);
+    backgraphics.fillRect(r.x, r.y, r.width, r.height);
     backgraphics.setColor(Color.BLACK);
 
-    backgraphics.translate(2, 2);
+    backgraphics.translate(RENDER_INSET, RENDER_INSET);
     draw(backgraphics);
-    backgraphics.translate(-2, -2);
+    backgraphics.translate(-RENDER_INSET, -RENDER_INSET);
 
-    backgraphics.setColor(Color.WHITE);
-    backgraphics.drawRect(1, 1, w + 1, h + 1);
+    r.grow(1, 1);
     backgraphics.setColor(Color.BLACK);
-    backgraphics.drawRect(0, 0, w + 3, h + 3);
+    backgraphics.drawRect(r.x, r.y, r.width - 1, r.height - 1);
+    r.grow(1, 1);
+    backgraphics.setColor(Color.LIGHT_GRAY);
+    backgraphics.drawRect(r.x, r.y, r.width - 1, r.height - 1);
 
     backbuffer.flush();
-    g.drawImage(backbuffer, clientArea.x - 2, clientArea.y - 2, clientArea.width + 4, clientArea.height + 4, null);
+    g.drawImage(backbuffer, clientArea.x - RENDER_INSET, clientArea.y - RENDER_INSET, null);
+
   }
 
   @Override
@@ -133,7 +134,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   public void start() {
     container.requestFocus();
-//    defCursor = setCursor("default");
     thread = new Thread(this);
     thread.start();
   }
@@ -152,7 +152,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   }
 
   public void resize(int x, int y, int w, int h) {
-    clientArea.setBounds(x + 2, y + 2, w - 4, h - 4);
+    clientArea.setBounds(x + RENDER_INSET, y + RENDER_INSET, w - RENDER_INSET2, h - RENDER_INSET2);
     backbuffer = null;
     backgraphics = null;
     if (currentUI != null)
@@ -269,16 +269,15 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
     if (currentUI != null) {
       g.translate(0, UIPANEL_HEIGHT);
+      backgraphics.setClip(0, 0, w, h - UIPANEL_HEIGHT);
       currentUI.draw(g, w, h - UIPANEL_HEIGHT);
+      backgraphics.setClip(null);
       g.translate(0, -UIPANEL_HEIGHT);
 
       drawCenteredString(new Point(w / 2, UIPANEL_HEIGHT / 4), clientArea, 0, g, currentUI.title(), true);
     }
 
-    try {
-      hud.Draw(g, 0, 0, w, UIPANEL_HEIGHT);
-    } catch (Exception e) {
-    }
+    hud.Draw(g, 0, 0, w, UIPANEL_HEIGHT);
 
     progress.draw(g, w, h);
 

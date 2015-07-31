@@ -158,8 +158,13 @@ public class XPathFilePicker extends CommonControl {
     return new CollumnedItemVisitor<>(columnWidth(), ITEM_HEIGHT, 0, rowsInView());
   }
 
+  protected File upFolderFile() {
+    return new File("..");
+  }
+  
   protected void fetchRoot() {
     entries.clear();
+    entries.add(upFolderFile());
 
     File path = getRootFile();
     if (!path.isDirectory())
@@ -168,6 +173,7 @@ public class XPathFilePicker extends CommonControl {
     try {
       root = path.getCanonicalPath();
     } catch (IOException ex) {
+      root = path.getPath();
     }
 
     File[] filesList = path.listFiles((File dir, String name) -> !name.matches("^\\..*$"));
@@ -177,7 +183,6 @@ public class XPathFilePicker extends CommonControl {
   public void setRoot(String root) {
     this.root = root;
     fetchRoot();
-    entries.add(0, new File(".."));
     selected = null;
     higlited = null;
     aiming = null;
@@ -258,7 +263,7 @@ public class XPathFilePicker extends CommonControl {
 
   File expandFile(File f) {
     if (f != null)
-      if (!f.getName().equals(".."))
+      if (!f.getName().equals(upFolderFile().getName()))
         return f;
       else
         return getRootFile().getParentFile();

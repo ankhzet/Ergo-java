@@ -92,7 +92,9 @@ public class DBLayer {
   }
 
   public static Connection dbConnection(String dbname) throws SQLException {
-    if (Strings.explode(dbname, "\\.").size() <= 1)
+    File f = new File(dbname);
+    String fileName = f.getName();
+    if (Strings.explode(fileName, "\\.").size() <= 1)
       dbname = dbname + "." + dbFileExt;
 
     String connection = String.format("jdbc:sqlite:%s", dbname);

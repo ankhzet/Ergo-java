@@ -1,7 +1,7 @@
 package org.ankhzet.ergo.ui.xgui;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -39,8 +39,7 @@ public class XControls extends ArrayList<CommonControl> {
           c.Draw(g);
     }
 
-    g.setColor(Color.GRAY);
-    g.drawRoundRect(x, y - 3, cw - 1, ch + 2, 6, 6);
+    Skin.drawBevel(g, x, y - 5, cw, ch + 5);
   }
 
   public void Process() {

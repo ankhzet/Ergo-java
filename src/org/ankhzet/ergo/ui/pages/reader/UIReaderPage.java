@@ -3,6 +3,8 @@ package org.ankhzet.ergo.ui.pages.reader;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.nio.file.Path;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Bookmark;
@@ -207,9 +209,21 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
         ui.message(String.format("This is %s available chapter (%s >> %s)", dir, current.getMangaFolder(), current.idShort()));
       }
 
-    } else
-      if (requested > 0)
+    } else {
+      boolean b = requested > 0;
+      if (!b) {
+        File m = current.getMangaFile();
+        b = new Manga(m.getPath()).hasBookmarks();
+        if (!b) {
+          Path chPath = m.toPath().resolve(new Chapter("0").idLong());
+          current = new Chapter(chPath.toString());
+          b = true;
+        }
+      }
+      
+      if (b)
         bookmark(current);
+    }
   }
 
   @Override

@@ -39,6 +39,7 @@ public class MangaChapterPicker extends XPathFilePicker {
   @Override
   protected void fetchRoot() {
     super.fetchRoot();
+    entries.remove(upFolderFile());
 
     FilesList bookmarked = new FilesList();
     FilesList read = new FilesList();
@@ -62,6 +63,7 @@ public class MangaChapterPicker extends XPathFilePicker {
         files.add(entry);
 
     entries.clear();
+    entries.add(upFolderFile());
     entries.addAll(bookmarked);
     entries.addAll(unread);
     entries.addAll(read);
@@ -74,6 +76,10 @@ public class MangaChapterPicker extends XPathFilePicker {
     int fontHeight = g.getFont().getSize();
 
     CollumnedItemVisitor.NodeVisitor<File> nodeVisitor = (Rectangle r, File item) -> {
+
+      if (!clip.contains(r))
+        return false;
+
       boolean isHilited = (higlited == item);// && item.equals(higlited);
       boolean isSelected = (selected == item);// && item.equals(selected);
       boolean isAiming = (aiming == item);// && item.equals(aiming);
@@ -90,7 +96,7 @@ public class MangaChapterPicker extends XPathFilePicker {
 
       if (isHilited) {
         g.setColor(Color.GRAY);
-        Skin.fillBevel(g, r.x, r.y, r.width, r.height);
+        Skin.fillBevel(g, r.x + 1, r.y + 1, r.width - 1, r.height - 1);
       }
 
       Skin.drawBevel(g, r.x, r.y, tw, r.height);

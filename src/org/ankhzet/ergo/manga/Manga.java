@@ -34,6 +34,10 @@ public class Manga extends Chapter {
   }
 
   public Bookmark putBookmark(Chapter c) {
+    Bookmark last = lastBookmark();
+    if (last != null)
+      last.delete();
+    
     ChapterBookmark b = new ChapterBookmark();
     b.uid = uid();
     b.chapter = c.id();

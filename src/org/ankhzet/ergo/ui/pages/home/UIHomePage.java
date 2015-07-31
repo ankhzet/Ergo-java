@@ -6,8 +6,9 @@ import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
-import org.ankhzet.ergo.ui.pages.duplicates.UIDuplicatesPage;
+import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.UIPage;
+import org.ankhzet.ergo.ui.pages.duplicates.UIDuplicatesPage;
 import org.ankhzet.ergo.ui.pages.reader.UIReaderPage;
 import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.XButton;
@@ -82,7 +83,7 @@ public class UIHomePage extends UIPage {
       return picker.hasSelected();
     });
 
-    XButton btn = (XButton) hud.getControl(
+    hud.getControl(
       hud.putActionAtLeft("Mark as readed", registerAction("readed", action -> {
         Manga manga = selectedManga();
         if (manga == null)
@@ -90,15 +91,15 @@ public class UIHomePage extends UIPage {
 
         Chapter c = manga.lastChapter();
         if (c != null)
-          if (manga.putBookmark(c) != null)
+          if (manga.putBookmark(c) != null) {
             ui.message(String.format("Manga marked as readed: %s\n", manga.title()));
-          else
+            picker.fetchRoot();
+          } else
             ui.message(String.format("Failed to put bookmark for \"%s\" [%s]!", manga.title(), c.idShort()));
       })).enabledAs(action -> {
         return hasMangaSelected();
       }).shortcut(XKeyShortcut.press("Shift+R"))
-    );
-    btn.setVisible(false);
+    ).setVisible(false);
 
     hud.add(picker);
   }
@@ -148,7 +149,7 @@ public class UIHomePage extends UIPage {
 
   @Override
   public void resized(int x, int y, int w, int h) {
-    picker.move(0, y, w, h - y);
+    picker.move(0, UILogic.UIPANEL_HEIGHT, w, h - UILogic.UIPANEL_HEIGHT);
   }
 
   @Override
