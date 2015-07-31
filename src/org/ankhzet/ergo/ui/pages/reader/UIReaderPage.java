@@ -44,6 +44,9 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   boolean swipeDirVertical = false;
   Point pressPos = new Point();
 
+  int keyScroll = 0;
+  long keyPress = 0;
+
   @Override
   public void navigateIn(Object... params) {
     super.navigateIn(params);
@@ -88,6 +91,9 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     }).togglable((XAction action) -> {
       return options.showOriginalSize();
     }));
+
+    hud.shortcut("Scroll up", XKeyShortcut.press("Up"), registerAction("scroll-up", action -> scroll(-1)));
+    hud.shortcut("Scroll down", XKeyShortcut.press("Down"), registerAction("scroll-down", action -> scroll(1)));
   }
 
   void bookmark(Chapter c) {
@@ -127,6 +133,27 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   public void process() {
     ui.intensiveRepaint(swiping());
     reader.process();
+
+    if (keyScroll != 0)
+      reader.scroll(0, currentScrollSpeed());
+  }
+
+  void scroll(int delta) {
+    keyScroll = (20 * delta + currentScrollSpeed()) / 2;
+    keyPress = System.currentTimeMillis();
+  }
+
+  int currentScrollSpeed() {
+    if (keyScroll == 0)
+      return 0;
+    
+    long scroll = (System.currentTimeMillis() - keyPress);
+    double d = 1. - Math.min(1., scroll / 500.);
+
+    if (d <= 0.01)
+      keyScroll = 0;
+
+    return (int) (keyScroll * d);
   }
 
   @Override
@@ -199,6 +226,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
 
   @Override
   public void pageSet(int requested, int set) {
+    keyScroll = 0;
     Chapter current = reader.chapter();
     if (requested != set) {
       Chapter load = current.seekChapter(requested > set);
