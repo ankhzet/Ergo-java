@@ -5,10 +5,13 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.io.File;
+import java.util.Comparator;
 import java.util.HashMap;
+import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.ui.Skin;
+import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.XPathFilePicker;
 import org.ankhzet.ergo.ui.xgui.XPathFilePicker.FilesList;
 import org.ankhzet.ergo.ui.xgui.filepicker.CollumnedItemVisitor;
@@ -18,6 +21,9 @@ import org.ankhzet.ergo.ui.xgui.filepicker.CollumnedItemVisitor;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class MangaChapterPicker extends XPathFilePicker {
+
+  @DependencyInjection()
+  protected Reader reader;
 
   boolean skipReaded = false;
 
@@ -39,29 +45,61 @@ public class MangaChapterPicker extends XPathFilePicker {
   @Override
   protected void fetchRoot() {
     super.fetchRoot();
+    entries.remove(upFolderFile());
 
     FilesList bookmarked = new FilesList();
     FilesList read = new FilesList();
     FilesList unread = new FilesList();
     FilesList files = new FilesList();
 
+    boolean inRootFolder = false;
+    File root = getRootFile();
+    for (String r : reader.getMangaRoots())
+      if (root.equals(new File(r))) {
+        inRootFolder = true;
+        break;
+      }
+
+    Manga m = new Manga(root.getPath());
+    Chapter b = null, last = null;
+    if (!inRootFolder) {
+      b = m.lastBookmarkedChapter();
+      last = m.lastChapter();
+    }
+
     for (File entry : entries)
       if (entry.isDirectory()) {
-        Manga m = new Manga(entry.getPath());
-        Chapter b = m.lastBookmarkedChapter();
+        if (inRootFolder) {
+          m = new Manga(entry.getPath());
+          b = m.lastBookmarkedChapter();
+          last = m.lastChapter();
+        }
+
         if (b != null) {
-          Chapter c = m.lastChapter();
-          if (b.compare(c) >= 0) {
+          Chapter c = new Chapter(entry.getPath());
+          File add = inRootFolder
+                     ? m
+                     : (c.equals(b) ? c : entry);
+
+          if (b.compare(last) >= 0) {
             if (!skipReaded)
-              read.add(m);
+              read.add(add);
           } else
-            bookmarked.add(m);
+            bookmarked.add(add);
         } else
           unread.add(entry);
       } else
         files.add(entry);
 
+    if (inRootFolder) {
+      Comparator<? super File> c = (f1, f2) -> Long.signum(f2.lastModified() - f1.lastModified());
+      bookmarked.sort(c);
+      unread.sort(c);
+      read.sort(c);
+    }
+
     entries.clear();
+    entries.add(upFolderFile());
     entries.addAll(bookmarked);
     entries.addAll(unread);
     entries.addAll(read);
@@ -74,6 +112,10 @@ public class MangaChapterPicker extends XPathFilePicker {
     int fontHeight = g.getFont().getSize();
 
     CollumnedItemVisitor.NodeVisitor<File> nodeVisitor = (Rectangle r, File item) -> {
+
+      if (!clip.contains(r))
+        return false;
+
       boolean isHilited = (higlited == item);// && item.equals(higlited);
       boolean isSelected = (selected == item);// && item.equals(selected);
       boolean isAiming = (aiming == item);// && item.equals(aiming);
@@ -90,7 +132,7 @@ public class MangaChapterPicker extends XPathFilePicker {
 
       if (isHilited) {
         g.setColor(Color.GRAY);
-        Skin.fillBevel(g, r.x, r.y, r.width, r.height);
+        Skin.fillBevel(g, r.x + 1, r.y + 1, r.width - 1, r.height - 1);
       }
 
       Skin.drawBevel(g, r.x, r.y, tw, r.height);
@@ -127,7 +169,7 @@ public class MangaChapterPicker extends XPathFilePicker {
   Color cachedColor(File item) {
     Color c = cachedColors.get(item);
     if (c == null) {
-      if (item instanceof Manga)
+      if (item instanceof Chapter)
         c = Color.MAGENTA;
       else
         c = Color.BLACK;

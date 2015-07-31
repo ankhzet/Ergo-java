@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.ankhzet.ergo.ConfigParser;
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.files.Parser;
 import org.ankhzet.ergo.ui.Skin;
@@ -34,19 +35,22 @@ public class XPathFilePicker extends CommonControl {
   String root = "/";
   protected FilesList entries = new FilesList();
   public File higlited, selected, aiming;
+  
+  UILogic uil;
 
   public XPathFilePicker(String caption) {
     super(-1000, 0, 0, 0);
-    setActionListener(IoC.<UILogic>get(UILogic.class));
+    uil = IoC.get(UILogic.class);
+    setActionListener(uil);
     try {
-      Parser p = new Parser(UILogic.LocalDir + "/config/filepicker.cfg");
+      Parser p = IoC.make(ConfigParser.class, "filepicker");
 
       int i = 0;
       p.checkNext("filepicker");
       p.checkNext("{");
       do {
         if (p.isToken("img"))
-          ims[i++] = IoC.<UILogic>get(UILogic.class).loadImage("/" + p.getValue("=", ";"));
+          ims[i++] = uil.loadImage("/" + p.getValue("=", ";"));
 
         if (!p.Token.equalsIgnoreCase("}"))
           p.checkNext(";");
@@ -154,8 +158,13 @@ public class XPathFilePicker extends CommonControl {
     return new CollumnedItemVisitor<>(columnWidth(), ITEM_HEIGHT, 0, rowsInView());
   }
 
+  protected File upFolderFile() {
+    return new File("..");
+  }
+  
   protected void fetchRoot() {
     entries.clear();
+    entries.add(upFolderFile());
 
     File path = getRootFile();
     if (!path.isDirectory())
@@ -164,6 +173,7 @@ public class XPathFilePicker extends CommonControl {
     try {
       root = path.getCanonicalPath();
     } catch (IOException ex) {
+      root = path.getPath();
     }
 
     File[] filesList = path.listFiles((File dir, String name) -> !name.matches("^\\..*$"));
@@ -173,7 +183,6 @@ public class XPathFilePicker extends CommonControl {
   public void setRoot(String root) {
     this.root = root;
     fetchRoot();
-    entries.add(0, new File(".."));
     selected = null;
     higlited = null;
     aiming = null;
@@ -254,7 +263,7 @@ public class XPathFilePicker extends CommonControl {
 
   File expandFile(File f) {
     if (f != null)
-      if (!f.getName().equals(".."))
+      if (!f.getName().equals(upFolderFile().getName()))
         return f;
       else
         return getRootFile().getParentFile();

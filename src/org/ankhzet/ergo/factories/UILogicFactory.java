@@ -1,5 +1,6 @@
 package org.ankhzet.ergo.factories;
 
+import org.ankhzet.ergo.Config;
 import org.ankhzet.ergo.classfactory.ClassFactory;
 import org.ankhzet.ergo.ui.UIContainerListener;
 import org.ankhzet.ergo.ui.UILogic;
@@ -14,6 +15,8 @@ public class UILogicFactory extends ClassFactory<UILogic> {
     register(UILogic.class);
 
     registerClass(UIContainerListener.class);
+    
+    registerClass(Config.class);
   }
 
 }
