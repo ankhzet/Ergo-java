@@ -20,6 +20,10 @@ public class XKeyShortcut {
     return new XKeyShortcut(KeyEvent.KEY_PRESSED, shortcut);
   }
 
+  public static XKeyShortcut release(String shortcut) {
+    return new XKeyShortcut(KeyEvent.KEY_RELEASED, shortcut);
+  }
+
   public boolean isKeyEvent(KeyEvent e) {
     if (e.getID() != eventMask)
       return false;
