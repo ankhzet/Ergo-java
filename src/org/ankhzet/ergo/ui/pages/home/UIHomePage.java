@@ -101,6 +101,11 @@ public class UIHomePage extends UIPage {
       }).shortcut(XKeyShortcut.press("Shift+R"))
     ).setVisible(false);
 
+    hud.getControl(
+      hud.putActionAtLeft("Refresh", registerAction("refresh", action -> picker.fetchRoot()))
+        .shortcut(XKeyShortcut.press("F5"))
+    ).setVisible(false);
+
     hud.add(picker);
   }
 
