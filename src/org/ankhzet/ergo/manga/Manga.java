@@ -42,6 +42,10 @@ public class Manga extends Chapter {
     b.uid = uid();
     b.chapter = c.id();
     b.save();
+    
+    long timestamp = System.currentTimeMillis();
+    c.setLastModified(timestamp);
+    c.getMangaFile().setLastModified(timestamp);
     return b;
   }
 
