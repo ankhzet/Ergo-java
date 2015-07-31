@@ -39,14 +39,17 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
 
   @DependencyInjection()
   UIContainerListener container;
+
   @DependencyInjection()
   protected Toolkit toolkit;
+
   @DependencyInjection()
   XMessageBox msgBox;
+
   @DependencyInjection()
   protected XControls hud;
 
-  @DependencyInjection(instantiate = false)
+  @DependencyInjection()
   protected DB db;
 
   private Thread thread = null;
