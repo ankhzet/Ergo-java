@@ -1,7 +1,9 @@
 package org.ankhzet.ergo.ui.pages.home;
 
+import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.io.File;
+import java.io.IOException;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Manga;
@@ -102,6 +104,15 @@ public class UIHomePage extends UIPage {
     ).setVisible(false);
 
     hud.shortcut("Refresh", XKeyShortcut.press("F5"), registerAction("refresh", action -> picker.fetchRoot()));
+    hud.shortcut("Open folder in folder browser", XKeyShortcut.press("Ctrl+E"), registerAction("browse-folder", action -> {
+      try {
+        Desktop.getDesktop().open(picker.getSelectedFile());
+      } catch (IOException ex) {
+
+      }
+    })).enabledAs(action -> {
+      return hasMangaSelected();
+    });
 
     hud.add(picker);
   }
