@@ -1,9 +1,13 @@
 package org.ankhzet.ergo.ui.pages.reader.reader;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.util.concurrent.locks.ReentrantLock;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.chapter.Chapter;
@@ -40,6 +44,8 @@ public class Reader extends PageNavigator {
   public Strings pageFiles = new Strings();
   private boolean flushCache = false;
   int scrollPosX = 0, scrollPosY = 0;
+  int hilitedScan = 0;
+  Rectangle clientRect = new Rectangle();
 
   public Reader() {
     mangaRoots.add("H:/manga/manga");
@@ -141,6 +147,7 @@ public class Reader extends PageNavigator {
   }
 
   public void draw(Graphics2D g, int x, int y, int w, int h) {
+    clientRect.setBounds(x, y, w, h);
     drawPages(g, x, y + TAB_BAR_HEIGHT, w, h - TAB_BAR_HEIGHT);
     //some gui draw here
     int pageCount = totalPages();
@@ -166,13 +173,13 @@ public class Reader extends PageNavigator {
     g.drawRoundRect(x, y, w - 1, TAB_BAR_HEIGHT, 5, 5);
 
     x--;
-    y--;
+    y++;
     if (currentPage() >= 0) {
       int tab = (int) (currentPage() * (tabs / (double) pageCount)) + 1;
       int px = (int) ((tab - 1) * pixelsPerTab);
       int pw = (int) (tab * pixelsPerTab) - px;
       g.setColor(Color.LIGHT_GRAY);
-      g.fillRect(x + px + 3, y + 3, pw - 1, tabHeight - 1);
+      g.fillRect(x + px + 3, y + 1, pw - 1, tabHeight - 1);
     }
 
     g.setColor(Color.BLACK);
@@ -180,20 +187,50 @@ public class Reader extends PageNavigator {
     while (tab++ < tabs) {
       int px = (int) ((tab - 1) * pixelsPerTab);
       int pw = (int) (tab * pixelsPerTab) - px;
-      g.drawRoundRect(x + px + 2, y + 2, pw - 0, tabHeight, 4, 4);
-      g.drawRoundRect(x + px + 2, y + 2, pw - 0, tabHeight, 4, 4);
+      g.drawRoundRect(x + px + 2, y, pw - 0, tabHeight, 4, 4);
+      g.drawRoundRect(x + px + 2, y, pw - 0, tabHeight, 4, 4);
     }
     g.setColor(Color.WHITE);
     tab = 0;
     while (tab++ < tabs) {
       int px = (int) ((tab - 1) * pixelsPerTab);
       int pw = (int) (tab * pixelsPerTab) - px;
-      g.drawRoundRect(x + px + 3, y + 3, pw - 2, tabHeight - 2, 4, 4);
-      g.drawRoundRect(x + px + 3, y + 3, pw - 2, tabHeight - 2, 4, 4);
+      g.drawRoundRect(x + px + 3, y + 1, pw - 2, tabHeight - 2, 4, 4);
+      g.drawRoundRect(x + px + 3, y + 1, pw - 2, tabHeight - 2, 4, 4);
+
+      if (tab == hilitedScan) {
+        float denom = pageCount / (float) tabs;
+        int page = Utils.constraint((int) ((tab - 1) * denom), 0, pageCount - 1);
+        String pageFile = (new File(pageFiles.get(page))).getName();
+
+        drawLabel(g, pageFile, px + pw / 2, y + 1 + tabHeight + 32);
+      }
     }
 
     if (magnifierShown())
       magnifier.draw(g, 0, TAB_BAR_HEIGHT, w, h - TAB_BAR_HEIGHT);
+  }
+
+  void drawLabel(Graphics2D g, String text, int x, int y) {
+    Rectangle2D r = labelSize(g, text);
+    int tw = (int) r.getWidth();
+    int th = (int) r.getHeight();
+    x = Utils.constraint(x - tw / 2, 0, clientRect.width - tw);
+    Color c = g.getColor();
+    g.setColor(Color.WHITE);
+    g.drawString(text, x, y + th + 1);
+    g.setColor(Color.BLACK);
+    g.drawString(text, x, y + th);
+    g.setColor(c);
+  }
+
+  Rectangle2D labelSize(Graphics2D g, String text) {
+    Font f = g.getFont();
+    FontRenderContext frc = g.getFontRenderContext();
+    Rectangle2D s = f.getStringBounds(text, frc);
+    Rectangle rect = new Rectangle(s.getBounds());
+    rect.height = f.getSize();
+    return rect;
   }
 
   void drawPages(Graphics2D g, int x, int y, int w, int h) {
@@ -212,9 +249,9 @@ public class Reader extends PageNavigator {
       int dir = SwipeHandler.direction();
       int next = currentPage() + dir;
       if (next >= pageCount) // we'r on next chapter
-      ;
+        ;
       if (next < 0) // we'r on prev chapter
-      ;
+        ;
 
       int nx = 0, ny = 0;
       double progress = SwipeHandler.getProgress();
@@ -258,7 +295,6 @@ public class Reader extends PageNavigator {
 
     }
 
-    g.setClip(null);
     g.setClip(clip);
   }
 
@@ -292,7 +328,38 @@ public class Reader extends PageNavigator {
     if (magnifierShown())
       return magnifier.mouseEvent(e);
 
-    return false;
+    return (hilitedScan = calcHilitedScan(e.getX(), e.getY())) > 0;
+  }
+
+  int calcHilitedScan(int x, int y) {
+    if (y > TAB_BAR_HEIGHT)
+      return 0;
+
+    int scanCount = totalPages();
+    if (scanCount <= 0)
+      return 0;
+
+    x -= 2;
+    int tabs = scanCount;
+    int spaceforTabs = clientRect.width - 4;
+    int minTabWidth = 6;
+    double pixelsPerTab = spaceforTabs / (double) tabs;
+    if (pixelsPerTab < minTabWidth) {
+      tabs = (int) Math.ceil(spaceforTabs / minTabWidth);
+      pixelsPerTab = spaceforTabs / (double) tabs;
+    }
+
+    int tab = 0, sel = 0;
+    while (tab++ < tabs) {
+      int px = (int) ((tab - 1) * pixelsPerTab);
+      int pw = (int) (tab * pixelsPerTab) - px;
+      if ((px <= x) && (px + pw > x)) {
+        sel = tab;
+        break;
+      }
+    }
+
+    return sel;
   }
 
 }
