@@ -98,10 +98,6 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
 
   void bookmark(Chapter c) {
     Manga m = new Manga(c.getMangaFile().getPath());
-    Bookmark bookmark = m.lastBookmark();
-    if (bookmark != null)
-      bookmark.delete();
-
     m.putBookmark(c);
   }
 
@@ -243,7 +239,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
         File m = current.getMangaFile();
         b = (new Manga(m.getPath())).hasBookmarks();
         if (!b) {
-          Path chPath = m.toPath().resolve(new Chapter("0").idLong());
+          Path chPath = m.toPath().resolve(new Chapter("0.1").idLong());
           current = new Chapter(chPath.toString());
           b = true;
         } else

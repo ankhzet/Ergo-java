@@ -85,23 +85,21 @@ public class UIHomePage extends UIPage {
       return picker.hasSelected();
     });
 
-    hud.getControl(
-      hud.putActionAtLeft("Mark as readed", registerAction("readed", action -> {
-        Manga manga = selectedManga();
-        if (manga == null)
-          return;
+    hud.shortcut("Mark as readed", XKeyShortcut.press("Shift+R"), registerAction("readed", action -> {
+      Manga manga = selectedManga();
+      if (manga == null)
+        return;
 
-        Chapter c = manga.lastChapter();
-        if (c != null)
-          if (manga.putBookmark(c) != null) {
-            ui.message(String.format("Manga marked as readed: %s\n", manga.title()));
-            picker.fetchRoot();
-          } else
-            ui.message(String.format("Failed to put bookmark for \"%s\" [%s]!", manga.title(), c.idShort()));
-      })).enabledAs(action -> {
-        return hasMangaSelected();
-      }).shortcut(XKeyShortcut.press("Shift+R"))
-    ).setVisible(false);
+      Chapter c = manga.lastChapter();
+      if (c != null)
+        if (manga.putBookmark(c) != null) {
+          ui.message(String.format("Manga marked as readed: %s\n", manga.title()));
+          picker.fetchRoot();
+        } else
+          ui.message(String.format("Failed to put bookmark for \"%s\" [%s]!", manga.title(), c.idShort()));
+    })).enabledAs(action -> {
+      return hasMangaSelected();
+    });
 
     hud.shortcut("Refresh", XKeyShortcut.press("F5"), registerAction("refresh", action -> picker.fetchRoot()));
     hud.shortcut("Open folder in folder browser", XKeyShortcut.press("Ctrl+E"), registerAction("browse-folder", action -> {
