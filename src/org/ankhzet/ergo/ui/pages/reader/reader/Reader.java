@@ -14,6 +14,7 @@ import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.manga.chapter.ChapterCacher;
 import org.ankhzet.ergo.manga.chapter.ChapterLoader;
 import org.ankhzet.ergo.manga.chapter.page.PageData;
+import org.ankhzet.ergo.manga.chapter.page.PageRenderOptions;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.Skin;
 import org.ankhzet.ergo.utils.Strings;
