@@ -75,21 +75,23 @@ public class Reader extends PageNavigator {
       this.chapter = chapter;
       pageFiles.clear();
       pages.clear();
-      toFirstPage();
+      pageFiles.addAll(chapter.fetchPages());
+
       if (listener != null)
         progressLoading(listener, 0);
 
-      pageFiles.addAll(chapter.fetchPages());
       int pos = 0;
       for (String imageFile : pageFiles) {
         pages.put(imageFile, new PageData(imageFile));
         if (listener != null && !progressLoading(listener, ++pos))
           return;
+
+        if (pos == 1)
+          toFirstPage();
       }
       if (listener != null)
         listener.progressDone();
 
-      toFirstPage();
     } finally {
       lock.unlock();
       System.gc();
