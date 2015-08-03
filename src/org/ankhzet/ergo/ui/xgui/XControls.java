@@ -128,6 +128,14 @@ public class XControls extends ArrayList<CommonControl> {
     return xAction;
   }
 
+  public XAction shortcut(String title, XKeyShortcut s, XAction action) {
+    getControl(
+      putActionAtLeft(title, action)
+      .shortcut(s)
+    ).setVisible(false);
+    return action;
+  }
+
   public void pack(int cw, int ch) {
     synchronized (this) {
       packArea(left, SIDE_MARGIN, (c, dx) -> {
@@ -148,6 +156,9 @@ public class XControls extends ArrayList<CommonControl> {
     Collections.sort(l);
     for (Integer idx : l) {
       CommonControl control = controls.get(idx);
+      if (!control.isVisible())
+        continue;
+
       dx = enumerate.withCtl(control, dx);
     }
   }

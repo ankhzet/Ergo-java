@@ -92,10 +92,9 @@ public class MangaChapterPicker extends XPathFilePicker {
         files.add(entry);
 
     if (inRootFolder) {
-      Comparator<? super File> c = (f1, f2) -> Long.signum(f2.lastModified() - f1.lastModified());
-      bookmarked.sort(c);
-      unread.sort(c);
-      read.sort(c);
+      sortEntries(bookmarked);
+      sortEntries(unread);
+      sortEntries(read);
     }
 
     entries.clear();
@@ -104,6 +103,24 @@ public class MangaChapterPicker extends XPathFilePicker {
     entries.addAll(unread);
     entries.addAll(read);
     entries.addAll(files);
+  }
+
+  void sortEntries(FilesList list) {
+    HashMap<File, Long> hashed = new HashMap<>(list.size());
+    Comparator<? super File> c = (f1, f2) -> {
+      Long l1 = hashed.get(f1);
+      if (l1 == null) {
+        l1 = f1.lastModified();
+        hashed.put(f1, l1);
+      }
+      Long l2 = hashed.get(f2);
+      if (l2 == null) {
+        l2 = f2.lastModified();
+        hashed.put(f2, l2);
+      }
+      return Long.signum(l2 - l1);
+    };
+    list.sort(c);
   }
 
   @Override

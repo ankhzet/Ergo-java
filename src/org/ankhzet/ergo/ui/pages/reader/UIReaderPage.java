@@ -10,11 +10,11 @@ import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
+import org.ankhzet.ergo.manga.chapter.page.PageRenderOptions;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.UIPage;
 import org.ankhzet.ergo.ui.pages.reader.reader.PageNavigator;
-import org.ankhzet.ergo.ui.pages.reader.reader.PageRenderOptions;
 import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
 import org.ankhzet.ergo.ui.pages.reader.reader.SwipeHandler;
 import org.ankhzet.ergo.ui.xgui.CommonControl;
@@ -43,6 +43,9 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
   boolean swipeDirVertical = false;
   Point pressPos = new Point();
+
+  int keyScroll = 0;
+  long keyPress = 0;
 
   @Override
   public void navigateIn(Object... params) {
@@ -88,14 +91,13 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     }).togglable((XAction action) -> {
       return options.showOriginalSize();
     }));
+
+    hud.shortcut("Scroll up", XKeyShortcut.press("Up"), registerAction("scroll-up", action -> scroll(-1)));
+    hud.shortcut("Scroll down", XKeyShortcut.press("Down"), registerAction("scroll-down", action -> scroll(1)));
   }
 
   void bookmark(Chapter c) {
     Manga m = new Manga(c.getMangaFile().getPath());
-    Bookmark bookmark = m.lastBookmark();
-    if (bookmark != null)
-      bookmark.delete();
-
     m.putBookmark(c);
   }
 
@@ -127,6 +129,27 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   public void process() {
     ui.intensiveRepaint(swiping());
     reader.process();
+
+    if (keyScroll != 0)
+      reader.scroll(0, currentScrollSpeed());
+  }
+
+  void scroll(int delta) {
+    keyScroll = (20 * delta + currentScrollSpeed()) / 2;
+    keyPress = System.currentTimeMillis();
+  }
+
+  int currentScrollSpeed() {
+    if (keyScroll == 0)
+      return 0;
+    
+    long scroll = (System.currentTimeMillis() - keyPress);
+    double d = 1. - Math.min(1., scroll / 500.);
+
+    if (d <= 0.01)
+      keyScroll = 0;
+
+    return (int) (keyScroll * d);
   }
 
   @Override
@@ -199,6 +222,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
 
   @Override
   public void pageSet(int requested, int set) {
+    keyScroll = 0;
     Chapter current = reader.chapter();
     if (requested != set) {
       Chapter load = current.seekChapter(requested > set);
@@ -213,14 +237,15 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
       boolean b = requested > 0;
       if (!b) {
         File m = current.getMangaFile();
-        b = new Manga(m.getPath()).hasBookmarks();
+        b = (new Manga(m.getPath())).hasBookmarks();
         if (!b) {
-          Path chPath = m.toPath().resolve(new Chapter("0").idLong());
+          Path chPath = m.toPath().resolve(new Chapter("0.1").idLong());
           current = new Chapter(chPath.toString());
           b = true;
-        }
+        } else
+          b = false;
       }
-      
+
       if (b)
         bookmark(current);
     }
