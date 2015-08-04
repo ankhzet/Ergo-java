@@ -32,7 +32,7 @@ public class ChapterCacher extends HashMap<String, PageData> {
 
       int pos = 0;
       for (PageData page : this.values()) {
-        page.calcLayout(w, h, ro);
+        page.layout(w, h, ro);
 
         if (!progressLayout(listener, ++pos))
           return;
@@ -58,7 +58,7 @@ public class ChapterCacher extends HashMap<String, PageData> {
       Collections.sort(l);
       for (String fileKey : l) {
         PageData page = get(fileKey);
-        page.makeCache(options);
+        page.prepare(options);
 
         if (!progressCache(listener, ++pos))
           return;

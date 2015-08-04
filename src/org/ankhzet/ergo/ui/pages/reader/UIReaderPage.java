@@ -7,7 +7,6 @@ import java.io.File;
 import java.nio.file.Path;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
-import org.ankhzet.ergo.manga.Bookmark;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.manga.chapter.page.PageRenderOptions;

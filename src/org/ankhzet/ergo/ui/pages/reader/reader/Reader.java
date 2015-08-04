@@ -3,6 +3,7 @@ package org.ankhzet.ergo.ui.pages.reader.reader;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
@@ -17,6 +18,7 @@ import org.ankhzet.ergo.manga.chapter.page.PageData;
 import org.ankhzet.ergo.manga.chapter.page.PageRenderOptions;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.Skin;
+import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
 
@@ -44,9 +46,9 @@ public class Reader extends PageNavigator {
 
   public Strings pageFiles = new Strings();
   private boolean flushCache = false;
-  int scrollPosX = 0, scrollPosY = 0;
   int hilitedScan = 0;
   Rectangle clientRect = new Rectangle();
+  Point scrollPos = new Point();
 
   public Reader() {
     mangaRoots.add("H:/manga/manga");
@@ -89,7 +91,12 @@ public class Reader extends PageNavigator {
 
       int pos = 0;
       for (String imageFile : pageFiles) {
-        pages.put(imageFile, new PageData(imageFile));
+        PageData page = new PageData(imageFile);
+        if (page.load())
+          pages.put(imageFile, page);
+        else
+          UILogic.log("Failed to load [%s]", imageFile);
+
         if (listener != null && !progressLoading(listener, ++pos))
           return;
 
@@ -132,8 +139,7 @@ public class Reader extends PageNavigator {
   @Override
   public int setPage(int page) {
     page = super.setPage(page);
-    scrollPosX = 0;
-    scrollPosY = 0;
+    scrollPos.move(0, 0);
     if (magnifier.activated)
       magnifier.layouted();
     return page;
@@ -273,25 +279,25 @@ public class Reader extends PageNavigator {
         nextPage.draw(g, x - nx, y - ny);
     }
 
-    page.draw(g, x - dx - scrollPosX, y - dy - scrollPosY);
+    page.draw(g, x - dx - scrollPos.x, y - dy - scrollPos.y);
 
     if (options.originalSize) { // draw scrolls if needed
       int scrollbarSize = 4;
-      int sx = page.getLayout().scrollX;
+      int sx = page.scrollX;
       if (sx > 0) {
         int cw = w - scrollbarSize;
         double swRatio = cw / (double) (cw + sx);
         int scrollWidth = (int) (cw * swRatio);
-        int scrollPos = x + (int) (scrollPosX * swRatio);
-        Skin.drawScrollbar(g, scrollPos, y + h - scrollbarSize - 1, scrollWidth, scrollbarSize);
+        int pos = x + (int) (scrollPos.x * swRatio);
+        Skin.drawScrollbar(g, pos, y + h - scrollbarSize - 1, scrollWidth, scrollbarSize);
       }
-      int sy = page.getLayout().scrollY;
+      int sy = page.scrollY;
       if (sy > 0) {
         int ch = h - scrollbarSize;
         double swRatio = ch / (double) (ch + sy);
         int scrollHeight = (int) (ch * swRatio);
-        int scrollPos = y + (int) (scrollPosY * swRatio);
-        Skin.drawScrollbar(g, x + w - scrollbarSize - 1, scrollPos, scrollbarSize, scrollHeight);
+        int pos = y + (int) (scrollPos.y * swRatio);
+        Skin.drawScrollbar(g, x + w - scrollbarSize - 1, pos, scrollbarSize, scrollHeight);
       }
 
     }
@@ -304,8 +310,7 @@ public class Reader extends PageNavigator {
     if (page == null)
       return;
 
-    scrollPosX = Utils.constraint(scrollPosX + dx, 0, page.getLayout().scrollX);
-    scrollPosY = Utils.constraint(scrollPosY + dy, 0, page.getLayout().scrollY);
+    scrollPos = page.constraintScroll(scrollPos, dx, dy);
   }
 
   public boolean showMagnifier(boolean show) {

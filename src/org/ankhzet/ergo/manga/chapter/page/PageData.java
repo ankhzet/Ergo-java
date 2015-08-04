@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import javax.imageio.ImageIO;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.utils.ImgUtil;
@@ -15,50 +16,64 @@ import org.ankhzet.ergo.utils.ImgUtil;
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-public class PageData {
+public class PageData extends PageLayout {
 
   String file;
   BufferedImage image, cache;
   public int pageW;
   public int pageH;
-  PageLayout layout = new PageLayout(0, 0);
 
   public PageData(String imageFile) {
+    super(0, 0);
     file = imageFile;
-    try {
-      image = ImageIO.read(new File(file));
-    } catch (IOException ex) {
-      ex.printStackTrace();
-    }
-    pageW = image != null ? image.getWidth() : 32;
-    pageH = image != null ? image.getHeight() : 32;
-  }
-
-  public PageLayout getLayout() {
-    return layout;
   }
 
   public BufferedImage getImage() {
     return image;
   }
 
-  public void calcLayout(int w, int h, PageRenderOptions ro) {
-    layout.clientW = w;
-    layout.clientH = h;
-    layout.calcLayout(pageW, pageH, ro);
+  public void draw(Graphics g, int dx, int dy) {
+    g.drawImage(cache, dx + renderX, dy + renderY, null);
   }
 
-  public void makeCache(PageRenderOptions options) {
-    if (!layout.wasResized())
-      return;
+  @Override
+  public int hashCode() {
+    return file.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final PageData other = (PageData) obj;
+    return Objects.equals(this.file, other.file);
+  }
+
+  public boolean load() {
+    try {
+      image = ImageIO.read(new File(file));
+      pageW = image != null ? image.getWidth() : 32;
+      pageH = image != null ? image.getHeight() : 32;
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+
+    return image != null;
+  }
+
+  public boolean prepare(PageRenderOptions options) {
+    if (!wasResized())
+      return true;
 
     UILogic.log("caching \"%s\"", file);
 
-    int nw = layout.newPageW;
-    int nh = layout.newPageH;
+    int nw = newPageW;
+    int nh = newPageH;
     if (image == null) {
       cache = new BufferedImage(nw, nh, BufferedImage.TYPE_INT_RGB);
-      return;
+      return true;
     }
 
     if (!options.originalSize)
@@ -68,7 +83,7 @@ public class PageData {
         cache = null;
       }
 
-    boolean clientPortrait = layout.clientW < layout.clientH;
+    boolean clientPortrait = clientW < clientH;
     boolean pagePortrait = pageW < pageH;
     boolean rotate = options.rotateToFit && (clientPortrait ^ pagePortrait);
 
@@ -81,39 +96,35 @@ public class PageData {
         at.translate(0d, -pageH / 2d);
       } else {
         at.rotate(-Math.PI / 2d);
-        at.translate(-pageW, -pageH / 2d);//, -pageH / 2d);
+        at.translate(-pageW, -pageH / 2d);
       }
-//      at.scale(nw / (double) pageW, nh / (double) pageH);
+
       BufferedImageOp o = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
       try {
         cache = o.filter(image, null);
       } catch (Exception e) {
         UILogic.log("Image rotation failed!", 0);
+        return false;
       }
     } else
       if (options.originalSize)
         cache = image;
       else {
-        float scale = layout.newPageW / (float) pageW;
+        float scale = newPageW / (float) pageW;
         scale = 0.1f * (int) (scale * 10);
         if ((int) scale != 1)
-          cache = ImgUtil.scaled(image, layout.newPageW / (float) pageW);
+          cache = ImgUtil.scaled(image, newPageW / (float) pageW);
         else
           cache = image;
-//      cache = new BufferedImage(nw, nh, BufferedImage.TYPE_INT_RGB);
-//      Graphics2D g = cache.createGraphics();
-//      g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//      g.drawImage(image, 0, 0, layout.newPageW, layout.newPageH, 0, 0, pageW, pageH, null);
-//      g.dispose();
       }
+
+    return true;
   }
 
-  public void draw(Graphics g, int dx, int dy) {
-    g.drawImage(
-      cache//
-      , dx + layout.renderX//
-      , dy + layout.renderY//
-      , null);
+  public void layout(int w, int h, PageRenderOptions ro) {
+    clientW = w;
+    clientH = h;
+    calcLayout(pageW, pageH, ro);
   }
 
 }
