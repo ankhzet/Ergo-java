@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.chapter.page.PageData;
-import org.ankhzet.ergo.manga.chapter.page.PageLayout;
 import org.ankhzet.ergo.utils.Utils;
 
 /**
@@ -17,7 +16,7 @@ import org.ankhzet.ergo.utils.Utils;
  */
 public class MagnifyGlass {
 
-  static final int SAMPLED_SIZE = 32;
+  static final int SAMPLED_SIZE = 64;
   boolean activated = false, active = false;
   int posX = 0, posY = 0, width = 32, height = 32;
   int imgX = 0, imgY = 0;
@@ -48,14 +47,13 @@ public class MagnifyGlass {
       return false;
 
     // translate view coordinates to image coordinates
-    PageLayout layout = data.getLayout();
-    double dx = layout.newPageW / (double) data.pageW;
-    double dy = layout.newPageH / (double) data.pageH;
-    imgX = Utils.constraint((int) ((posX - layout.renderX) / dx), width / 2, data.pageW - width / 2);
-    imgY = Utils.constraint((int) ((posY - layout.renderY) / dy), height / 2, data.pageH - height / 2);
+    double dx = data.newPageW / (double) data.pageW;
+    double dy = data.newPageH / (double) data.pageH;
+    imgX = Utils.constraint((int) ((posX - data.renderX) / dx), width / 2, data.pageW - width / 2);
+    imgY = Utils.constraint((int) ((posY - data.renderY) / dy), height / 2, data.pageH - height / 2);
 
-    projX = layout.renderX + (int) (imgX * dx);
-    projY = layout.renderY + (int) (imgY * dy);
+    projX = data.renderX + (int) (imgX * dx);
+    projY = data.renderY + (int) (imgY * dy);
 
     int mw = SAMPLED_SIZE * magnification;
     int mh = SAMPLED_SIZE * magnification;
@@ -114,8 +112,8 @@ public class MagnifyGlass {
     if (data == null)
       return;
 
-    double dx = data.getLayout().newPageW / (double) data.pageW;
-    double dy = data.getLayout().newPageH / (double) data.pageH;
+    double dx = data.newPageW / (double) data.pageW;
+    double dy = data.newPageH / (double) data.pageH;
 
     // get magnification parameters
     width = (int) (SAMPLED_SIZE / dx);

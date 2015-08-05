@@ -1,5 +1,8 @@
 package org.ankhzet.ergo.manga.chapter.page;
 
+import java.awt.Point;
+import org.ankhzet.ergo.utils.Utils;
+
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
@@ -13,8 +16,8 @@ public class PageLayout {
     renderY = 0,
     oldPageW = -1,
     oldPageH = -1,
-    newPageW = 0,
-    newPageH = 0,
+    newPageW = -1,
+    newPageH = -1,
     scrollX = 0,
     scrollY = 0;
 
@@ -110,4 +113,10 @@ public class PageLayout {
     return (oldPageW != newPageW) || (oldPageH != newPageH);
   }
 
+  public Point constraintScroll(Point scrollPos, int dx, int dy) {
+    scrollPos = (Point) scrollPos.clone();
+    scrollPos.x = Utils.constraint(scrollPos.x + dx, 0, scrollX);
+    scrollPos.y = Utils.constraint(scrollPos.y + dy, 0, scrollY);
+    return scrollPos;
+  }
 }

@@ -11,6 +11,8 @@ public class Skin {
 
   public final Color//
     BG_COLOR,
+    UI_SCAN_LOADING,
+    UI_SCAN_CACHING,
     UI_PANEL,
     UI_OUTLINEO,
     UI_OUTLINEI,
@@ -25,6 +27,9 @@ public class Skin {
     BG_COLOR = Color.WHITE;
 
     UI_PANEL = getColor("#DDDDDD");
+    
+    UI_SCAN_LOADING = getColor("#80000");
+    UI_SCAN_CACHING = getColor("#202020");
 
     UI_SCROLLBG = getColor("#AA000000");
     UI_SCROLLBORDER = getColor("#AAFFFFFF");
