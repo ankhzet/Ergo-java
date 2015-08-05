@@ -202,18 +202,6 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     reader.draw(g, 0, 0, w, h);
   }
 
-  @Override
-  public boolean onProgress(int state, int p, int max) {
-    switch (state) {
-    case LoaderProgressListener.STATE_CACHING:
-      if (reader.flushPending())
-        //flushCache = false;
-        return false;
-      break;
-    }
-    return true;
-  }
-
   @DependenciesInjected(suppressInherited = false, beforeInherited = false)
   private void diInjected() {
     reader.setNavListener(this);

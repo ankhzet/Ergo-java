@@ -30,6 +30,8 @@ public class Reader extends PageNavigator {
   public static final int TAB_BAR_HEIGHT = 8;
 
   @DependencyInjection
+  protected UILogic ui;
+  @DependencyInjection
   protected PageRenderOptions options;
   @DependencyInjection
   protected MagnifyGlass magnifier;
@@ -71,7 +73,7 @@ public class Reader extends PageNavigator {
     cache.invalidateAll(2);
   }
 
-  public synchronized void LoadPages(Chapter chapter, LoaderProgressListener listener) {
+  public synchronized void LoadPages(Chapter chapter) {
     lock.lock();
     try {
       this.chapter = chapter;
@@ -79,21 +81,19 @@ public class Reader extends PageNavigator {
       cache.clear();
       scanFileNames.addAll(chapter.fetchPages());
 
-      if (listener != null)
-        progressLoading(listener, 0);
+      progressLoading(ui, 0);
 
       int pos = 0;
       for (String imageFile : scanFileNames) {
         cache.cacheData(imageFile, new PageData(imageFile));
 
-        if (listener != null && !progressLoading(listener, ++pos))
+        if (!progressLoading(ui, ++pos))
           return;
 
         if (pos == 1)
           toFirstPage();
       }
-      if (listener != null)
-        listener.progressDone();
+      ui.progressDone();
 
     } finally {
       lock.unlock();
@@ -103,7 +103,7 @@ public class Reader extends PageNavigator {
 
   public void loadChapter(Chapter chapter) {
     cache.detatch(() -> {
-      LoadPages(chapter, ui);
+      LoadPages(chapter);
     });
   }
 
