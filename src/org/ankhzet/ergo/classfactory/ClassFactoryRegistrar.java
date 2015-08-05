@@ -32,8 +32,7 @@ public class ClassFactoryRegistrar<P> extends FactoryRegistrar<ClassFactory<P>> 
 
   @Override
   public void register(Object factoryIdentifier, ClassFactory<P> factory) {
-//    System.out.printf("Registering %s..\n", factoryIdentifier);
-
+    LOG.log(Level.FINE, "Registering class factory {0}..\n", factoryIdentifier);
     IoC.registerFactory(factory);
   }
 

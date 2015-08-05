@@ -1,7 +1,7 @@
 package org.ankhzet.ergo.db;
 
-import java.sql.SQLException;
 import org.ankhzet.ergo.classfactory.IoC;
+import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.db.tables.BookmarksTable;
 
 /**
@@ -10,9 +10,13 @@ import org.ankhzet.ergo.db.tables.BookmarksTable;
  */
 public class DB extends DBLayer {
 
-  public DB() throws ClassNotFoundException, SQLException {
-    super();
+  @DependenciesInjected()
+  private void diInjected() {
     IoC.get(BookmarksTable.class);
+  }
+
+  public DB() {
+    super();
   }
 
 }
