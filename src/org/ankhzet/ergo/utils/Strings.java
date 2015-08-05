@@ -9,10 +9,16 @@ import java.util.Arrays;
  */
 public class Strings extends ArrayList<String> {
 
+  public Strings() {
+    super();
+  }
+
+  public Strings(String[] strings) {
+    super(Arrays.asList(strings));
+  }
+
   public static Strings explode(String s, String regex) {
-    Strings r = new Strings();
-    r.addAll(Arrays.asList(s.split(regex)));
-    return r;
+    return new Strings(s.split(regex));
   }
 
   public static String toTitleCase(String input) {

@@ -20,6 +20,9 @@ public class Chapter extends File {
   public static final String CHAP_PATTERN = "^[\\d\\.]+";
 
   protected Strings pageFiles;
+  
+  Chapter[] all;
+  long fetched = 0;
 
   public Chapter(String path) {
     super(path);
@@ -58,10 +61,14 @@ public class Chapter extends File {
 
   public Chapter lastChapter() {
     List<Chapter> list = Arrays.<Chapter>asList(allChapters());
-    return (list.size() > 0) ? list.get(list.size() - 1) : null;
+    return (list.size() > 0) ? list.get(list.size() - 1) : (valid() ? this : null);
   }
 
   public Chapter[] allChapters() {
+    long time = System.currentTimeMillis();
+    if (time - fetched < 5000)
+      return all;
+    
     File manga = getMangaFile();
 
     ArrayList<Chapter> chapters = new ArrayList<>();
@@ -70,7 +77,7 @@ public class Chapter extends File {
       for (File chapter : chapterNames)
         chapters.add(new Chapter(chapter.getPath()));
 
-    return chapters.toArray(new Chapter[]{});
+    return all = chapters.toArray(new Chapter[]{});
   }
 
   public Chapter seekChapter(boolean forward) {

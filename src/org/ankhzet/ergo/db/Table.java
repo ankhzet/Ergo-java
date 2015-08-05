@@ -3,6 +3,8 @@ package org.ankhzet.ergo.db;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 
@@ -20,7 +22,7 @@ public abstract class Table {
     if (!assumeExists())
       throw new Exception(String.format("Can't create [%s] table!", tableName()));
     else
-      System.out.printf("Table [%s] is OK.\n", tableName());
+      LOG.log(Level.FINE, "Table [{0}] is OK.\n", tableName());
   }
 
   public abstract String tableName();
@@ -65,5 +67,7 @@ public abstract class Table {
   public static String delete(String table) {
     return String.format(Locale.US, "delete from %s", table);
   }
+
+  private static final Logger LOG = Logger.getLogger(Table.class.getName());
 
 }

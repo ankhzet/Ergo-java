@@ -16,6 +16,7 @@ import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.XButton;
 import org.ankhzet.ergo.ui.xgui.XControls;
 import org.ankhzet.ergo.ui.xgui.XKeyShortcut;
+import org.ankhzet.ergo.utils.Strings;
 
 /**
  *
@@ -36,7 +37,9 @@ public class UIHomePage extends UIPage {
 
   @DependenciesInjected
   private void di() {
-    fetchMangas();
+    String root = "H:/manga/manga";
+    reader.setMangaRoots(new Strings(new String[]{root}));
+    picker.setRoot(root);
   }
 
   @Override

@@ -215,6 +215,8 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     if (prevUI != null)
       hud.putBackAction(XControls.AREA_LEFT, null);
 
+    currentUI.resized(clientArea.x, clientArea.y, clientArea.width, clientArea.height);
+
     currentUI.navigateIn(params);
     int l = hud.onLeft();
     while (l++ < 2)
@@ -224,7 +226,6 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
     hud.putActionAtLeft(kExitLabel, currentUI.registerAction(kExitAction, action -> System.exit(0)));
 
     hud.pack(clientArea.width, clientArea.height);
-    currentUI.resized(clientArea.x, clientArea.y, clientArea.width, clientArea.height);
     return currentUI;
   }
 

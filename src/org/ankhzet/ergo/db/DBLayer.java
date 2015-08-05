@@ -1,12 +1,8 @@
 package org.ankhzet.ergo.db;
 
-import java.io.File;
 import java.sql.*;
-import org.ankhzet.ergo.Config;
 import org.ankhzet.ergo.classfactory.IoC;
-import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
-import org.ankhzet.ergo.utils.Strings;
 
 /**
  *
@@ -14,30 +10,11 @@ import org.ankhzet.ergo.utils.Strings;
  */
 public class DBLayer {
 
-  public static final String dbFileExt = "sqlite";
-
   @DependencyInjection()
-  protected Config config;
+  public Connection connection = null;
 
-  public Connection connection;
   public Statement statmt;
   public ResultSet resSet;
-  
-  @DependenciesInjected()
-  private void di() throws SQLException {
-    try {
-      connection = dbConnection(config.appDir(config.appName()));
-      System.out.println("--connected.");
-    } catch (SQLException e) {
-      System.out.println("--connection failed!");
-      throw e;
-    }
-  }
-
-  public DBLayer() throws ClassNotFoundException {
-    connection = null;
-    Class.forName("org.sqlite.JDBC");
-  }
 
   public PreparedStatement prepareStatement(String sql) throws SQLException {
     return connection.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -81,6 +58,7 @@ public class DBLayer {
   }
 
   @Override
+  @SuppressWarnings("FinalizeDeclaration")
   protected void finalize() throws Throwable {
     if (connection != null)
       try {
@@ -89,17 +67,6 @@ public class DBLayer {
         e.printStackTrace();
       }
     super.finalize();
-  }
-
-  public static Connection dbConnection(String dbname) throws SQLException {
-    File f = new File(dbname);
-    String fileName = f.getName();
-    if (Strings.explode(fileName, "\\.").size() <= 1)
-      dbname = dbname + "." + dbFileExt;
-
-    String connection = String.format("jdbc:sqlite:%s", dbname);
-    System.out.println("Connecting to [" + connection + "]...");
-    return DriverManager.getConnection(connection);
   }
 
 }
