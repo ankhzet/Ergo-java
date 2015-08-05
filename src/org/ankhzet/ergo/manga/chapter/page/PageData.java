@@ -121,10 +121,10 @@ public class PageData extends PageLayout {
     return true;
   }
 
-  public void layout(int w, int h, PageRenderOptions ro) {
+  public boolean layout(int w, int h, PageRenderOptions ro) {
     clientW = w;
     clientH = h;
-    calcLayout(pageW, pageH, ro);
+    return calcLayout(pageW, pageH, ro);
   }
 
 }

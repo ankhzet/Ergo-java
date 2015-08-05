@@ -16,8 +16,8 @@ public class PageLayout {
     renderY = 0,
     oldPageW = -1,
     oldPageH = -1,
-    newPageW = 0,
-    newPageH = 0,
+    newPageW = -1,
+    newPageH = -1,
     scrollX = 0,
     scrollY = 0;
 

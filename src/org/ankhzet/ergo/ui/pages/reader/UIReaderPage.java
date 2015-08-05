@@ -79,14 +79,14 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
 
     hud.putActionAtRight("Подгонка поворота страниц", registerAction(kRotate, action -> {
       options.toggleRotationToFit();
-      reader.flushCache(true);
+      reader.flushLayout();
     }).togglable((XAction action) -> {
       return options.rotateToFit();
     }));
 
     hud.putActionAtRight("Оригинальный размер", registerAction(kOriginal, action -> {
       options.toggleOriginalSize();
-      reader.flushCache(true);
+      reader.flushLayout();
     }).togglable((XAction action) -> {
       return options.showOriginalSize();
     }));
@@ -153,7 +153,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
 
   @Override
   public void resized(int x, int y, int w, int h) {
-    reader.flushCache(true);
+    reader.resized(x, y, w, h);
   }
 
   @Override
