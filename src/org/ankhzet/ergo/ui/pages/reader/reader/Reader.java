@@ -46,12 +46,13 @@ public class Reader extends PageNavigator {
   Rectangle clientRect = new Rectangle();
   Point scrollPos = new Point();
 
-  public Reader() {
-    mangaRoots.add("H:/manga/manga");
-  }
-
   public Chapter chapter() {
     return chapter;
+  }
+
+  public void setMangaRoots(Strings roots) {
+    mangaRoots.clear();
+    mangaRoots.addAll(roots);
   }
 
   public Strings getMangaRoots() {
