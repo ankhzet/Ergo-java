@@ -26,15 +26,15 @@ public class PageLayout {
     clientW = cw;
   }
 
-  public boolean calcLayout(int pageW, int pageH, PageRenderOptions ro) {
+  public boolean calcLayout(int pageW, int pageH, ReadOptions ro) {
     oldPageW = newPageW;
     oldPageH = newPageH;
 
     if (pageW * pageH == 0)
       return false;
 
-    if (ro.manhwaMode) {// page under page
-      if (ro.stretchToFit)
+    if (ro.manhwaMode()) {// page under page
+      if (ro.stretchToFit())
         ;
       //stretchToFit - fit in view the width of pages
 //      if (totalX < pageW)
@@ -47,7 +47,7 @@ public class PageLayout {
     boolean pagePortrait = pageW < pageH;
     newPageW = pageW;
     newPageH = pageH;
-    if (ro.rotateToFit && (clientPortrait ^ pagePortrait)) {
+    if (ro.rotateToFit() && (clientPortrait ^ pagePortrait)) {
       newPageW = pageH;
       newPageH = pageW;
     }
@@ -56,11 +56,11 @@ public class PageLayout {
     int posY = 0;
     scrollX = 0;
     scrollY = 0;
-    if (!ro.originalSize) { // do scale
+    if (!ro.originalSize()) { // do scale
       boolean smallW = newPageW < clientW;
       boolean smallH = newPageH < clientH;
-      if (ro.stretchToFit && smallW && smallH)// enlarge, if needed
-        if (ro.fitHeight) {
+      if (ro.stretchToFit() && smallW && smallH)// enlarge, if needed
+        if (ro.fitHeight()) {
           newPageH = clientH;
           newPageW = (int) (newPageH * ratio);
         } else {

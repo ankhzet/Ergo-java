@@ -9,7 +9,7 @@ import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
-import org.ankhzet.ergo.manga.chapter.page.PageRenderOptions;
+import org.ankhzet.ergo.manga.chapter.page.ReadOptions;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.UIPage;
@@ -37,10 +37,9 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   @DependencyInjection
   Reader reader;
   @DependencyInjection
-  PageRenderOptions options;
+  ReadOptions globalOptions;
 
   CommonControl pgNext, pgPrev, pgOrigSize, pgMagnify;
-  boolean swipeDirVertical = false;
   Point pressPos = new Point();
 
   int keyScroll = 0;
@@ -72,23 +71,23 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     })).shortcut(XKeyShortcut.press("Shift"));
 
     hud.putActionAtRight("Листать вертикально", registerAction(kSwipedir, action -> {
-      swipeDirVertical = !swipeDirVertical;
+        options.toggleSwipeDir();
     }).togglable((XAction action) -> {
-      return swipeDirVertical;
+      return !options().swipeHorisontal();
     }));
 
     hud.putActionAtRight("Подгонка поворота страниц", registerAction(kRotate, action -> {
-      options.toggleRotationToFit();
+        options.toggleRotationToFit();
       reader.flushLayout();
     }).togglable((XAction action) -> {
-      return options.rotateToFit();
+      return options().rotateToFit();
     }));
 
     hud.putActionAtRight("Оригинальный размер", registerAction(kOriginal, action -> {
-      options.toggleOriginalSize();
+        options.toggleOriginalSize();
       reader.flushLayout();
     }).togglable((XAction action) -> {
-      return options.showOriginalSize();
+      return options().originalSize();
     }));
 
     hud.shortcut("Scroll up", XKeyShortcut.press("Up"), registerAction("scroll-up", action -> scroll(-1)));
@@ -101,6 +100,19 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
       m.putBookmark(c);
   }
 
+  ReadOptions options() {
+    return options(reader.chapter());
+  }
+
+  ReadOptions options(Chapter chapter) {
+    ReadOptions curOptions = null;
+
+    if (curOptions == null)
+      curOptions = globalOptions;
+
+    return curOptions;
+  }
+
   void loadChapter(Chapter c) {
     reader.loadChapter(c);
   }
@@ -109,8 +121,9 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     if (!canSwipe())
       return false;
 
-    if (!options.showOriginalSize())
-      return SwipeHandler.makeSwipe(swipeDirVertical, dir, ui.clientArea.width, ui.clientArea.height);
+    ReadOptions options = options();
+    if (!options.originalSize())
+      return SwipeHandler.makeSwipe(!options.swipeHorisontal(), dir, ui.clientArea.width, ui.clientArea.height);
     else
       reader.changePage(dir < 0);
 
@@ -165,6 +178,9 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     int mx = e.getX();
     int my = e.getY();
 
+    ReadOptions options = options();
+    boolean originalSize = options.originalSize();
+    boolean swipeDirVertical = !options.swipeHorisontal();
     int dx = pressPos.x - mx;
     int dy = pressPos.y - my;
     switch (e.getID()) {
@@ -174,7 +190,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
       hud.unfocus();
       break;
     case MouseEvent.MOUSE_DRAGGED:
-      if (!options.showOriginalSize())
+      if (!originalSize)
         break;
       reader.scroll(dx, dy);
       pressPos.setLocation(mx, my);
@@ -183,7 +199,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
       if (!mouseDown)
         break;
 
-      if (!options.showOriginalSize()) {
+      if (!originalSize) {
         boolean vertSwipe = Math.abs(dy) > Math.abs(dx);
         if (vertSwipe == swipeDirVertical) {
           int dir = swipeDirVertical ? dy : dx;
