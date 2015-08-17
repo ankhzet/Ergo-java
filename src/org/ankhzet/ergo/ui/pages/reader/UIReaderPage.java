@@ -136,6 +136,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     action.accept(curOptions);
 
     if (curOptions instanceof MangaOptions) {
+      ((MangaOptions) curOptions).save();
       globalOptions.setOptions(curOptions.hashCode());
     }
   }

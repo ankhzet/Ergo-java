@@ -96,16 +96,28 @@ public class ReadOptions {
     return bits;
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    final ReadOptions other = (ReadOptions) obj;
+    return this.bits == other.bits;
+  }
+
   private boolean bitIsSet(long mask) {
     return (bits & mask) == mask;
   }
 
-  private long bitSet(long mask, boolean set) {
-    bits &= mask ^ 0xFFFFFFFF;
+  private long bitSet(int mask, boolean set) {
+    int applied = bits & (mask ^ 0xFFFFFFFF);
     if (set)
-      bits |= mask;
-      
-    return bits;
+      applied |= mask;
+    
+    setOptions(applied);
+    
+    return applied;
   }
 
 }

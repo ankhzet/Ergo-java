@@ -22,6 +22,7 @@ public class DBFactory extends ClassFactory<DB> {
     registerClass(SQLGrammar.class);
     
     registerClass(BookmarksTable.class);
+    registerClass(MangaOptionsTable.class);
   }
 
 }
