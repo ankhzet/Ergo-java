@@ -33,6 +33,12 @@ public class IoC {
     return factory.make(identifier, args);
   }
 
+  public static <P> P resolve(Class<? extends P> identifier, Object... args) throws FactoryException {
+    ClassFactory<P> factory = ioc.factory(identifier);
+
+    return factory.resolve(identifier, args);
+  }
+
   @SuppressWarnings("unchecked")
   public static <P> ClassFactory<P> registerFactory(ClassFactory<P> factory) {
     for (Class<? extends P> identifier : factory.produces())

@@ -62,7 +62,16 @@ public class Factory<T, P> implements AbstractFactory<T, P> {
         boolean wrap = (!(ex instanceof FactoryException));
         throw wrap ? new FailedFactoryProductException(identifier, ex) : (FactoryException) ex;
       }
+    }
+  }
 
+  @Override
+  public P resolve(T identifier, Object... args) throws FactoryException {
+    synchronized (this) {
+      P instance = make(identifier, args);
+      if (instance != null)
+        injectDependencies(instance);
+      return instance;
     }
   }
 
