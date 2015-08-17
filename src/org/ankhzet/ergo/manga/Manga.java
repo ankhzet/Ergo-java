@@ -88,4 +88,17 @@ public class Manga extends Chapter {
     return getPath().hashCode();
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+    
+    if (getClass() != obj.getClass())
+      return false;
+    
+    final Manga other = (Manga) obj;
+    
+    return other.hashCode() == hashCode();
+  }
+
 }

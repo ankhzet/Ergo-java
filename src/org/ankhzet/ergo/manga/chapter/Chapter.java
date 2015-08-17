@@ -129,7 +129,12 @@ public class Chapter extends File {
     if (!(o instanceof Chapter))
       return false;
 
-    return hashCode() == o.hashCode();
+    Chapter c = (Chapter)o;
+    
+    if (valid() && c.valid())
+      return hashCode() == c.hashCode();
+    
+    return getName().equals(c.getName());
   }
 
   @Override
