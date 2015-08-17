@@ -15,7 +15,7 @@ public class UILogicFactory extends ClassFactory<UILogic> {
     register(UILogic.class);
 
     registerClass(UIContainerListener.class);
-    
+
     registerClass(Config.class);
   }
 

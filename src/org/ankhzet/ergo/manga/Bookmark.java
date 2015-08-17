@@ -8,8 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.ankhzet.ergo.classfactory.IoC;
-import org.ankhzet.ergo.db.DBLayer;
-import org.ankhzet.ergo.db.Table;
+import org.ankhzet.ergo.db.query.ObjectsMap;
 import org.ankhzet.ergo.db.tables.BookmarksTable;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 
@@ -35,51 +34,18 @@ public class Bookmark {
     return (parent != null) ? parent : (new File("")).toPath();
   }
 
-  protected StatementBuilder saveClause(int index, StringBuilder c, StringBuilder v) {
-    return null;
+  protected ObjectsMap selectClause() {
+    return new ObjectsMap();
   }
 
   public void save() {
-    try {
-      StringBuilder c = new StringBuilder();
-      StringBuilder v = new StringBuilder();
-
-      StatementBuilder builder = saveClause(1, c, v);
-      DBLayer db = IoC.get(DBLayer.class);
-      BookmarksTable t = IoC.get(BookmarksTable.class);
-
-      PreparedStatement statement = db.prepareStatement(Table.insert(t.tableName(), c.toString(), v.toString()));
-
-      if (builder != null)
-        builder.build(statement);
-
-      statement.execute();
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
-  }
-
-  protected StatementBuilder deleteClause(int index, StringBuilder s) {
-    return null;
+    IoC.get(BookmarksTable.class)
+      .save(selectClause());
   }
 
   public void delete() {
-    try {
-      StringBuilder s = new StringBuilder();
-
-      StatementBuilder builder = deleteClause(1, s);
-      DBLayer db = IoC.get(DBLayer.class);
-      BookmarksTable t = IoC.get(BookmarksTable.class);
-
-      PreparedStatement statement = db.prepareStatement(Table.delete(t.tableName()) + " where " + s.toString());
-
-      if (builder != null)
-        builder.build(statement);
-
-      statement.execute();
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
+    IoC.get(BookmarksTable.class)
+      .delete(selectClause());
   }
 
   public static List<Bookmark> forManga(String manga, BookmarkGenerator gen) {
@@ -123,50 +89,9 @@ class MangaBookmark extends Bookmark {
   }
 
   @Override
-  protected StatementBuilder saveClause(int index, StringBuilder c, StringBuilder v) {
-    if (c.length() > 0)
-      c.append(", ");
-
-    c.append("manga");
-
-    if (v.length() > 0)
-      v.append(", ");
-
-    v.append("?");
-
-    StatementBuilder b = super.saveClause(index + 1, c, v);
-
-    return (statement) -> {
-      try {
-        statement.setString(index, uid);
-      } catch (SQLException ex) {
-        ex.printStackTrace();
-      }
-
-      if (b != null)
-        b.build(statement);
-    };
-  }
-
-  @Override
-  protected StatementBuilder deleteClause(int index, StringBuilder s) {
-    if (s.length() > 0)
-      s.append(" and ");
-
-    s.append("manga = ?");
-
-    StatementBuilder b = super.deleteClause(index + 1, s);
-
-    return (statement) -> {
-      try {
-        statement.setString(index, uid);
-      } catch (SQLException ex) {
-        ex.printStackTrace();
-      }
-
-      if (b != null)
-        b.build(statement);
-    };
+  protected ObjectsMap selectClause() {
+    return super.selectClause()
+      .put("manga", uid);
   }
 
 }
@@ -188,50 +113,9 @@ class ChapterBookmark extends MangaBookmark {
   }
 
   @Override
-  protected StatementBuilder saveClause(int index, StringBuilder c, StringBuilder v) {
-    if (c.length() > 0)
-      c.append(", ");
-
-    c.append("chapter");
-
-    if (v.length() > 0)
-      v.append(", ");
-
-    v.append("?");
-
-    StatementBuilder b = super.saveClause(index + 1, c, v);
-
-    return (statement) -> {
-      try {
-        statement.setFloat(index, chapter);
-      } catch (SQLException ex) {
-        ex.printStackTrace();
-      }
-
-      if (b != null)
-        b.build(statement);
-    };
-  }
-
-  @Override
-  protected StatementBuilder deleteClause(int index, StringBuilder s) {
-    if (s.length() > 0)
-      s.append(" and ");
-
-    s.append("chapter = ?");
-
-    StatementBuilder b = super.deleteClause(index + 1, s);
-
-    return (statement) -> {
-      try {
-        statement.setFloat(index, chapter);
-      } catch (SQLException ex) {
-        ex.printStackTrace();
-      }
-
-      if (b != null)
-        b.build(statement);
-    };
+  protected ObjectsMap selectClause() {
+    return super.selectClause()
+      .put("chapter", chapter);
   }
 
 }

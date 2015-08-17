@@ -43,7 +43,7 @@ public class MagnifyGlass {
       break;
     }
 
-    if (!active || data == null || !layouted || reader.options.originalSize)
+    if (!active || data == null || !layouted || reader.options.originalSize())
       return false;
 
     // translate view coordinates to image coordinates

@@ -1,12 +1,11 @@
 package org.ankhzet.ergo.db;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import org.ankhzet.ergo.db.query.Builder;
 
 /**
  *
@@ -15,58 +14,33 @@ import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 public abstract class Table {
 
   @DependencyInjection(instantiate = false)
-  protected DBLayer db;
+  protected Builder builder;
 
   @DependenciesInjected(suppressInherited = false, beforeInherited = false)
   private void diInjected() throws Exception {
-    if (!assumeExists())
-      throw new Exception(String.format("Can't create [%s] table!", tableName()));
-    else
+    try {
+      createIfNotExists();
       LOG.log(Level.FINE, "Table [{0}] is OK.\n", tableName());
+    } catch (Throwable e) {
+      throw new Exception(String.format("Can't create table [%s]!", tableName()), e);
+    }
+  }
+
+  public void createIfNotExists() throws SQLException {
+    tableBuilder().create(schema());
+  }
+
+  public void truncate() throws SQLException {
+    tableBuilder().truncate();
+  }
+
+  protected Builder tableBuilder() {
+    return builder.table(tableName());
   }
 
   public abstract String tableName();
 
   protected abstract String schema();
-
-  public boolean assumeExists() {
-    try {
-      db.createTable(schema());
-      return true;
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
-
-    return false;
-  }
-
-  public boolean truncate() {
-    try {
-      PreparedStatement ps = db.prepareStatement(truncate(tableName()));
-      ps.executeUpdate();
-      return true;
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
-
-    return false;
-  }
-
-  public static String select(String table, String collumns) {
-    return String.format(Locale.US, "select %s from %s", collumns, table);
-  }
-
-  public static String insert(String table, String collumns, String values) {
-    return String.format(Locale.US, "insert into %s (%s) values (%s)", table, collumns, values);
-  }
-
-  public static String truncate(String table) {
-    return String.format(Locale.US, "truncate table %s", table);
-  }
-
-  public static String delete(String table) {
-    return String.format(Locale.US, "delete from %s", table);
-  }
 
   private static final Logger LOG = Logger.getLogger(Table.class.getName());
 

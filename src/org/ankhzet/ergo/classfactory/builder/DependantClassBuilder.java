@@ -10,7 +10,8 @@ public class DependantClassBuilder<Type, Dependency> extends ClassBuilder<Type> 
 
   Dependency dependency;
 
-  public DependantClassBuilder(Dependency dependency) {
+  public DependantClassBuilder(Class<? extends Type> classRef, Dependency dependency) {
+    super(classRef);
     this.dependency = dependency;
   }
 

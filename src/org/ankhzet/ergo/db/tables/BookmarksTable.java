@@ -1,9 +1,9 @@
 package org.ankhzet.ergo.db.tables;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import org.ankhzet.ergo.db.Table;
+import org.ankhzet.ergo.db.query.Builder;
+import org.ankhzet.ergo.db.query.ObjectsMap;
 
 /**
  *
@@ -20,18 +20,29 @@ public class BookmarksTable extends Table {
 
   @Override
   protected String schema() {
-    return tableName() + " ("
-      + "  manga text not null"
+    return "manga text not null"
       + ", chapter float not null"
-      + ", unique (manga, chapter)"
-      + ")";
+      + ", unique (manga, chapter)";
   }
 
-  public ResultSet fetch(String manga) throws SQLException {
-    PreparedStatement ps = db.prepareStatement("select * from " + tableName() + " where manga = ?");
-    ps.setString(1, manga);
+  public ResultSet fetch(String manga) {
+    return tableBuilder()
+      .where("manga", manga)
+      .get();
+  }
 
-    return ps.executeQuery();
+  public int save(ObjectsMap values) {
+    String key = values.keySet().iterator().next();
+    return tableBuilder().insertOrUpdate(key, values);
+  }
+
+  public int delete(ObjectsMap values) {
+    Builder db = tableBuilder();
+
+    for (String column : values.keySet())
+      db = db.where(column, values.get(column));
+
+    return db.delete();
   }
 
 }

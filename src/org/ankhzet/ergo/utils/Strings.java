@@ -2,6 +2,7 @@ package org.ankhzet.ergo.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  *
@@ -13,8 +14,12 @@ public class Strings extends ArrayList<String> {
     super();
   }
 
-  public Strings(String[] strings) {
+  public Strings(String... strings) {
     super(Arrays.asList(strings));
+  }
+
+  public Strings(Collection<String> strings) {
+    super(strings);
   }
 
   public static Strings explode(String s, String regex) {

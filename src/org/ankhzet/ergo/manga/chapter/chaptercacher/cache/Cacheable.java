@@ -17,7 +17,7 @@ public class Cacheable<T> {
     this.data = data;
     this.key = key;
   }
-  
+
   public T getData() {
     return data;
   }

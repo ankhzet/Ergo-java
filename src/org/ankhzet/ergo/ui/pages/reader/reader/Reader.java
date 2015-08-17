@@ -13,10 +13,11 @@ import org.ankhzet.ergo.manga.chapter.chaptercacher.ScanCache;
 import org.ankhzet.ergo.manga.chapter.chaptercacher.ScansCache;
 import org.ankhzet.ergo.manga.chapter.chaptercacher.cache.CacheTask;
 import org.ankhzet.ergo.manga.chapter.page.PageData;
-import org.ankhzet.ergo.manga.chapter.page.PageRenderOptions;
+import org.ankhzet.ergo.manga.chapter.page.ReadOptions;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.Skin;
 import org.ankhzet.ergo.ui.UILogic;
+import org.ankhzet.ergo.utils.DelayableAction;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
 
@@ -32,7 +33,7 @@ public class Reader extends PageNavigator {
   @DependencyInjection
   protected UILogic ui;
   @DependencyInjection
-  protected PageRenderOptions options;
+  protected ReadOptions options;
   @DependencyInjection
   protected MagnifyGlass magnifier;
   @DependencyInjection
@@ -70,7 +71,15 @@ public class Reader extends PageNavigator {
   }
 
   public void flushLayout() {
-    cache.invalidateAll(2);
+    DelayableAction.enqueue("reader-resize", () -> {
+      try {
+        while (isBusy())
+          Thread.sleep(50);
+      } catch (InterruptedException ex) {
+      }
+
+      cache.invalidateAll(2);
+    });
   }
 
   public synchronized void LoadPages(Chapter chapter) {
@@ -116,6 +125,11 @@ public class Reader extends PageNavigator {
     flushLayout();
     if (magnifier.activated)
       magnifier.layouted();
+
+    PageData page = getCurrentPageData();
+    if (page != null)
+      page.layout(clientRect.width, clientRect.height, options);
+
     scroll(0, 0);
   }
 
@@ -289,7 +303,7 @@ public class Reader extends PageNavigator {
 
     page.draw(g, x - dx - scrollPos.x, y - dy - scrollPos.y);
 
-    if (options.originalSize) { // draw scrolls if needed
+    if (options.originalSize()) { // draw scrolls if needed
       int scrollbarSize = 4;
       int sx = page.scrollX;
       if (sx > 0) {

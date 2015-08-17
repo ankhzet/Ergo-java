@@ -1,11 +1,9 @@
 package org.ankhzet.ergo.manga.chapter.chaptercacher;
 
 import java.util.ArrayList;
-import java.util.Set;
 import org.ankhzet.ergo.manga.chapter.chaptercacher.cache.Cache;
 import org.ankhzet.ergo.manga.chapter.chaptercacher.cache.CacheTask;
 import org.ankhzet.ergo.manga.chapter.page.PageData;
-import org.ankhzet.ergo.ui.UILogic;
 
 /**
  *
@@ -14,6 +12,7 @@ import org.ankhzet.ergo.ui.UILogic;
 public class ScansCache extends Cache<PageData, ScanCache> {
 
   Thread processor;
+  boolean drop = false;
 
   class CacheTaskList<C> extends ArrayList<CacheTask<C>> {
   }
@@ -24,18 +23,33 @@ public class ScansCache extends Cache<PageData, ScanCache> {
     startWorker();
   }
 
+  @Override
+  public synchronized void clear() {
+    super.clear();
+    drop();
+  }
+
+  synchronized public void drop() {
+    drop = true;
+  }
+
   public ScanCache cacheData(String key, PageData data) {
     ScanCache cacheable = new ScanCache(tasks.size(), data, key);
     invalidate(cacheable);
     return cacheable;
   }
 
-  boolean processTask(ScanCache scan, CacheTask<ScanCache> task) {
+  synchronized boolean processTask(ScanCache scan, CacheTask<ScanCache> task) {
+    if (drop) {
+      drop = false;
+      return false;
+    }
+
     int idx = tasks.indexOf(task) + 1;
     int cid = scan.cached();
     if (cid > idx)
       return false;
-    
+
     boolean r = true;
     if (cid < idx) {
       r = task.process(scan);

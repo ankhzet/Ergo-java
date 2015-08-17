@@ -11,8 +11,17 @@ import org.ankhzet.ergo.utils.Strings;
  */
 public class Manga extends Chapter {
 
+  MangaOptions options;
+
+  List<Bookmark> bookmarksCache;
+
   public Manga(String path) {
     super(path);
+  }
+
+  @Override
+  public boolean valid() {
+    return allChapters().length > 0;
   }
 
   public String uid() {
@@ -33,16 +42,24 @@ public class Manga extends Chapter {
     return this.getPath();
   }
 
+  public MangaOptions options() {
+    if (options == null)
+      options = new MangaOptions(this);
+    return options;
+  }
+
   public Bookmark putBookmark(Chapter c) {
-    Bookmark last = lastBookmark();
-    if (last != null)
-      last.delete();
-    
+    List<Bookmark> bookmarks = bookmarks();
+    if (bookmarks.size() > 0)
+      bookmarks.remove(0);
+
     ChapterBookmark b = new ChapterBookmark();
     b.uid = uid();
     b.chapter = c.id();
     b.save();
-    
+
+    bookmarks.add(b);
+
     long timestamp = System.currentTimeMillis();
     c.setLastModified(timestamp);
     c.getMangaFile().setLastModified(timestamp);
@@ -56,8 +73,6 @@ public class Manga extends Chapter {
 
   public Bookmark lastBookmark() {
     List<Bookmark> bookmarks = bookmarks();
-    if (bookmarks == null)
-      return null;
 
     int s = bookmarks.size();
     if (s <= 0)
@@ -67,9 +82,12 @@ public class Manga extends Chapter {
   }
 
   public List<Bookmark> bookmarks() {
-    return Bookmark.forManga(uid(), () -> {
-      return new ChapterBookmark();
-    });
+    if (bookmarksCache == null)
+      bookmarksCache = Bookmark.forManga(uid(), () -> {
+        return new ChapterBookmark();
+      });
+
+    return bookmarksCache;
   }
 
   public Chapter lastBookmarkedChapter() {
@@ -86,6 +104,19 @@ public class Manga extends Chapter {
   @Override
   public int hashCode() {
     return getPath().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null)
+      return false;
+
+    if (getClass() != obj.getClass())
+      return false;
+
+    final Manga other = (Manga) obj;
+
+    return other.hashCode() == hashCode();
   }
 
 }

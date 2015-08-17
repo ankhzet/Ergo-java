@@ -43,7 +43,6 @@ public class Factory<T, P> implements AbstractFactory<T, P> {
 
       if (instance == null) {
         container.put(identifier, instance = make(identifier));
-
         injectDependencies(instance);
       }
 
@@ -62,7 +61,16 @@ public class Factory<T, P> implements AbstractFactory<T, P> {
         boolean wrap = (!(ex instanceof FactoryException));
         throw wrap ? new FailedFactoryProductException(identifier, ex) : (FactoryException) ex;
       }
+    }
+  }
 
+  @Override
+  public P resolve(T identifier, Object... args) throws FactoryException {
+    synchronized (this) {
+      P instance = make(identifier, args);
+      if (instance != null)
+        injectDependencies(instance);
+      return instance;
     }
   }
 
@@ -82,7 +90,7 @@ public class Factory<T, P> implements AbstractFactory<T, P> {
   @Override
   @SuppressWarnings("unchecked")
   public Builder<T, P> register(T identifier) {
-    return register(identifier, (Builder<T, P>) new ClassBuilder<T>());
+    throw new RuntimeException("No default builder");
   }
 
   void injectDependencies(Object instance) throws FactoryException {

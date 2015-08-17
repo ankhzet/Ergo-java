@@ -1,22 +1,24 @@
 package org.ankhzet.ergo.db;
 
-import org.ankhzet.ergo.classfactory.IoC;
-import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
-import org.ankhzet.ergo.db.tables.BookmarksTable;
+import org.ankhzet.ergo.db.query.Builder;
 
 /**
  *
  * @author Ankh Zet (ankhzet@gmail.com)
  */
-public class DB extends DBLayer {
-
-  @DependenciesInjected()
-  private void diInjected() {
-    IoC.get(BookmarksTable.class);
-  }
+public class DB extends Builder {
 
   public DB() {
     super();
+  }
+
+  public DB(String from) {
+    super(from);
+  }
+
+  @Override
+  public String beforeSQL(String sql) {
+    return sql;
   }
 
 }

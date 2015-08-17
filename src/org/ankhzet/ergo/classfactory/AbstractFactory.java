@@ -23,6 +23,8 @@ public interface AbstractFactory<I, P> {
 
   P make(I identifier, Object... args) throws FactoryException;
 
+  P resolve(I identifier, Object... args) throws FactoryException;
+
   Builder<I, P> register(I identifier, Builder<I, P> maker);
 
   Builder<I, P> register(I identifier);

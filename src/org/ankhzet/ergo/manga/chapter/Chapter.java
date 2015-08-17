@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import org.ankhzet.ergo.manga.Bookmark;
+import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
 
@@ -20,9 +21,10 @@ public class Chapter extends File {
   public static final String CHAP_PATTERN = "^[\\d\\.]+";
 
   protected Strings pageFiles;
-  
+
   Chapter[] all;
   long fetched = 0;
+  Manga manga;
 
   public Chapter(String path) {
     super(path);
@@ -39,6 +41,13 @@ public class Chapter extends File {
 
   public String getMangaFolder() {
     return getMangaFile().getName();
+  }
+
+  public Manga getManga() {
+    if (manga == null)
+      manga = new Manga(getMangaFile().getPath());
+
+    return manga;
   }
 
   public Strings fetchPages() {
@@ -68,7 +77,7 @@ public class Chapter extends File {
     long time = System.currentTimeMillis();
     if (time - fetched < 5000)
       return all;
-    
+
     File manga = getMangaFile();
 
     ArrayList<Chapter> chapters = new ArrayList<>();
@@ -129,7 +138,12 @@ public class Chapter extends File {
     if (!(o instanceof Chapter))
       return false;
 
-    return hashCode() == o.hashCode();
+    Chapter c = (Chapter) o;
+
+    if (valid() && c.valid())
+      return hashCode() == c.hashCode();
+
+    return getName().equals(c.getName());
   }
 
   @Override
