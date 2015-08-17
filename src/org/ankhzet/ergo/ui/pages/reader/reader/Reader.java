@@ -17,6 +17,7 @@ import org.ankhzet.ergo.manga.chapter.page.PageRenderOptions;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.Skin;
 import org.ankhzet.ergo.ui.UILogic;
+import org.ankhzet.ergo.utils.DelayableAction;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
 
@@ -70,7 +71,15 @@ public class Reader extends PageNavigator {
   }
 
   public void flushLayout() {
-    cache.invalidateAll(2);
+    DelayableAction.enqueue("reader-resize", () -> {
+      try {
+        while (isBusy())
+          Thread.sleep(50);
+      } catch (InterruptedException ex) {
+      }
+
+      cache.invalidateAll(2);
+    });
   }
 
   public synchronized void LoadPages(Chapter chapter) {
@@ -116,6 +125,12 @@ public class Reader extends PageNavigator {
     flushLayout();
     if (magnifier.activated)
       magnifier.layouted();
+    
+    PageData page = getCurrentPageData();
+    if (page != null) {
+      page.layout(clientRect.width, clientRect.height, options);
+    }
+    
     scroll(0, 0);
   }
 
