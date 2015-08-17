@@ -23,7 +23,7 @@ public class Manga extends Chapter {
   public boolean valid() {
     return allChapters().length > 0;
   }
-  
+
   public String uid() {
     return getName();
   }
@@ -110,12 +110,12 @@ public class Manga extends Chapter {
   public boolean equals(Object obj) {
     if (obj == null)
       return false;
-    
+
     if (getClass() != obj.getClass())
       return false;
-    
+
     final Manga other = (Manga) obj;
-    
+
     return other.hashCode() == hashCode();
   }
 

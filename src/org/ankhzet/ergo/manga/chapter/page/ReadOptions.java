@@ -17,7 +17,7 @@ public class ReadOptions {
     BIT_VALID     = 0x800000;
 
   protected int bits = 0;
-  
+
   public ReadOptions() {
     toggle(BIT_VALID);
     toggle(BIT_STRETCH);
@@ -32,19 +32,19 @@ public class ReadOptions {
     bitSet(BIT_STRETCH, stretchToFit);
     bitSet(BIT_ORIGINAL, originalSize);
   }
-  
+
   public void setOptions(int hash) {
     bits = hash;
   }
-  
+
   public boolean valid() {
     return valid(bits);
   }
-  
+
   public static boolean valid(int bits) {
     return (bits & BIT_VALID) == BIT_VALID;
   }
-  
+
   private boolean toggle(int mask) {
     boolean set = bitIsSet(mask);
     bitSet(mask, !set);
@@ -62,7 +62,7 @@ public class ReadOptions {
   public boolean toggleSwipeDir() {
     return toggle(BIT_HORISSWIPE);
   }
-  
+
   public boolean swipeHorisontal() {
     return bitIsSet(BIT_HORISSWIPE);
   }
@@ -114,9 +114,9 @@ public class ReadOptions {
     int applied = bits & (mask ^ 0xFFFFFFFF);
     if (set)
       applied |= mask;
-    
+
     setOptions(applied);
-    
+
     return applied;
   }
 

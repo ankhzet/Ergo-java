@@ -25,15 +25,19 @@ public abstract class Table {
       throw new Exception(String.format("Can't create table [%s]!", tableName()), e);
     }
   }
+
   public void createIfNotExists() throws SQLException {
     tableBuilder().create(schema());
-   }
+  }
+
   public void truncate() throws SQLException {
     tableBuilder().truncate();
-   }
+  }
+
   protected Builder tableBuilder() {
     return builder.table(tableName());
-   }
+  }
+
   public abstract String tableName();
 
   protected abstract String schema();

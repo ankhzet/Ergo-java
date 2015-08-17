@@ -125,12 +125,11 @@ public class Reader extends PageNavigator {
     flushLayout();
     if (magnifier.activated)
       magnifier.layouted();
-    
+
     PageData page = getCurrentPageData();
-    if (page != null) {
+    if (page != null)
       page.layout(clientRect.width, clientRect.height, options);
-    }
-    
+
     scroll(0, 0);
   }
 

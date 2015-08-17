@@ -12,7 +12,7 @@ import org.ankhzet.ergo.ui.xgui.XMessageBox;
  * @author Ankh Zet (ankhzet@gmail.com)
  */
 public class IoCFactoriesRegistrar extends ClassFactory<Object> {
-  
+
   static IoCFactoriesRegistrar registrar;
 
   static FactoryRegistrar<?> uiPages = new ClassFactoryRegistrar<>(new UIPageFactory());
@@ -23,15 +23,14 @@ public class IoCFactoriesRegistrar extends ClassFactory<Object> {
 
     registerClass(Toolkit.class, (c, args) -> Toolkit.getDefaultToolkit());
 
-    registerClass(MangaChapterPicker.class, (c, args) -> new MangaChapterPicker(args.length > 0 ? (String)args[0] : "File pick"));
+    registerClass(MangaChapterPicker.class, (c, args) -> new MangaChapterPicker(args.length > 0 ? (String) args[0] : "File pick"));
     registerClass(XMessageBox.class);
     registerClass(XControls.class);
 
     registerClass(ConfigParser.class, (c, args) -> new ConfigParser((String) args[0]));
   }
 
-  
-  public static void register() { 
+  public static void register() {
     registrar = new IoCFactoriesRegistrar();
   }
 

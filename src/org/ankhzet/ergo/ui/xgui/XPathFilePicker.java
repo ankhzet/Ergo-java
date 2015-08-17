@@ -35,7 +35,7 @@ public class XPathFilePicker extends CommonControl {
   String root = "/";
   protected FilesList entries = new FilesList();
   public File higlited, selected, aiming;
-  
+
   UILogic uil;
 
   public XPathFilePicker(String caption) {
@@ -161,7 +161,7 @@ public class XPathFilePicker extends CommonControl {
   protected File upFolderFile() {
     return new File("..");
   }
-  
+
   protected void fetchRoot() {
     entries.clear();
     entries.add(upFolderFile());

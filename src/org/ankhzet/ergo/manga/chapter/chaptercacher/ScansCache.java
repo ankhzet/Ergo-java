@@ -28,7 +28,7 @@ public class ScansCache extends Cache<PageData, ScanCache> {
     super.clear();
     drop();
   }
-  
+
   synchronized public void drop() {
     drop = true;
   }
@@ -44,12 +44,12 @@ public class ScansCache extends Cache<PageData, ScanCache> {
       drop = false;
       return false;
     }
-    
+
     int idx = tasks.indexOf(task) + 1;
     int cid = scan.cached();
     if (cid > idx)
       return false;
-    
+
     boolean r = true;
     if (cid < idx) {
       r = task.process(scan);

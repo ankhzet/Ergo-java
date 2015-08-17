@@ -21,7 +21,7 @@ public class Chapter extends File {
   public static final String CHAP_PATTERN = "^[\\d\\.]+";
 
   protected Strings pageFiles;
-  
+
   Chapter[] all;
   long fetched = 0;
   Manga manga;
@@ -77,7 +77,7 @@ public class Chapter extends File {
     long time = System.currentTimeMillis();
     if (time - fetched < 5000)
       return all;
-    
+
     File manga = getMangaFile();
 
     ArrayList<Chapter> chapters = new ArrayList<>();
@@ -138,11 +138,11 @@ public class Chapter extends File {
     if (!(o instanceof Chapter))
       return false;
 
-    Chapter c = (Chapter)o;
-    
+    Chapter c = (Chapter) o;
+
     if (valid() && c.valid())
       return hashCode() == c.hashCode();
-    
+
     return getName().equals(c.getName());
   }
 

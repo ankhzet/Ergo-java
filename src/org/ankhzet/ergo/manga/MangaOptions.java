@@ -14,7 +14,7 @@ public class MangaOptions extends ReadOptions {
 
   public MangaOptions(Manga manga) {
     this.manga = manga;
-    
+
     MangaOptionsTable t = IoC.get(MangaOptionsTable.class);
     int optionsBits = t.getOptions(manga.uid());
 

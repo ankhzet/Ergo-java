@@ -20,7 +20,7 @@ public class DBFactory extends ClassFactory<DB> {
 
     registerClass(Connection.class, new ConnectionBuilder(IoC.get(Config.class)));
     registerClass(SQLGrammar.class);
-    
+
     registerClass(BookmarksTable.class);
     registerClass(MangaOptionsTable.class);
   }

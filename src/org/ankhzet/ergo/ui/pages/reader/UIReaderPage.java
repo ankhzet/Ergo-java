@@ -187,7 +187,7 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   int currentScrollSpeed() {
     if (keyScroll == 0)
       return 0;
-    
+
     long scroll = (System.currentTimeMillis() - keyPress);
     double d = 1. - Math.min(1., scroll / 500.);
 
