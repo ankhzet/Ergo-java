@@ -5,9 +5,11 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.function.Consumer;
 import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Manga;
+import org.ankhzet.ergo.manga.MangaOptions;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.manga.chapter.page.ReadOptions;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
@@ -71,20 +73,26 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     })).shortcut(XKeyShortcut.press("Shift"));
 
     hud.putActionAtRight("Листать вертикально", registerAction(kSwipedir, action -> {
+      changeMangaOptions(options -> {
         options.toggleSwipeDir();
+      });
     }).togglable((XAction action) -> {
       return !options().swipeHorisontal();
     }));
 
     hud.putActionAtRight("Подгонка поворота страниц", registerAction(kRotate, action -> {
+      changeMangaOptions(options -> {
         options.toggleRotationToFit();
+      });
       reader.flushLayout();
     }).togglable((XAction action) -> {
       return options().rotateToFit();
     }));
 
     hud.putActionAtRight("Оригинальный размер", registerAction(kOriginal, action -> {
+      changeMangaOptions(options -> {
         options.toggleOriginalSize();
+      });
       reader.flushLayout();
     }).togglable((XAction action) -> {
       return options().originalSize();
@@ -107,13 +115,36 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   ReadOptions options(Chapter chapter) {
     ReadOptions curOptions = null;
 
+    if (chapter != null) {
+      Manga m = chapter.getManga();
+      if (m != null) {
+        curOptions = m.options();
+        if (!curOptions.valid())
+          curOptions.setOptions(globalOptions.hashCode());
+      }
+    }
+
     if (curOptions == null)
       curOptions = globalOptions;
 
     return curOptions;
   }
 
+  void changeMangaOptions(Consumer<ReadOptions> action) {
+    ReadOptions curOptions = options();
+
+    action.accept(curOptions);
+
+    if (curOptions instanceof MangaOptions) {
+      globalOptions.setOptions(curOptions.hashCode());
+    }
+  }
+
   void loadChapter(Chapter c) {
+    ReadOptions options = options(c);
+    if (options instanceof MangaOptions)
+      globalOptions.setOptions(options.hashCode());
+
     reader.loadChapter(c);
   }
 
