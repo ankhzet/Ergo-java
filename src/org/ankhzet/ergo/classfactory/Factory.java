@@ -82,7 +82,7 @@ public class Factory<T, P> implements AbstractFactory<T, P> {
   @Override
   @SuppressWarnings("unchecked")
   public Builder<T, P> register(T identifier) {
-    return register(identifier, (Builder<T, P>) new ClassBuilder<T>());
+    throw new RuntimeException("No default builder");
   }
 
   void injectDependencies(Object instance) throws FactoryException {

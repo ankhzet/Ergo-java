@@ -15,7 +15,7 @@ public class SingleClassFactory<Produces> extends ClassFactory<Produces> {
   }
 
   SingleClassFactory(Class<Produces> c) {
-    register(c, new ClassBuilder<>());
+    register(c, new ClassBuilder<>(c));
   }
 
 }
