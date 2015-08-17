@@ -43,7 +43,6 @@ public class Factory<T, P> implements AbstractFactory<T, P> {
 
       if (instance == null) {
         container.put(identifier, instance = make(identifier));
-
         injectDependencies(instance);
       }
 
@@ -74,6 +73,8 @@ public class Factory<T, P> implements AbstractFactory<T, P> {
       return instance;
     }
   }
+  
+  
 
   <R> R pick(HashMap<T, R> map, T id) throws UnknownFactoryProductException {
     throw new UnknownFactoryProductException(id);

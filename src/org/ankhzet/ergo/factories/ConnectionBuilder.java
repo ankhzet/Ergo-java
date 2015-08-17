@@ -38,6 +38,10 @@ public class ConnectionBuilder extends ClassBuilder<Connection> {
     if (Strings.explode(fileName, "\\.").size() <= 1)
       dbName = dbName + "." + dbFileExt;
 
+    File journal = new File(dbName + "-journal");
+    if (journal.exists())
+      journal.delete();
+
     String connectionString = String.format("jdbc:sqlite:%s", dbName);
 
     Connection connection = null;
