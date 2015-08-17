@@ -11,6 +11,8 @@ import org.ankhzet.ergo.utils.Strings;
  */
 public class Manga extends Chapter {
 
+  MangaOptions options;
+
   List<Bookmark> bookmarksCache;
 
   public Manga(String path) {
@@ -38,6 +40,12 @@ public class Manga extends Chapter {
   @Override
   public String getMangaFolder() {
     return this.getPath();
+  }
+
+  public MangaOptions options() {
+    if (options == null)
+      options = new MangaOptions(this);
+    return options;
   }
 
   public Bookmark putBookmark(Chapter c) {

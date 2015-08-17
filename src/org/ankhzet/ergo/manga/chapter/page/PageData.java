@@ -63,7 +63,7 @@ public class PageData extends PageLayout {
     return image != null;
   }
 
-  public boolean prepare(PageRenderOptions options) {
+  public boolean prepare(ReadOptions options) {
     if (!wasResized())
       return true;
 
@@ -76,7 +76,7 @@ public class PageData extends PageLayout {
       return true;
     }
 
-    if (!options.originalSize)
+    if (!options.originalSize())
       if (cache != null) {
         cache.flush();
         cache.getGraphics().dispose();
@@ -85,13 +85,13 @@ public class PageData extends PageLayout {
 
     boolean clientPortrait = clientW < clientH;
     boolean pagePortrait = pageW < pageH;
-    boolean rotate = options.rotateToFit && (clientPortrait ^ pagePortrait);
+    boolean rotate = options.rotateToFit() && (clientPortrait ^ pagePortrait);
 
     if (rotate) {
       AffineTransform at = new AffineTransform();
       at.scale(nh / (double) pageW, nw / (double) pageH);
       at.translate(pageH / 2d, 0);
-      if (options.turnClockwise) {
+      if (options.turnClockwise()) {
         at.rotate(Math.PI / 2d);
         at.translate(0d, -pageH / 2d);
       } else {
@@ -107,7 +107,7 @@ public class PageData extends PageLayout {
         return false;
       }
     } else
-      if (options.originalSize)
+      if (options.originalSize())
         cache = image;
       else {
         float scale = newPageW / (float) pageW;
@@ -121,7 +121,7 @@ public class PageData extends PageLayout {
     return true;
   }
 
-  public boolean layout(int w, int h, PageRenderOptions ro) {
+  public boolean layout(int w, int h, ReadOptions ro) {
     clientW = w;
     clientH = h;
     return calcLayout(pageW, pageH, ro);
