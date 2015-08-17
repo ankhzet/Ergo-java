@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import org.ankhzet.ergo.manga.Bookmark;
+import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.utils.Strings;
 import org.ankhzet.ergo.utils.Utils;
 
@@ -23,6 +24,7 @@ public class Chapter extends File {
   
   Chapter[] all;
   long fetched = 0;
+  Manga manga;
 
   public Chapter(String path) {
     super(path);
@@ -39,6 +41,13 @@ public class Chapter extends File {
 
   public String getMangaFolder() {
     return getMangaFile().getName();
+  }
+
+  public Manga getManga() {
+    if (manga == null)
+      manga = new Manga(getMangaFile().getPath());
+
+    return manga;
   }
 
   public Strings fetchPages() {

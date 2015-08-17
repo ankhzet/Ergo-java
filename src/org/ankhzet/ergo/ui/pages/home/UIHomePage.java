@@ -35,6 +35,8 @@ public class UIHomePage extends UIPage {
   @DependencyInjection
   Reader reader;
 
+  Chapter chapter;
+  
   @DependenciesInjected
   private void di() {
     String root = "H:/manga/manga";
@@ -119,19 +121,22 @@ public class UIHomePage extends UIPage {
   }
 
   Chapter pickedChapter() {
-    return new Chapter(picker.getSelectedPath());
+    Chapter t = new Chapter(picker.getSelectedPath());
+    
+    if ((chapter == null) || !chapter.equals(t))
+      chapter = t;
+    
+    return chapter;
   }
 
   Manga selectedManga() {
     Chapter c = pickedChapter();
-    if (c.allChapters().length == 0)
-      return null;
-
-    return new Manga(c.getMangaFile().getPath());
+    return (c != null) ? c.getManga() : null;
   }
 
   boolean hasMangaSelected() {
-    return pickedChapter().allChapters().length > 0;
+    Manga m = selectedManga();
+    return (m != null) && m.valid();
   }
 
   public boolean loadChapter() {
@@ -168,6 +173,10 @@ public class UIHomePage extends UIPage {
 
   @Override
   public String title() {
+    Manga m = selectedManga();
+    if (m != null)
+      return Strings.toTitleCase(m.getName());
+    
     return "Ergo manga reader";
   }
 

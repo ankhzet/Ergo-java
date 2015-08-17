@@ -96,8 +96,9 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
   }
 
   void bookmark(Chapter c) {
-    Manga m = new Manga(c.getMangaFile().getPath());
-    m.putBookmark(c);
+    Manga m = c.getManga();
+    if (m != null)
+      m.putBookmark(c);
   }
 
   void loadChapter(Chapter c) {

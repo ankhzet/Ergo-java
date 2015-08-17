@@ -11,10 +11,17 @@ import org.ankhzet.ergo.utils.Strings;
  */
 public class Manga extends Chapter {
 
+  List<Bookmark> bookmarksCache;
+
   public Manga(String path) {
     super(path);
   }
 
+  @Override
+  public boolean valid() {
+    return allChapters().length > 0;
+  }
+  
   public String uid() {
     return getName();
   }
@@ -34,15 +41,17 @@ public class Manga extends Chapter {
   }
 
   public Bookmark putBookmark(Chapter c) {
-    Bookmark last = lastBookmark();
-    if (last != null)
-      last.delete();
-    
+    List<Bookmark> bookmarks = bookmarks();
+    if (bookmarks.size() > 0)
+      bookmarks.remove(0);
+
     ChapterBookmark b = new ChapterBookmark();
     b.uid = uid();
     b.chapter = c.id();
     b.save();
-    
+
+    bookmarks.add(b);
+
     long timestamp = System.currentTimeMillis();
     c.setLastModified(timestamp);
     c.getMangaFile().setLastModified(timestamp);
@@ -56,8 +65,6 @@ public class Manga extends Chapter {
 
   public Bookmark lastBookmark() {
     List<Bookmark> bookmarks = bookmarks();
-    if (bookmarks == null)
-      return null;
 
     int s = bookmarks.size();
     if (s <= 0)
@@ -67,9 +74,12 @@ public class Manga extends Chapter {
   }
 
   public List<Bookmark> bookmarks() {
-    return Bookmark.forManga(uid(), () -> {
-      return new ChapterBookmark();
-    });
+    if (bookmarksCache == null)
+      bookmarksCache = Bookmark.forManga(uid(), () -> {
+        return new ChapterBookmark();
+      });
+
+    return bookmarksCache;
   }
 
   public Chapter lastBookmarkedChapter() {
