@@ -44,6 +44,11 @@ public class MangaChapterPicker extends XPathFilePicker {
   }
 
   @Override
+  public int itemHeight() {
+    return 25;
+  }
+
+  @Override
   protected void fetchRoot() {
     super.fetchRoot();
     entries.remove(upFolderFile());
@@ -71,7 +76,7 @@ public class MangaChapterPicker extends XPathFilePicker {
 
     CollumnedItemVisitor.NodeVisitor<File> nodeVisitor = (Rectangle r, File item) -> {
 
-      if (!clip.contains(r))
+      if (!clip.intersects(r))
         return false;
 
       boolean isHilited = (higlited == item);// && item.equals(higlited);

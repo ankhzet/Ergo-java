@@ -63,6 +63,10 @@ public class XPathFilePicker extends CommonControl {
   public String itemCaption(File item) {
     return root.equals("/") ? item.getPath() : item.getName();
   }
+  
+  public int itemHeight() {
+    return ITEM_HEIGHT;
+  }
 
   public File getRootFile() {
     return new File(root);
@@ -70,17 +74,18 @@ public class XPathFilePicker extends CommonControl {
 
   @Override
   public void DoDraw(Graphics2D g) {
+    int fontHeight = g.getFont().getSize();
+    
     g.translate(x, y);
-    g.clipRect(0, 0, w, h - ITEM_HEIGHT);
+    g.clipRect(0, 0, w, h - fontHeight);
 
 //    g.setColor(Skin.get().BG_COLOR);
 //    g.fillRect(0, 0, w, h);
     drawItems(g);
 
-    int fontHeight = g.getFont().getSize();
     g.setClip(null);
     g.setColor(Color.GRAY);
-    g.drawString(root, 0, h - ITEM_HEIGHT + fontHeight + (ITEM_HEIGHT - fontHeight) / 2 - 1);
+    g.drawString(root, 0, h - 1);
 
     g.translate(-x, -y);
   }
@@ -130,7 +135,7 @@ public class XPathFilePicker extends CommonControl {
   }
 
   int rowsInView() {
-    return ((h - ITEM_HEIGHT) / ITEM_HEIGHT);
+    return ((h - itemHeight()) / itemHeight());
   }
 
   float columnWidth() {
@@ -152,7 +157,7 @@ public class XPathFilePicker extends CommonControl {
   }
 
   protected CollumnedItemVisitor<File> itemVisitor(int w, int h) {
-    return new CollumnedItemVisitor<>(columnWidth(), ITEM_HEIGHT, 0, rowsInView());
+    return new CollumnedItemVisitor<>(columnWidth(), itemHeight(), 0, rowsInView() + 1);
   }
 
   protected File upFolderFile() {
@@ -217,7 +222,7 @@ public class XPathFilePicker extends CommonControl {
     if (p != null) {
       higlited = p.node;
       if (higlited.isDirectory())
-        if (mx - p.r.x > (p.r.width - 3 - ITEM_HEIGHT) && mx - p.r.x < p.r.width - 3)
+        if (mx - p.r.x > (p.r.width - 3 - itemHeight()) && mx - p.r.x < p.r.width - 3)
           clickedBtn = true;
     }
 
