@@ -13,7 +13,6 @@ import org.ankhzet.ergo.manga.MangaOptions;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.manga.chapter.page.PageData;
 import org.ankhzet.ergo.manga.chapter.page.ReadOptions;
-import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.pages.UIPage;
 import org.ankhzet.ergo.ui.pages.reader.reader.PageNavigator;
@@ -281,8 +280,8 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     } else {
       boolean b = requested > 0;
       if (!b) {
-        File m = current.getMangaFile();
-        b = (new Manga(m.getPath())).hasBookmarks();
+        Manga m = current.getManga();
+        b = m.hasBookmarks();
         if (!b) {
           Path chPath = m.toPath().resolve(new Chapter("0.1").idLong());
           current = new Chapter(chPath.toString());
