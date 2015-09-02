@@ -11,6 +11,7 @@ import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.MangaOptions;
 import org.ankhzet.ergo.manga.chapter.Chapter;
+import org.ankhzet.ergo.manga.chapter.page.PageData;
 import org.ankhzet.ergo.manga.chapter.page.ReadOptions;
 import org.ankhzet.ergo.ui.LoaderProgressListener;
 import org.ankhzet.ergo.ui.UILogic;
@@ -179,8 +180,16 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
       reader.scroll(0, currentScrollSpeed());
   }
 
+  int scrollSpeed() {
+    PageData page = reader.getCurrentPageData();
+    if (page == null)
+      return 20;
+    
+    return (int) Math.min(page.pageH * 0.1, page.clientH * 0.05);
+  }
+  
   void scroll(int delta) {
-    keyScroll = (20 * delta + currentScrollSpeed()) / 2;
+    keyScroll = (scrollSpeed() * delta + currentScrollSpeed()) / 2;
     keyPress = System.currentTimeMillis();
   }
 
