@@ -28,7 +28,7 @@ public class UIHomePage extends UIPage {
   static final String kLoadChapterLabel = "Load chapter";
 
   static final String kContinueAction = "continue";
-  static final String kContinueLabel = "Continue";
+  static final String kContinueLabel = "Read";
 
   @DependencyInjection
   MangaChapterPicker picker;
@@ -61,10 +61,15 @@ public class UIHomePage extends UIPage {
       if (manga == null)
         return;
 
-      Chapter chapter = manga.lastBookmarkedChapter();
-      Chapter next = chapter.seekChapter(true);
-      if (next == null)
-        next = chapter;
+      Chapter next, bookmark = manga.lastBookmarkedChapter();
+      if (bookmark == null)
+        next = manga.firstChapter();
+      else {
+        next = bookmark.seekChapter(true);
+        if (next == null)
+          next = chapter;
+      }
+
       ui.navigateTo(UIReaderPage.class, next);
     })).enabledAs(action -> {
       Manga manga = selectedManga();
@@ -79,7 +84,7 @@ public class UIHomePage extends UIPage {
       else
         cntButton.setCaption(kContinueLabel);
 
-      return c != null;
+      return manga.valid();
     });
 
     hud.putSpacer(XControls.AREA_LEFT);
