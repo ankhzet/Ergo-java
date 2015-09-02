@@ -5,16 +5,17 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.io.File;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Manga;
 import org.ankhzet.ergo.manga.chapter.Chapter;
 import org.ankhzet.ergo.ui.Skin;
 import org.ankhzet.ergo.ui.pages.reader.reader.Reader;
 import org.ankhzet.ergo.ui.xgui.XPathFilePicker;
-import org.ankhzet.ergo.ui.xgui.XPathFilePicker.FilesList;
 import org.ankhzet.ergo.ui.xgui.filepicker.CollumnedItemVisitor;
+import org.ankhzet.ergo.ui.xgui.filepicker.FilesList;
 
 /**
  *
@@ -47,11 +48,6 @@ public class MangaChapterPicker extends XPathFilePicker {
     super.fetchRoot();
     entries.remove(upFolderFile());
 
-    FilesList bookmarked = new FilesList();
-    FilesList read = new FilesList();
-    FilesList unread = new FilesList();
-    FilesList files = new FilesList();
-
     boolean inRootFolder = false;
     File root = getRootFile();
     for (String r : reader.getMangaRoots())
@@ -60,67 +56,12 @@ public class MangaChapterPicker extends XPathFilePicker {
         break;
       }
 
-    Manga m = new Manga(root.getPath());
-    Chapter b = null, last = null;
-    if (!inRootFolder) {
-      b = m.lastBookmarkedChapter();
-      last = m.lastChapter();
-    }
-
-    for (File entry : entries)
-      if (entry.isDirectory()) {
-        if (inRootFolder) {
-          m = new Manga(entry.getPath());
-          b = m.lastBookmarkedChapter();
-          last = m.lastChapter();
-        }
-
-        if (b != null) {
-          Chapter c = new Chapter(entry.getPath());
-          File add = inRootFolder
-                     ? m
-                     : (c.equals(b) ? c : entry);
-
-          if (b.compare(last) >= 0) {
-            if (!skipReaded)
-              read.add(add);
-          } else
-            bookmarked.add(add);
-        } else
-          unread.add(entry);
-      } else
-        files.add(entry);
-
-    if (inRootFolder) {
-      sortEntries(bookmarked);
-      sortEntries(unread);
-      sortEntries(read);
-    }
+    FileFetcher fetcher = inRootFolder ? new MangaFetcher() : new ChapterFetcher();
+    FilesList fetched = fetcher.fetch(entries, this);
 
     entries.clear();
     entries.add(upFolderFile());
-    entries.addAll(bookmarked);
-    entries.addAll(unread);
-    entries.addAll(read);
-    entries.addAll(files);
-  }
-
-  void sortEntries(FilesList list) {
-    HashMap<File, Long> hashed = new HashMap<>(list.size());
-    Comparator<? super File> c = (f1, f2) -> {
-      Long l1 = hashed.get(f1);
-      if (l1 == null) {
-        l1 = f1.lastModified();
-        hashed.put(f1, l1);
-      }
-      Long l2 = hashed.get(f2);
-      if (l2 == null) {
-        l2 = f2.lastModified();
-        hashed.put(f2, l2);
-      }
-      return Long.signum(l2 - l1);
-    };
-    list.sort(c);
+    entries.addAll(fetched);
   }
 
   @Override
@@ -193,6 +134,170 @@ public class MangaChapterPicker extends XPathFilePicker {
       cachedColors.put(item, c);
     }
     return c;
+  }
+
+}
+
+class FileFetcher {
+
+  public FilesList fetch(FilesList entries, MangaChapterPicker picker) {
+    FileFilter filter = filter(picker);
+
+    LinkedHashMap<Bucket, FilesList> map = filterFiles(entries, filter);
+
+    FilesList result = new FilesList();
+    ArrayList<Bucket> buckets = new ArrayList<>(map.keySet());
+    buckets.sort(null);
+    buckets.forEach((bucket) -> {
+      result.addAll(sortEntries(map.get(bucket)));
+    });
+
+    return result;
+  }
+
+  enum Bucket {
+
+    SKIP,
+    BOOKMARKED,
+    UNREAD,
+    READ,
+    FILE,
+
+  }
+
+  interface FileFilter {
+
+    Bucket filter(File f);
+
+  }
+
+  protected FilesList sortEntries(FilesList list) {
+    list = (FilesList) list.clone();
+    list.sort(null);
+    return list;
+  }
+
+  protected LinkedHashMap<Bucket, FilesList> filterFiles(FilesList files, FileFilter f) {
+    LinkedHashMap<Bucket, FilesList> map = new LinkedHashMap<>();
+    for (File entry : files) {
+      Bucket bucket = f.filter(entry);
+      if (bucket == Bucket.SKIP)
+        continue;
+
+      FilesList list = map.get(bucket);
+      if (list == null)
+        map.put(bucket, list = new FilesList());
+
+      list.add((bucket == Bucket.READ || bucket == Bucket.BOOKMARKED) ? new Chapter(entry.getPath()) : entry);
+    }
+    return map;
+  }
+
+  protected FileFilter filter(MangaChapterPicker picker) {
+    return (file) -> file.isFile() ? Bucket.FILE : Bucket.UNREAD;
+  }
+
+}
+
+class MangaFetcher extends FileFetcher {
+
+  @Override
+  protected FilesList sortEntries(FilesList list) {
+    list = (FilesList) list.clone();
+    HashMap<File, Long> hashed = new HashMap<>(list.size());
+    list.sort((f1, f2) -> {
+      Long l1 = hashed.get(f1);
+      if (l1 == null) {
+        l1 = f1.lastModified();
+        hashed.put(f1, l1);
+      }
+      Long l2 = hashed.get(f2);
+      if (l2 == null) {
+        l2 = f2.lastModified();
+        hashed.put(f2, l2);
+      }
+      return Long.signum(l2 - l1);
+    });
+    return list;
+  }
+
+  @Override
+  protected FileFilter filter(MangaChapterPicker picker) {
+    return (file) -> {
+      if (file.isFile())
+        return Bucket.FILE;
+
+      Manga m = new Manga(file.getPath());
+      Chapter b = m.lastBookmarkedChapter();
+      Chapter last = m.lastChapter();
+
+      if (b == null)
+        return Bucket.UNREAD;
+
+      if (b.compare(last) < 0)
+        return Bucket.BOOKMARKED;
+
+      return picker.skipReaded ? Bucket.SKIP : Bucket.READ;
+    };
+  }
+
+}
+
+class ChapterFetcher extends FileFetcher {
+
+  Manga manga = null;
+  Chapter bookmarked = null, last = null;
+  
+  boolean unread = false;
+  
+  @Override
+  protected FilesList sortEntries(FilesList list) {
+    list = (FilesList) list.clone();
+    HashMap<File, Long> hashed = new HashMap<>(list.size());
+    list.sort((f1, f2) -> {
+      Long l1 = hashed.get(f1);
+      if (l1 == null) {
+        l1 = (long) (new Chapter(f1.getPath())).idx();
+        hashed.put(f1, l1);
+      }
+      Long l2 = hashed.get(f2);
+      if (l2 == null) {
+        l2 = (long) (new Chapter(f2.getPath())).idx();
+        hashed.put(f2, l2);
+      }
+      return Long.signum(l2 - l1);
+    });
+    return list;
+  }
+
+  @Override
+  protected FileFilter filter(MangaChapterPicker picker) {
+    manga = null;
+    return (file) -> {
+      if (file.isFile())
+        return Bucket.FILE;
+      
+      Chapter c = null;
+      if (manga == null) {
+        manga = (c = new Chapter(file.getPath())).getManga();
+        bookmarked = manga.lastBookmarkedChapter();
+        last = manga.lastChapter();
+        unread = bookmarked == null;
+      }
+      
+      if (unread)
+        return Bucket.UNREAD;
+
+      if (c == null) 
+        c = new Chapter(file.getPath());
+      
+      int compared = bookmarked.compare(c);
+      
+      switch (compared) {
+      case -1: return Bucket.UNREAD;
+      default: return picker.skipReaded ? Bucket.SKIP : Bucket.READ;
+      }
+    };
   }
 
 }
