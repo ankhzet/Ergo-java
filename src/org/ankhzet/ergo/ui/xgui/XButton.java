@@ -3,7 +3,6 @@ package org.ankhzet.ergo.ui.xgui;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import org.ankhzet.ergo.Config;
 import org.ankhzet.ergo.ConfigParser;
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.files.Parser;
@@ -31,8 +30,8 @@ public class XButton extends CommonControl {
       Parser p = IoC.make(ConfigParser.class, src);
 
       int i = 0;
-      p.checkNext("button");
-      p.checkNext("{");
+      p.checkAndNext("button");
+      p.checkAndNext("{");
       do {
         if (p.isToken("img"))
           ims[i++] = uil.loadImage(p.getValue("=", ";"));
@@ -44,7 +43,7 @@ public class XButton extends CommonControl {
               h = Integer.parseInt(p.getValue("=", ";"));
 
         if (!p.Token.equalsIgnoreCase("}"))
-          p.checkNext(";");
+          p.checkAndNext(";");
 
       } while (!(p.Token.equalsIgnoreCase("}") || p.Token.isEmpty()));
       p.check("}");
@@ -85,7 +84,7 @@ public class XButton extends CommonControl {
       }
     else // disabled
     //      g.setColor(Color.LIGHT_GRAY)
-    ;
+      ;
 
     if (!g.drawImage(i, x + dx, y + dy, w, h, null))
 //      System.out.println("img not ready")

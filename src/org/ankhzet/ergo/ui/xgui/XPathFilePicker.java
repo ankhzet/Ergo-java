@@ -43,14 +43,14 @@ public class XPathFilePicker extends CommonControl {
       Parser p = IoC.make(ConfigParser.class, "filepicker");
 
       int i = 0;
-      p.checkNext("filepicker");
-      p.checkNext("{");
+      p.checkAndNext("filepicker");
+      p.checkAndNext("{");
       do {
         if (p.isToken("img"))
           ims[i++] = uil.loadImage("/" + p.getValue("=", ";"));
 
         if (!p.Token.equalsIgnoreCase("}"))
-          p.checkNext(";");
+          p.checkAndNext(";");
 
       } while (!(p.Token.equalsIgnoreCase("}") || p.Token.isEmpty()));
       p.check("}");

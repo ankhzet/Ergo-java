@@ -165,7 +165,7 @@ public class Parser {
    * @return {@code String} next token.
    * @throws java.lang.Throwable
    */
-  public String checkNext(String token) throws Throwable {
+  public String checkAndNext(String token) throws Throwable {
     if (!token.equalsIgnoreCase(Token))
       throw new Throwable(String.format("[%s] expected, but [%s] found", token, Token));
     return next();
@@ -195,8 +195,8 @@ public class Parser {
    * @throws java.lang.Throwable
    */
   public String getValue(String left, String right) throws Throwable {
-    String r = checkNext(left);
-    nextCheck(right);
+    String r = checkAndNext(left);
+    nextAndCheck(right);
     return r;
   }
 
@@ -206,7 +206,7 @@ public class Parser {
    * @param token
    * @throws java.lang.Throwable
    */
-  public void nextCheck(String token) throws Throwable {
+  public void nextAndCheck(String token) throws Throwable {
     if (!token.equalsIgnoreCase(next()))
       throw new Throwable(String.format("[%s] expected, but [%s] found", token, Token));
   }
