@@ -114,7 +114,11 @@ public class UIHomePage extends UIPage {
     hud.shortcut("Refresh", XKeyShortcut.press("F5"), registerAction("refresh", action -> picker.fetchRoot()));
     hud.shortcut("Open folder in folder browser", XKeyShortcut.press("Ctrl+E"), registerAction("browse-folder", action -> {
       try {
-        Desktop.getDesktop().open(picker.getSelectedFile());
+        File file = picker.getSelectedFile();
+        if (file != null)
+          Desktop.getDesktop().open(file);
+        else
+          ui.message("Select folder to open");
       } catch (IOException ex) {
 
       }
