@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.ankhzet.ergo.App;
 import org.ankhzet.ergo.Config;
 import org.ankhzet.ergo.classfactory.builder.ClassBuilder;
 import org.ankhzet.ergo.utils.Strings;
@@ -31,9 +32,10 @@ public class ConnectionBuilder extends ClassBuilder<Connection> {
 
   @Override
   public synchronized Connection build(Class<? extends Connection> c, Object... args) throws Exception {
-    String dbName = (args.length > 0) ? (String) args[0] : config.appDir(config.appName());
+    String dbName = (args.length > 0) ? (String) args[0] : App.resolveDir(config.get("db.file", App.appName()));
 
     File f = new File(dbName);
+
     String fileName = f.getName();
     if (Strings.explode(fileName, "\\.").size() <= 1)
       dbName = dbName + "." + dbFileExt;

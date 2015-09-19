@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import org.ankhzet.ergo.App;
 import org.ankhzet.ergo.Config;
 import org.ankhzet.ergo.classfactory.IoC;
 import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
@@ -139,7 +140,7 @@ public class UILogic implements Runnable, XActionListener, LoaderProgressListene
   }
 
   public Image loadImage(String src) {
-    return toolkit.getImage(config.appDir(src));
+    return toolkit.getImage(App.appDir(src));
   }
 
   public static void log(String format, Object... args) {
