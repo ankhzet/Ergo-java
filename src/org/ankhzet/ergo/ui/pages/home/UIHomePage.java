@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
+import org.ankhzet.ergo.Config;
 import ankh.annotations.DependenciesInjected;
 import ankh.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.Manga;
@@ -34,13 +35,15 @@ public class UIHomePage extends UIPage {
   MangaChapterPicker picker;
   @DependencyInjection
   Reader reader;
+  @DependencyInjection()
+  protected Config config;
 
   Chapter chapter;
   
   @DependenciesInjected
   private void di() {
-    String root = "H:/manga/manga";
-    reader.setMangaRoots(new Strings(new String[]{root}));
+    String root = config.get("manga.folder", "");
+    reader.setMangaRoots(new Strings(root));
     picker.setRoot(root);
   }
 
