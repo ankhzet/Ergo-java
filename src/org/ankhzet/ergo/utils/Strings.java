@@ -1,5 +1,7 @@
 package org.ankhzet.ergo.utils;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +45,19 @@ public class Strings extends ArrayList<String> {
     }
 
     return titleCase.toString();
+  }
+
+  public static String md5(String str) {
+    String hash16 = "";
+    try {
+      MessageDigest md5 = MessageDigest.getInstance("MD5");
+      byte[] digest = md5.digest(str.getBytes());
+      for (int i = 0; i < digest.length; i++)
+        hash16 += Integer.toString(digest[i] & 0xff, 16);
+    } catch (NoSuchAlgorithmException ex) {
+      ex.printStackTrace();
+    }
+    return hash16;
   }
 
   public String join(String glue) {

@@ -100,8 +100,11 @@ public class ImgUtil {
     BufferedImage scaled = null;
 
     File src = new File(fileName);
-    Path thumbPath = src.getParentFile().toPath();
-    thumbPath = thumbPath.resolve(thumbDir).resolve(src.getName());
+    Path thumbPath = (new File(thumbDir)).toPath();
+    if (!thumbPath.toFile().isDirectory()) {
+      thumbPath = src.toPath().resolveSibling(thumbDir);
+    }
+    thumbPath = thumbPath.resolve(Strings.md5(fileName) + "-" + src.getName());
 
     File dst = thumbPath.toFile();
     if (dst.exists())
