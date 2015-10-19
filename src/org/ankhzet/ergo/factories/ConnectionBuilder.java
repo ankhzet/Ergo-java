@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.ankhzet.ergo.App;
 import org.ankhzet.ergo.Config;
-import org.ankhzet.ergo.classfactory.builder.ClassBuilder;
+import ankh.builder.ClassBuilder;
 import org.ankhzet.ergo.utils.Strings;
 
 /**

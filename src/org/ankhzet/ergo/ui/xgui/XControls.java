@@ -7,7 +7,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import org.ankhzet.ergo.classfactory.IoC;
+import ankh.IoC;
 import org.ankhzet.ergo.ui.Skin;
 import org.ankhzet.ergo.ui.UILogic;
 

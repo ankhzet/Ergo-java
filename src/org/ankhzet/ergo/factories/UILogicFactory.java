@@ -1,8 +1,9 @@
 package org.ankhzet.ergo.factories;
 
+import ankh.IoC;
+import ankh.factory.ClassFactory;
 import org.ankhzet.ergo.App;
 import org.ankhzet.ergo.Config;
-import org.ankhzet.ergo.classfactory.ClassFactory;
 import org.ankhzet.ergo.ui.UIContainerListener;
 import org.ankhzet.ergo.ui.UILogic;
 
@@ -12,7 +13,9 @@ import org.ankhzet.ergo.ui.UILogic;
  */
 public class UILogicFactory extends ClassFactory<UILogic> {
 
-  public UILogicFactory() {
+  public UILogicFactory(IoC ioc) {
+    super(ioc);
+    
     register(UILogic.class);
 
     registerClass(UIContainerListener.class);

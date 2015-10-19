@@ -7,7 +7,7 @@ package org.ankhzet.ergo;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
-import org.ankhzet.ergo.classfactory.IoC;
+import ankh.IoC;
 import org.ankhzet.ergo.factories.IoCFactoriesRegistrar;
 import org.ankhzet.ergo.ui.UIContainerListener;
 import org.ankhzet.ergo.ui.UILogic;

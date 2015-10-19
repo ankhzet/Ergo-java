@@ -3,8 +3,8 @@ package org.ankhzet.ergo.db;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import ankh.annotations.DependenciesInjected;
+import ankh.annotations.DependencyInjection;
 import org.ankhzet.ergo.db.query.Builder;
 
 /**

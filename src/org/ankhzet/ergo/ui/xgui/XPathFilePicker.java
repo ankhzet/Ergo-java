@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import org.ankhzet.ergo.ConfigParser;
-import org.ankhzet.ergo.classfactory.IoC;
+import ankh.IoC;
 import org.ankhzet.ergo.files.Parser;
 import org.ankhzet.ergo.ui.Skin;
 import org.ankhzet.ergo.ui.UILogic;

@@ -1,6 +1,7 @@
 package org.ankhzet.ergo.factories;
 
-import org.ankhzet.ergo.classfactory.ClassFactory;
+import ankh.IoC;
+import ankh.factory.ClassFactory;
 import org.ankhzet.ergo.manga.chapter.chaptercacher.ScansCache;
 import org.ankhzet.ergo.manga.chapter.page.ReadOptions;
 import org.ankhzet.ergo.ui.pages.duplicates.UIDuplicatesPage;
@@ -17,7 +18,8 @@ import org.ankhzet.ergo.ui.pages.reader.reader.SwipeHandler;
  */
 public class UIPageFactory extends ClassFactory<UIPage> {
 
-  public UIPageFactory() {
+  public UIPageFactory(IoC ioc) {
+    super(ioc);
 
     register(UIHomePage.class);
     register(UIReaderPage.class);
