@@ -1,7 +1,12 @@
 package org.ankhzet.ergo.ui;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
+import org.ankhzet.ergo.utils.Utils;
 
 /**
  *
@@ -77,6 +82,28 @@ public class Skin {
     Skin skin = get();
 
     g.fillRoundRect(x, y, w, h, skin.UI_C, skin.UI_C);
+  }
+
+  public static void drawLabel(Graphics2D g, String text, int x, int y, int w, int h) {
+    Rectangle2D r = labelSize(g, text);
+    int tw = (int) r.getWidth();
+    int th = (int) r.getHeight();
+    x = Utils.constraint(x - tw / 2, 0, w - tw);
+    Color c = g.getColor();
+    g.setColor(Color.WHITE);
+    g.drawString(text, x, y + th + 1);
+    g.setColor(Color.BLACK);
+    g.drawString(text, x, y + th);
+    g.setColor(c);
+  }
+
+  public static Rectangle2D labelSize(Graphics2D g, String text) {
+    Font f = g.getFont();
+    FontRenderContext frc = g.getFontRenderContext();
+    Rectangle2D s = f.getStringBounds(text, frc);
+    Rectangle rect = new Rectangle(s.getBounds());
+    rect.height = f.getSize();
+    return rect;
   }
 
 }

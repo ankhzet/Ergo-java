@@ -3,7 +3,6 @@ package org.ankhzet.ergo.ui.pages.reader;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 import ankh.annotations.DependenciesInjected;

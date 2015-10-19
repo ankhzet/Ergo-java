@@ -211,7 +211,7 @@ public class Reader extends PageNavigator {
         if (tab == hilitedScan) {
           String pageFile = (new File(scanFileNames.get(pageFromTab(tab, tabs)))).getName();
 
-          drawLabel(g, pageFile, px + pw / 2, y + 1 + tabHeight + 32);
+          Skin.drawLabel(g, pageFile, px + pw / 2, y + 1 + tabHeight + 32, clientRect.width, clientRect.height);
         }
       }
 
@@ -239,29 +239,7 @@ public class Reader extends PageNavigator {
            ? Color.GRAY
            : Skin.get().UI_SCAN_CACHING;
   }
-
-  void drawLabel(Graphics2D g, String text, int x, int y) {
-    Rectangle2D r = labelSize(g, text);
-    int tw = (int) r.getWidth();
-    int th = (int) r.getHeight();
-    x = Utils.constraint(x - tw / 2, 0, clientRect.width - tw);
-    Color c = g.getColor();
-    g.setColor(Color.WHITE);
-    g.drawString(text, x, y + th + 1);
-    g.setColor(Color.BLACK);
-    g.drawString(text, x, y + th);
-    g.setColor(c);
-  }
-
-  Rectangle2D labelSize(Graphics2D g, String text) {
-    Font f = g.getFont();
-    FontRenderContext frc = g.getFontRenderContext();
-    Rectangle2D s = f.getStringBounds(text, frc);
-    Rectangle rect = new Rectangle(s.getBounds());
-    rect.height = f.getSize();
-    return rect;
-  }
-
+  
   void drawPages(Graphics2D g, int x, int y, int w, int h) {
     //if no pages - we'r done here
     PageData page = getCurrentPageData();

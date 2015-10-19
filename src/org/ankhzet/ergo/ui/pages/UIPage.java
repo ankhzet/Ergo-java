@@ -1,6 +1,7 @@
 package org.ankhzet.ergo.ui.pages;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import ankh.annotations.DependenciesInjected;
 import ankh.annotations.DependencyInjection;
@@ -22,6 +23,8 @@ public class UIPage {
   protected XControls hud;
 
   protected boolean mouseDown = false;
+  Point pressPos = new Point();
+  public int mx, my;
 
   XActions actions = new XActions();
 
@@ -56,7 +59,30 @@ public class UIPage {
   }
 
   public boolean mouseEvent(MouseEvent e) {
-    return false;
+    mx = e.getX();
+    my = e.getY();
+
+    int dx = pressPos.x - mx;
+    int dy = pressPos.y - my;
+    switch (e.getID()) {
+    case MouseEvent.MOUSE_PRESSED:
+      pressPos.setLocation(mx, my);
+      mouseDown = true;
+      hud.unfocus();
+      break;
+    case MouseEvent.MOUSE_DRAGGED:
+      scroll(dx, dy);
+      pressPos.setLocation(mx, my);
+      break;
+    case MouseEvent.MOUSE_RELEASED:
+      mouseDown = false;
+      break;
+    }
+
+    return mouseDown;
+  }
+
+  public void scroll(int x, int y) {
   }
 
   public void draw(Graphics2D g, int w, int h) {
