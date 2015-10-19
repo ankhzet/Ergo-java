@@ -64,11 +64,11 @@ public class Parser {
       switch (chr) {
       case 0:
         break;
-      case '\\':
+      case '/':
         position++;
         chr = c();
-        if (chr != '\\') {
-          Token += '\\';
+        if (chr != '/') {
+          Token += '/';
           break;
         }
 
