@@ -7,14 +7,14 @@ package org.ankhzet.ergo.manga.chapter.page;
 public class ReadOptions {
 
   protected static final int//
-    BIT_MODE      = 0x000001,
-    BIT_STRETCH   = 0x000002,
-    BIT_ORIGINAL  = 0x000004,
+    BIT_MODE = 0x000001,
+    BIT_STRETCH = 0x000002,
+    BIT_ORIGINAL = 0x000004,
     BIT_FITHEIGHT = 0x000008,
-    BIT_ROTATE    = 0x000010,
+    BIT_ROTATE = 0x000010,
     BIT_CLOCKWISE = 0x000020,
-    BIT_HORISSWIPE= 0x000040,
-    BIT_VALID     = 0x800000;
+    BIT_HORISSWIPE = 0x000040,
+    BIT_VALID = 0x800000;
 
   protected int bits = 0;
 

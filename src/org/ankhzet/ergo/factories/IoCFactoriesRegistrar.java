@@ -24,7 +24,7 @@ public class IoCFactoriesRegistrar extends ClassFactory {
 
   public IoCFactoriesRegistrar(IoC ioc) {
     super(ioc);
-    
+
     registerClass(Toolkit.class, (c, args) -> Toolkit.getDefaultToolkit());
 
     registerClass(MangaChapterPicker.class, (c, args) -> new MangaChapterPicker(args.length > 0 ? (String) args[0] : "File pick"));

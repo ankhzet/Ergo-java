@@ -182,10 +182,10 @@ public class UIReaderPage extends UIPage implements PageNavigator.NavigationList
     PageData page = reader.getCurrentPageData();
     if (page == null)
       return 20;
-    
+
     return (int) Math.min(page.pageH * 0.1, page.clientH * 0.05);
   }
-  
+
   void scroll(int delta) {
     keyScroll = (scrollSpeed() * delta + currentScrollSpeed()) / 2;
     keyPress = System.currentTimeMillis();

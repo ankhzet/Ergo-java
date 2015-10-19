@@ -63,7 +63,7 @@ public class XPathFilePicker extends CommonControl {
   public String itemCaption(File item) {
     return root.equals("/") ? item.getPath() : item.getName();
   }
-  
+
   public int itemHeight() {
     return ITEM_HEIGHT;
   }
@@ -75,7 +75,7 @@ public class XPathFilePicker extends CommonControl {
   @Override
   public void DoDraw(Graphics2D g) {
     int fontHeight = g.getFont().getSize();
-    
+
     g.translate(x, y);
     g.clipRect(0, 0, w, h - fontHeight);
 

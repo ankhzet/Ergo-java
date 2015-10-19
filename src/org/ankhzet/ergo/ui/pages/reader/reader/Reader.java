@@ -239,7 +239,7 @@ public class Reader extends PageNavigator {
            ? Color.GRAY
            : Skin.get().UI_SCAN_CACHING;
   }
-  
+
   void drawPages(Graphics2D g, int x, int y, int w, int h) {
     //if no pages - we'r done here
     PageData page = getCurrentPageData();

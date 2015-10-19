@@ -15,7 +15,7 @@ public class ProcessThreadsPool extends ArrayList<ProcessThread> {
 
     if (progressListener != null)
       progressListener.onProgress(LoaderProgressListener.STATE_CACHING, 0, total);
-    
+
     int perThread = Math.max(total / threads, 1);
     threads = Math.min(threads, total / perThread);
 
@@ -29,10 +29,10 @@ public class ProcessThreadsPool extends ArrayList<ProcessThread> {
       add(new ProcessThread(
         heap,
         new ProcessChunk<>(
-          i, 
-          total, 
-          progress, 
-          progressListener, 
+          i,
+          total,
+          progress,
+          progressListener,
           pages.subList(from, to)
         )
       ));

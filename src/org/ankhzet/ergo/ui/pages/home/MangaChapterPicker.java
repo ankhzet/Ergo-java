@@ -252,9 +252,9 @@ class ChapterFetcher extends FileFetcher {
 
   Manga manga = null;
   Chapter bookmarked = null, last = null;
-  
+
   boolean unread = false;
-  
+
   @Override
   protected FilesList sortEntries(FilesList list) {
     list = (FilesList) list.clone();
@@ -281,7 +281,7 @@ class ChapterFetcher extends FileFetcher {
     return (file) -> {
       if (file.isFile())
         return Bucket.FILE;
-      
+
       Chapter c = null;
       if (manga == null) {
         manga = (c = new Chapter(file.getPath())).getManga();
@@ -289,18 +289,20 @@ class ChapterFetcher extends FileFetcher {
         last = manga.lastChapter();
         unread = bookmarked == null;
       }
-      
+
       if (unread)
         return Bucket.UNREAD;
 
-      if (c == null) 
+      if (c == null)
         c = new Chapter(file.getPath());
-      
+
       int compared = bookmarked.compare(c);
-      
+
       switch (compared) {
-      case -1: return Bucket.UNREAD;
-      default: return picker.skipReaded ? Bucket.SKIP : Bucket.READ;
+      case -1:
+        return Bucket.UNREAD;
+      default:
+        return picker.skipReaded ? Bucket.SKIP : Bucket.READ;
       }
     };
   }

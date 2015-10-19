@@ -101,9 +101,8 @@ public class ImgUtil {
 
     File src = new File(fileName);
     Path thumbPath = (new File(thumbDir)).toPath();
-    if (!thumbPath.toFile().isDirectory()) {
+    if (!thumbPath.toFile().isDirectory())
       thumbPath = src.toPath().resolveSibling(thumbDir);
-    }
     thumbPath = thumbPath.resolve(Strings.md5(fileName) + "-" + src.getName());
 
     File dst = thumbPath.toFile();

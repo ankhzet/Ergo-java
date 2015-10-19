@@ -74,14 +74,14 @@ public class FColor extends Color {
 
     return Integer.signum(delta / 3);
   }
-  
+
   public int brightness() {
     int rgb1 = getRGB();
 
     int r = (byte) ((rgb1 & 0xFF));
     int g = (byte) ((rgb1 & 0xFF00) >> 8);
     int b = (byte) ((rgb1 & 0xFF0000) >> 16);
-    
+
     return (r + g + b) / 3;
   }
 

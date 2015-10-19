@@ -54,7 +54,7 @@ public class Manga extends Chapter {
       ChapterBookmark last = (ChapterBookmark) bookmarks.get(bookmarks.size() - 1);
       if (last.uid.equals(uid()) && (Float.compare(last.chapter, c.id()) == 0))
         return last;
-      
+
       bookmarks.remove(last);
     }
 

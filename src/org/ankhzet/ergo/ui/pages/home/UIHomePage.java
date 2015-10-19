@@ -39,7 +39,7 @@ public class UIHomePage extends UIPage {
   protected Config config;
 
   Chapter chapter;
-  
+
   @DependenciesInjected
   private void di() {
     String root = config.get("manga.folder", "");
@@ -134,10 +134,10 @@ public class UIHomePage extends UIPage {
 
   Chapter pickedChapter() {
     Chapter t = new Chapter(picker.getSelectedPath());
-    
+
     if ((chapter == null) || !chapter.equals(t))
       chapter = t;
-    
+
     return chapter;
   }
 
@@ -188,7 +188,7 @@ public class UIHomePage extends UIPage {
     Manga m = selectedManga();
     if (m != null)
       return Strings.toTitleCase(m.getName());
-    
+
     return "Ergo manga reader";
   }
 

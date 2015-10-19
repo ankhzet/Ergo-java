@@ -32,7 +32,7 @@ public class ProcessChunk<Item> extends ArrayList<Item> {
 
       if (listener == null)
         return;
-      
+
       double totalProgress = 0.;
       for (Double chunkProgress : chunks.values())
         totalProgress += chunkProgress;

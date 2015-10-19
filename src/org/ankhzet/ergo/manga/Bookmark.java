@@ -40,12 +40,12 @@ public class Bookmark {
 
   public void save() {
     IoC.get(BookmarksTable.class)
-      .save(selectClause());
+    .save(selectClause());
   }
 
   public void delete() {
     IoC.get(BookmarksTable.class)
-      .delete(selectClause());
+    .delete(selectClause());
   }
 
   public static List<Bookmark> forManga(String manga, BookmarkGenerator gen) {
@@ -91,7 +91,7 @@ class MangaBookmark extends Bookmark {
   @Override
   protected ObjectsMap selectClause() {
     return super.selectClause()
-      .put("manga", uid);
+    .put("manga", uid);
   }
 
 }
@@ -115,7 +115,7 @@ class ChapterBookmark extends MangaBookmark {
   @Override
   protected ObjectsMap selectClause() {
     return super.selectClause()
-      .put("chapter", chapter);
+    .put("chapter", chapter);
   }
 
 }
