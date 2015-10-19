@@ -1,7 +1,7 @@
 package org.ankhzet.ergo.db;
 
 import org.ankhzet.ergo.Config;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import ankh.annotations.DependencyInjection;
 import org.ankhzet.ergo.db.query.Builder;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.utils.Strings;

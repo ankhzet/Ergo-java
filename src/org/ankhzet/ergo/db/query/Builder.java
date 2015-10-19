@@ -5,9 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import org.ankhzet.ergo.classfactory.IoC;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
-import org.ankhzet.ergo.classfactory.exceptions.FactoryException;
+import ankh.IoC;
+import ankh.annotations.DependencyInjection;
+import ankh.exceptions.FactoryException;
 import org.ankhzet.ergo.utils.Strings;
 
 /**

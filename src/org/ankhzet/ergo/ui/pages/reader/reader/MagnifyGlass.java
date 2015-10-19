@@ -6,7 +6,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import ankh.annotations.DependencyInjection;
 import org.ankhzet.ergo.manga.chapter.page.PageData;
 import org.ankhzet.ergo.utils.Utils;
 

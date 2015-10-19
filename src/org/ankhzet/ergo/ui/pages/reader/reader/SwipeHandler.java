@@ -1,7 +1,7 @@
 package org.ankhzet.ergo.ui.pages.reader.reader;
 
-import org.ankhzet.ergo.classfactory.IoC;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import ankh.IoC;
+import ankh.annotations.DependencyInjection;
 
 /**
  *

@@ -2,8 +2,8 @@ package org.ankhzet.ergo.ui.pages;
 
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
-import org.ankhzet.ergo.classfactory.annotations.DependenciesInjected;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import ankh.annotations.DependenciesInjected;
+import ankh.annotations.DependencyInjection;
 import org.ankhzet.ergo.ui.UILogic;
 import org.ankhzet.ergo.ui.xgui.XAction;
 import org.ankhzet.ergo.ui.xgui.XAction.Action;

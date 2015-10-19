@@ -7,7 +7,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
-import org.ankhzet.ergo.classfactory.annotations.DependencyInjection;
+import ankh.annotations.DependencyInjection;
 
 /**
  *

@@ -1,6 +1,6 @@
 package org.ankhzet.ergo.manga;
 
-import org.ankhzet.ergo.classfactory.IoC;
+import ankh.IoC;
 import org.ankhzet.ergo.db.tables.MangaOptionsTable;
 import org.ankhzet.ergo.manga.chapter.page.ReadOptions;
 
